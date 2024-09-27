@@ -1,0 +1,13 @@
+br\com\unirides\loginauthapi\dto\RegisterRequestDTO.class
+br\com\unirides\loginauthapi\controllers\AuthController.class
+br\com\unirides\loginauthapi\infra\security\SecurityFilter.class
+br\com\unirides\loginauthapi\dto\ResponseDTO.class
+br\com\unirides\loginauthapi\LoginAuthApiApplication.class
+br\com\unirides\loginauthapi\infra\security\TokenService.class
+br\com\unirides\loginauthapi\infra\cors\CorsConfig.class
+br\com\unirides\loginauthapi\domain\user\User.class
+br\com\unirides\loginauthapi\dto\LoginRequestDTO.class
+br\com\unirides\loginauthapi\infra\security\SecurityConfig.class
+br\com\unirides\loginauthapi\controllers\UserController.class
+br\com\unirides\loginauthapi\infra\security\CustomUserDetailsService.class
+br\com\unirides\loginauthapi\repositories\UserRepository.class

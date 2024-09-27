@@ -1,0 +1,14 @@
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\dto\ResponseDTO.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\domain\user\User.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\infra\cors\CorsConfig.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\dto\LoginRequestDTO.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\infra\security\TokenService.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\repositories\UserRepository.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\controllers\UserController.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\dto\RegisterRequestDTO.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\infra\security\SecurityFilter.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\infra\security\CustomUserDetailsService.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\LoginAuthApiApplication.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\dto\UserResponseDTO.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\controllers\AuthController.java
+C:\Users\gabri\rp4\unirides\login-auth-api\src\main\java\br\com\unirides\loginauthapi\infra\security\SecurityConfig.java
