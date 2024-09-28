@@ -34,7 +34,7 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
-
+    //nome, email, cpf, telefone, datanasciemnto, cep, cidade, estado, endereco, senha
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequestDTO body){
         Optional<User> user = this.repository.findByEmail(body.email());
@@ -45,6 +45,12 @@ public class AuthController {
             newUser.setEmail(body.email());
             newUser.setName(body.name());
             newUser.setCpf(body.cpf());
+            newUser.setTelefone(body.telefone());
+            newUser.setDataNascimento(body.dataNascimento());
+            newUser.setCep(body.cep());
+            newUser.setCidade(body.cidade());
+            newUser.setEstado(body.estado());
+            newUser.setEndereco(body.endereco());
             this.repository.save(newUser);
 
             String token = this.tokenService.generateToken(newUser);
