@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import axios from '../services/axiosConfig';
+import React, { useState } from "react";
+import axios from "../services/axiosConfig";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setSenha] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setSenha] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/login', { email, password });
-      // Salve o token de autenticação 
-      localStorage.setItem('token', response.data.token);
+      const response = await axios.post("/login", { email, password });
+      // Salve o token de autenticação
+      localStorage.setItem("token", response.data.token);
       // Redirecione para a página principal
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error("Erro ao fazer login:", error);
       // Trate o erro (exiba mensagem ao usuário)
     }
   };
