@@ -54,6 +54,12 @@
     color: red;
     font-size: 12px;
   }
+
+  .errorLabel{
+    color: red;
+    font-size: 15px;
+    font-weight: 800;
+  }
   
   .inputBox {
     height: 48px;

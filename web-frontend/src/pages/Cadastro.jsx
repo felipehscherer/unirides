@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import axios from '../services/axiosConfig';
 import "./styles/Cadastro.css"
 import { useNavigate } from 'react-router-dom';
+import InputMask from 'react-input-mask';
 
+const removeMask = (value) => {
+  return value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+};
 
 const Cadastro = () => {
   
@@ -17,35 +21,36 @@ const Cadastro = () => {
   const [endereco, setEndereco] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
-  const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [genericError, setGenericError] = useState('')
   const navigate = useNavigate();
 
 
-  const validacao = () => {
-    setEmailError('')
-    setPasswordError('')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (password.length < 7) {
+    setPasswordError('')
+    setGenericError('')
+    if (password.length <= 7) {
       setPasswordError('A senha deve conter 8 caracteres ou mais')
       return
     }
-
     if(!(password === passwordConfirm)){
       setPasswordError('As senhas não coincidem')
       return
     }
 
-    handleSubmit()
-  }
+    if(telefone.length < 15 || !nome.includes(' ')){
+      setGenericError('Verifique todos os campos!')
+      return
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    //setDataNascimento(removeMask(dataNascimento))
+    //console.log(removeMask(dataNascimento))
 
     try {
       await axios.post('/register', { nome, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
       console.log('Sucesso!');
-      // Redirecione para a tela de login ou exiba mensagem de sucesso
       navigate('/login');
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
@@ -85,25 +90,24 @@ const Cadastro = () => {
             className={'inputBox'}
             required
           />
-          <label className="errorLabel">{emailError}</label>
         </div>
 
         <div className='inputContainer'>
-          <input
-            type="text"
-            name="cpf"
-            placeholder='CPF'
-            value={cpf}
-            onChange={(ev) => setCpf(ev.target.value)}
-            className={'inputBox'}
-            required
-          />
+            <InputMask 
+              mask="999.999.999-99" 
+              maskChar={null} 
+              placeholder='CPF'
+              value={cpf}
+              onChange={(ev) => setCpf(ev.target.value)}
+              className={'inputBox'}
+              required
+            /> 
         </div>
 
         <div className='inputContainer'>
-          <input
-            type="tel"
-            name="telefone"
+          <InputMask
+            mask={telefone === '' ? null : "(99) 99999-9999"} 
+            maskChar={null} 
             placeholder='Telefone'
             value={telefone}
             onChange={(ev) => setTelefone(ev.target.value)}
@@ -113,11 +117,10 @@ const Cadastro = () => {
         </div>
 
         <div className='inputContainer'>
-          <input
-            type="text"
-            name="dataNascimento"
-            placeholder='Data de Nascimento' //Incluir máscara
-            maxLength={10}
+          <InputMask
+            mask={dataNascimento === '' ? null : "99/99/9999"} 
+            maskChar={null} 
+            placeholder='Data de nascimento'
             value={dataNascimento}
             onChange={(ev) => setDataNascimento(ev.target.value)}
             className={'inputBox'}
@@ -158,7 +161,8 @@ const Cadastro = () => {
           <input
             type="text"
             name="estado"
-            placeholder='Estado' //fazer lista e/ou preencher automaticamente com o cep
+            pattern="[^0-9]*"
+            placeholder='Estado' //fazer lista e/ou preencher automaticamente com o cep, nao permitir numeros
             value={estado} 
             onChange={(ev) => setEstado(ev.target.value)}
             className={'inputBox'}
@@ -193,7 +197,6 @@ const Cadastro = () => {
             className={'inputBox'}
             required
           />
-          <label className="errorLabel">{passwordError}</label>
         </div>
 
         <div className='inputContainer'> 
@@ -211,6 +214,9 @@ const Cadastro = () => {
         <br />
 
         <div className='inputContainer'>
+        <div className='centro'>
+          <label className="errorLabel">{genericError}</label>
+        </div>
         <button className='cadastrar' type="submit">Cadastrar</button>
         </div>
         
