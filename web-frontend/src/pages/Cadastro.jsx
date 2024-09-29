@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from '../services/axiosConfig';
 import "./styles/Cadastro.css"
+import { useNavigate } from 'react-router-dom';
+
 
 const Cadastro = () => {
   
@@ -17,33 +19,19 @@ const Cadastro = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const navigate = useNavigate();
+
 
   const validacao = () => {
-    //const { email, password, passwordConfirm } = formData; // Extrai os dados do estado
     setEmailError('')
     setPasswordError('')
-
-    if ('' === email) {
-      setEmailError('Por favor, informe seu email')
-      return
-    }
-
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      setEmailError('Este email é inválido')
-      return
-    }
-
-    if ('' === password) {
-      setPasswordError('Defina uma senha')
-      return
-    }
 
     if (password.length < 7) {
       setPasswordError('A senha deve conter 8 caracteres ou mais')
       return
     }
 
-    if(!(password == passwordConfirm)){
+    if(!(password === passwordConfirm)){
       setPasswordError('As senhas não coincidem')
       return
     }
@@ -53,16 +41,15 @@ const Cadastro = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //const { nome, email, cpf, password } = formData; // Extrai os dados do estado
 
     try {
       await axios.post('/register', { nome, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
+      console.log('Sucesso!');
       // Redirecione para a tela de login ou exiba mensagem de sucesso
+      navigate('/login');
     } catch (error) {
       console.error('Erro ao cadastrar:', error);
     }
-    //console.log(formData);
-    
   };
 
   return (
@@ -70,7 +57,7 @@ const Cadastro = () => {
       <div className='titleContainer'>
         <h2>UniRides</h2>
       </div>
-      <form onSubmit={validacao}> 
+      <form onSubmit={handleSubmit}> 
 
         <div className='centro'>
           <h3>Algumas Informações Básicas</h3>
@@ -94,7 +81,6 @@ const Cadastro = () => {
             name="email"
             placeholder='Seu melhor e-mail'
             value={email}
-            //onChange={handleChange}
             onChange={(ev) => setEmail(ev.target.value)}
             className={'inputBox'}
             required
