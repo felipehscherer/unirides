@@ -16,6 +16,8 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String usuarioEmail;
+    private String color;
+    private int Capacity;
     private String model;
     private String brand;
     private String plate;
@@ -27,6 +29,8 @@ public class Vehicle {
 
     public Vehicle(VehicleRequestDTO vehicleRequestDTO) {
         this.usuarioEmail = vehicleRequestDTO.email();
+        this.color = vehicleRequestDTO.color();
+        this.Capacity = vehicleRequestDTO.capacity();
         this.model = vehicleRequestDTO.model();
         this.brand = vehicleRequestDTO.brand();
         this.plate = vehicleRequestDTO.plate();

@@ -35,7 +35,7 @@ public class VehicleController {
 
         if (veiculoOpt.isPresent()) {
             Vehicle vehicle = veiculoOpt.get();
-            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle.getId(), vehicle.getUsuarioEmail(), vehicle.getModel(), vehicle.getBrand(), vehicle.getPlate());
+            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle.getId(), vehicle.getUsuarioEmail(), vehicle.getColor(), vehicle.getCapacity(), vehicle.getModel(), vehicle.getBrand(), vehicle.getPlate());
             return ResponseEntity.ok(responseDTO); //retorna o veiculo encontrado
         }
 
