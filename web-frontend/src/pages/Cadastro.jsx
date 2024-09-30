@@ -11,7 +11,7 @@ const removeMask = (value) => {
 
 const Cadastro = () => {
   
-  const [nome, setNome] = useState('')
+  const [name, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [cpf, setCpf] = useState('')
   const [telefone, setTelefone] = useState('')
@@ -41,7 +41,7 @@ const Cadastro = () => {
       return
     }
 
-    if(telefone.length < 15 || !nome.includes(' ')){
+    if(!name.includes(' ')){
       setGenericError('Verifique todos os campos!')
       return
     }
@@ -50,7 +50,7 @@ const Cadastro = () => {
     //console.log(removeMask(dataNascimento))
 
     try {
-      await axios.post('/register', { nome, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
+      await axios.post('/register', { nome: name, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
       console.log('Sucesso!');
       navigate('/login');
     } catch (error) {
@@ -79,7 +79,7 @@ const Cadastro = () => {
                   type="text"
                   name="nome"
                   placeholder='Nome completo'
-                  value={nome}
+                  value={name}
                   onChange={(ev) => setNome(ev.target.value)}
                   className={'inputBox'}
                   required
