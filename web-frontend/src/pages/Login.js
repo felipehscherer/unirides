@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from '../services/axiosConfig';
-import './Login.css'; 
+import './styles/Login.css'; 
 import logoImage from '../assets/logo.jpg'; 
 
 function Login() {
