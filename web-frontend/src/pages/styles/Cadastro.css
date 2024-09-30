@@ -4,6 +4,8 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
   
 .titleContainer {
@@ -68,6 +70,7 @@
     border-radius: 8px;
     border: 1px solid grey;
     padding-left: 8px;
+    align-self: center;
   }
 
 .cadastrar {
@@ -91,7 +94,40 @@
     text-align: center;
 }
 
+.div-infos-endereco{
+  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
+  justify-items: space-between;
+  align-items: center;
+}
+
+.login-logo{
+  padding-top: 5vh;
+  padding-bottom: 4vh;
+  overflow-y: scroll;
+}
+
+.espaco{
+  padding-right: 4vw;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#div-form-completo {
+  height: 100%;
+  overflow-y: auto; 
+}
+
+.cadastrar:hover {
+  background-color: green;
+}
+
 body{
-    background: rgb(238,255,241);
-    background: linear-gradient(90deg, rgba(238,255,241,1) 0%, rgba(211,255,220,0) 50%, rgba(238,255,241,1) 100%);
+  overflow-x: auto;
+  overflow-y: auto;
+  background: rgb(191,255,176);
+  background: linear-gradient(90deg, rgba(191,255,176,0.31976540616246496) 30%, rgba(238,255,241,0) 52%, rgba(191,255,176,0.3701855742296919) 70%);
 }
