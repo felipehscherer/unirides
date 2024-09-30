@@ -12,12 +12,18 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User { //nome, email, cpf, telefone, datanasciemnto, cep, cidade, estado, endereco, senha
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String name;
-    private String cpf;
+    private String nome;
     private String email;
+    private String cpf;
     private String password;
+    private String telefone;
+    private String dataNascimento;
+    private String cep;
+    private String cidade;
+    private String estado;
+    private String endereco;
 }
