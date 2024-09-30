@@ -4,3 +4,5 @@
 .idea/unirides.iml
 login-auth-api/target/classes/.env
 login-auth-api/src/main/resources/.env
+web-frontend/package.json
+web-frontend/package-lock.json
