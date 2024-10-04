@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import axios from '../services/axiosConfig';
 import './styles/Login.css'; 
 import logoImage from '../assets/logo.jpg'; 
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setSenha] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setSenha] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/login", { email, password });
-      // Salve o token de autenticação
-      localStorage.setItem("token", response.data.token);
-      // Redirecione para a página principal
+      const response = await axios.post('/login', { email, password });
+      // Salve o token de autenticação 
+      localStorage.setItem('token', response.data.token);
+
+      navigate('/home'); // vai pra /home
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      // Trate o erro (exiba mensagem ao usuário)
+      console.error('Erro ao fazer login:', error);
+      // Trate o erro 
     }
   };
 
