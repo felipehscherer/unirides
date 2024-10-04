@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import InputMask from 'react-input-mask';
 import logoImage from '../assets/logo.png';
 
+//TODO: O alert aparece mas ainda é possível salvar com cpf, cep e etc errados
+//TODO: Verificar se já existe alguém no banco com aquele cpf/celular/email
+
 const regexUpperCase = /[A-Z]/;       // Verifica se contém ao menos uma letra maiúscula
 const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/; // Verifica se contém ao menos um símbolo especial
 
@@ -131,13 +134,14 @@ const Cadastro = () => {
       cpf: cpf.replace(/\D/g, ''),
       password: password,
       telefone: telefone.replace(/\D/g, ''),
-      dataNascimento: dataNascimento.replace(/\D/g, ''),
+      //dataNascimento: dataNascimento.replace(/\D/g, ''),
+      dataNascimento: dataNascimento,
       cep: cep.replace(/\D/g, ''),
       cidade: cidade,
       estado: estado,
       endereco: endereco,
-      //numero: numero
-      //complemento: complemento
+      numero: numero,
+      complemento: complemento
     };
 
     try {
@@ -245,7 +249,6 @@ const Cadastro = () => {
                   placeholder='CEP'
                   value={cep}
                   onChange={(ev) => handleCepChange(ev)}
-                  maxLength={9}
                   className={'inputBox'}
                   required
                 />

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RestController
@@ -46,11 +48,17 @@ public class AuthController {
             newUser.setName(body.name());
             newUser.setCpf(body.cpf());
             newUser.setTelefone(body.telefone());
-            newUser.setDataNascimento(body.dataNascimento());
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate dataFormatada = LocalDate.parse(body.dataNascimento(), formatter);
+            newUser.setDataNascimento(dataFormatada);
+
             newUser.setCep(body.cep());
             newUser.setCidade(body.cidade());
             newUser.setEstado(body.estado());
             newUser.setEndereco(body.endereco());
+            newUser.setNumero(body.numero());
+            newUser.setComplemento(body.complemento());
             this.repository.save(newUser);
 
             String token = this.tokenService.generateToken(newUser);
