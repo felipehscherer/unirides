@@ -21,18 +21,6 @@ public class Vehicle {
     private String model;
     private String brand;
     private String plate;
+    private long id_driver;
 
-    // Adicionar relacionamento com Driver
-    @ManyToOne
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
-
-    public Vehicle(VehicleRequestDTO vehicleRequestDTO) {
-        this.usuarioEmail = vehicleRequestDTO.email();
-        this.color = vehicleRequestDTO.color();
-        this.Capacity = vehicleRequestDTO.capacity();
-        this.model = vehicleRequestDTO.model();
-        this.brand = vehicleRequestDTO.brand();
-        this.plate = vehicleRequestDTO.plate();
-    }
 }

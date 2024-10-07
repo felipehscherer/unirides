@@ -1,6 +1,7 @@
 package br.com.unirides.loginauthapi.controllers;
 
 
+import br.com.unirides.loginauthapi.domain.driver.Driver;
 import br.com.unirides.loginauthapi.domain.driver.Vehicle;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.vehicle.VehicleRequestDTO;
@@ -33,9 +34,15 @@ public class VehicleController {
     public ResponseEntity<VehicleResponseDTO> getVeiculoByPlate(@PathVariable String plate) {
         Optional<Vehicle> veiculoOpt = repository.findByPlate(plate); //busca o veículo
 
+
         if (veiculoOpt.isPresent()) {
             Vehicle vehicle = veiculoOpt.get();
-            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle.getId(), vehicle.getUsuarioEmail(), vehicle.getColor(), vehicle.getCapacity(), vehicle.getModel(), vehicle.getBrand(), vehicle.getPlate());
+
+            Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(vehicle.getUsuarioEmail());
+
+            Driver driver = driverOpt.get();
+
+            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle.getId(), vehicle.getUsuarioEmail(), vehicle.getColor(), vehicle.getCapacity(), vehicle.getModel(), vehicle.getBrand(), vehicle.getPlate(), driver.getId());
             return ResponseEntity.ok(responseDTO); //retorna o veiculo encontrado
         }
 
@@ -55,23 +62,34 @@ public class VehicleController {
     //metodo para criar um novo veículo
     @PostMapping
     public ResponseEntity<VehicleResponseDTO> createVeiculo(@RequestBody VehicleRequestDTO data) {
-        Vehicle vehicleData = new Vehicle(data); //cria um novo veiculo com os dados que foram recebidos
+        Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(data.email());
+
 
         if (repository.findByPlate(data.plate()).isPresent()) {
             throw new RuntimeException("Já existe um veiculo registrado com esta placa.");
         }
 
-        User usuario = userRepository.findByEmail(vehicleData.getUsuarioEmail())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        if(driverOpt.isPresent()) {
+            Driver driver = driverOpt.get();
+            Vehicle vehicleData = new Vehicle(data.id(), data.email(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver.getId()); //cria um novo veiculo com os dados que foram recebidos
 
-        if(driverRepository.findByUsuarioEmail(vehicleData.getUsuarioEmail()).isEmpty()) {
+
+            User usuario = userRepository.findByEmail(vehicleData.getUsuarioEmail())
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+
+
+            repository.save(vehicleData); // salva o veiculo no BD
+
+            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
+            return ResponseEntity.status(201).body(responseDTO); //retorna o veiculo que foi criado
+        }
+        else {
             throw new RuntimeException("É necessario cadastrar uma cnh em sua conta antes de adicionar um veiculo.");
         }
 
-        repository.save(vehicleData); // salva o veiculo no BD
 
-        VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
-        return ResponseEntity.status(201).body(responseDTO); //retorna o veiculo que foi criado
+
     }
 
     //metodo que atualiza um veículo existente
@@ -101,7 +119,7 @@ public class VehicleController {
 
         if (veiculoOpt.isPresent()) {
             repository.delete(veiculoOpt.get()); // Deleta o veículo encontrado
-            return ResponseEntity.noContent().build(); //retorna 204 No Content
+            return ResponseEntity.noContent().build(); //retorna 204
         }
 
         return ResponseEntity.notFound().build(); //retorna 404 se o veículo não for encontrado
