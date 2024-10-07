@@ -4,6 +4,7 @@ import "./styles/Cadastro.css"
 import { useNavigate } from 'react-router-dom';
 import InputMask from 'react-input-mask';
 import logoImage from '../assets/logo.png';
+import Alert from '@mui/material/Alert';
 
 //TODO: O alert aparece mas ainda é possível salvar com cpf, cep e etc errados
 //TODO: Verificar se já existe alguém no banco com aquele cpf/celular/email
@@ -27,6 +28,7 @@ const Cadastro = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [genericError, setGenericError] = useState('')
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleCepChange = async (e) => {
@@ -37,14 +39,19 @@ const Cadastro = () => {
       try {
         const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
         if (response.data.erro) {
-          alert('CEP não encontrado!');
+          <Alert variant="filled" severity="error">
+            CEP não encontrado!
+          </Alert>
         } else {
           setCidade(response.data.localidade)
           setEstado(response.data.estado)
           setEndereco(response.data.logradouro)
         }
       } catch (error) {
-        alert('Erro ao buscar CEP!');
+        //alert('Erro ao buscar CEP!');
+        <Alert severity="error">
+          Erro ao buscar o CEP!
+        </Alert>
       }
     }
   };
@@ -74,6 +81,7 @@ const Cadastro = () => {
   
     if (date.length>= 10 && !validateDate(date)) {
       alert('Data inválida!');
+      <Alert variant="filled" severity="error">CEP não encontrado!</Alert>
     } 
   };
 
@@ -150,7 +158,12 @@ const Cadastro = () => {
       console.log('Sucesso!');
       navigate('/login');
     } catch (error) {
-      console.error('Erro ao cadastrar:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorMessage(error.response.data); // Exibe a mensagem de erro do backend
+        alert(errorMessage)
+      }else{
+        console.error('Erro ao cadastrar:', error);
+      }
     }
   };
 

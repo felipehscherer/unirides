@@ -4,6 +4,8 @@ import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.LoginRequestDTO;
 import br.com.unirides.loginauthapi.dto.RegisterRequestDTO;
 import br.com.unirides.loginauthapi.dto.ResponseDTO;
+import br.com.unirides.loginauthapi.exceptions.CpfAlreadyExistsException;
+import br.com.unirides.loginauthapi.exceptions.emailAlreadyExistsException;
 import br.com.unirides.loginauthapi.infra.security.TokenService;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,12 +36,13 @@ public class AuthController {
         return ResponseEntity.badRequest().build();
     }
 
-    //nome, email, cpf, telefone, datanasciemnto, cep, cidade, estado, endereco, senha
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequestDTO body){
-        Optional<User> user = this.repository.findByEmail(body.email());
-
-        if(user.isEmpty()) {
+        if (this.repository.findByCpf(body.cpf()).isPresent()) {
+            throw new CpfAlreadyExistsException("Usuário com este CPF já cadastrado!");
+        } else if (this.repository.findByEmail(body.email()).isPresent()) {
+            throw new emailAlreadyExistsException("E-mail já cadastrado!");
+        }else{
             User newUser = new User();
             newUser.setPassword(passwordEncoder.encode(body.password()));
             newUser.setEmail(body.email());
@@ -64,6 +65,5 @@ public class AuthController {
             String token = this.tokenService.generateToken(newUser);
             return ResponseEntity.ok(new ResponseDTO(newUser.getName(), token));
         }
-        return ResponseEntity.badRequest().build();
     }
 }
