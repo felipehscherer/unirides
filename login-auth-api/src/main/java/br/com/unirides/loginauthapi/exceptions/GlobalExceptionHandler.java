@@ -12,8 +12,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+    @ExceptionHandler(CpfInvalidoException.class)
+    public ResponseEntity<String> handleCpfInvalidoException(CpfInvalidoException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
     @ExceptionHandler(emailAlreadyExistsException.class)
     public ResponseEntity<String> handleEmailAlreadyExistsException(emailAlreadyExistsException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CepInvalidoException.class)
+    public ResponseEntity<String> handleCepInvalidoException(CepInvalidoException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(DataInvalidaException.class)
+    public ResponseEntity<String> handleDataInvalidaException(DataInvalidaException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

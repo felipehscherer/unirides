@@ -4,11 +4,11 @@ import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.LoginRequestDTO;
 import br.com.unirides.loginauthapi.dto.RegisterRequestDTO;
 import br.com.unirides.loginauthapi.dto.ResponseDTO;
-import br.com.unirides.loginauthapi.exceptions.CpfAlreadyExistsException;
-import br.com.unirides.loginauthapi.exceptions.emailAlreadyExistsException;
+import br.com.unirides.loginauthapi.exceptions.*;
 import br.com.unirides.loginauthapi.infra.security.TokenService;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,32 +38,54 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegisterRequestDTO body){
+        User newUser = new User();
+        boolean responseOk = true;
         if (this.repository.findByCpf(body.cpf()).isPresent()) {
             throw new CpfAlreadyExistsException("Usuário com este CPF já cadastrado!");
         } else if (this.repository.findByEmail(body.email()).isPresent()) {
             throw new emailAlreadyExistsException("E-mail já cadastrado!");
         }else{
-            User newUser = new User();
+            if (User.validateCpf(body.cpf())){
+                newUser.setCpf(body.cpf());
+            }else{
+                responseOk = false;
+                throw new CpfInvalidoException("CPF inválido");
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String data = body.dataNascimento();
+            //A data no banco dica invertida, ou seja 12/05/199 = 1999-05-12
+            if (User.validateDate(data)){
+                LocalDate dataFormatada = LocalDate.parse(data, formatter);
+                newUser.setDataNascimento(dataFormatada);
+            }else{
+                responseOk = false;
+                throw new DataInvalidaException("A data não é válida");
+            }
+
             newUser.setPassword(passwordEncoder.encode(body.password()));
             newUser.setEmail(body.email());
             newUser.setName(body.name());
-            newUser.setCpf(body.cpf());
             newUser.setTelefone(body.telefone());
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate dataFormatada = LocalDate.parse(body.dataNascimento(), formatter);
-            newUser.setDataNascimento(dataFormatada);
-
+            String[] enderecoFinal = User.validateCEP(body.cep());
+            if (enderecoFinal[0] == null || enderecoFinal[0].isEmpty()){
+                responseOk = false;
+                throw new CepInvalidoException("CEP inválido");
+            }
             newUser.setCep(body.cep());
-            newUser.setCidade(body.cidade());
-            newUser.setEstado(body.estado());
-            newUser.setEndereco(body.endereco());
+            newUser.setCidade(enderecoFinal[0]);
+            newUser.setEstado(enderecoFinal[1]);
+            newUser.setEndereco(enderecoFinal[2]);
             newUser.setNumero(body.numero());
             newUser.setComplemento(body.complemento());
-            this.repository.save(newUser);
+        }
 
+        if (responseOk){
+            this.repository.save(newUser);
             String token = this.tokenService.generateToken(newUser);
             return ResponseEntity.ok(new ResponseDTO(newUser.getName(), token));
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado!");
     }
 }
