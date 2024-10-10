@@ -4,25 +4,25 @@ import { useNavigate } from 'react-router-dom';
 import './styles/Perfil.css';
 
 const Perfil = () => {
+  const [emailPerfil, setEmailPerfil] = useState('');
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   // Estados para alteração de senha
-  const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   useEffect(() => {
-    // Buscar os dados do usuário ao montar o componente
     const fetchUserData = async () => {
       try {
         const response = await axios.get('/user/profile');
         setEmail(response.data.email);
-        // Se necessário, você pode definir outros estados com os dados retornados
+        setName(response.data.name);
+        setEmailPerfil(response.data.email) // Novo estado para o nome
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
-        // Se o token estiver inválido ou expirado, redirecionar para o login
         if (error.response && error.response.status === 401) {
           navigate('/login');
         }
@@ -57,10 +57,8 @@ const Perfil = () => {
         newPassword,
       });
       alert('Senha atualizada com sucesso!');
-      // Limpar os campos de senha
       setCurrentPassword('');
       setNewPassword('');
-      setShowPasswordFields(false);
     } catch (error) {
       setErrorMessage('Erro ao atualizar senha.');
       console.error('Erro ao atualizar senha:', error);
@@ -68,11 +66,18 @@ const Perfil = () => {
   };
 
   return (
-    <div className="perfil-container">
-      <h2>Meu Perfil</h2>
-      <form onSubmit={handleSaveEmail}>
+    <div className="perfil-wrapper">
+      <div className="perfil-card">
+        <h2>Meu Perfil</h2>
+        <div className="perfil-info">
+          <p><strong>Nome:</strong> {name}</p>
+          <p><strong>Email:</strong> {emailPerfil}</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSaveEmail} className="form-container">
         <div className="input-container">
-          <label>Email:</label>
+          <label>Atualizar Email:</label>
           <input
             type="email"
             value={email}
@@ -81,53 +86,53 @@ const Perfil = () => {
           />
         </div>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
-        <button type="submit" className="btn-salvar">Salvar Email</button>
+        <button type="submit" className="btn-primary">Salvar Email</button>
       </form>
 
-      <button
-        onClick={() => setShowPasswordFields(!showPasswordFields)}
-        className="btn-alterar-senha"
-      >
-        {showPasswordFields ? 'Cancelar' : 'Alterar Senha'}
-      </button>
-
-      {showPasswordFields && (
-        <form onSubmit={handleChangePassword}>
-          <div className="input-container">
-            <label>Senha Atual:</label>
-            <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="input-container">
-            <label>Nova Senha:</label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-          </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <button type="submit" className="btn-salvar">Salvar Nova Senha</button>
-        </form>
-      )}
+      <form onSubmit={handleChangePassword} className="form-container">
+        <div className="input-container">
+          <label>Senha Atual:</label>
+          <input
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="input-container">
+          <label>Nova Senha:</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
+        </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <button type="submit" className="btn-primary">Salvar Nova Senha</button>
+      </form>
 
       <div className="button-container">
         <button
-          className="btn-cnh"
+          className="btn-action-green"
           onClick={() => navigate('/vincular-cnh')}
         >
           Vincular CNH
         </button>
         <button
-          className="btn-veiculos"
+          className="btn-action-green"
           onClick={() => navigate('/veiculos')}
         >
           Meus Veículos
+        </button>
+      </div>
+
+      <div className="btn-home-container">
+        <button
+          className="btn-home"
+          onClick={() => navigate('/home')}
+        >
+          Voltar para Home
         </button>
       </div>
     </div>
