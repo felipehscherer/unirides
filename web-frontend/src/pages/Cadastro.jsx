@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import axios from '../services/axiosConfig';
 import "./styles/Cadastro.css"
 import { useNavigate } from 'react-router-dom';
@@ -9,8 +9,10 @@ import Alert from '@mui/material/Alert';
 //TODO: O alert aparece mas ainda é possível salvar com cpf, cep e etc errados
 //TODO: Verificar se já existe alguém no banco com aquele cpf/celular/email
 
-const regexUpperCase = /[A-Z]/;       // Verifica se contém ao menos uma letra maiúscula
-const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/; // Verifica se contém ao menos um símbolo especial
+const regexUpperCase = /[A-Z]/;  // Verifica se contém ao menos uma letra maiúscula
+const regexLowerCase = /[a-z]/;
+const regexNumber = /\d/;
+const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;  // Verifica se contém ao menos um símbolo especial
 
 const Cadastro = () => {
   const [name, setNome] = useState('')
@@ -81,11 +83,11 @@ const Cadastro = () => {
   
     if (date.length>= 10 && !validateDate(date)) {
       alert('Data inválida!');
-      <Alert variant="filled" severity="error">CEP não encontrado!</Alert>
+      //<Alert variant="filled" severity="error">CEP não encontrado!</Alert>
     } 
   };
 
-  function TestaCPF(strCPF) {  //código da receita federal
+  function TestaCPF(strCPF) {  //código da receita federal + modificações
     var Soma;
     var Resto;
     Soma = 0;
@@ -112,27 +114,36 @@ const Cadastro = () => {
     const cpf = ev.target.value;
     setCpf(cpf)
   
-    if (cpf.length>= 14 && !TestaCPF(cpf.replace(/\D/g, ''))) {  //verificar se esta no banco
+    if (cpf.length>=14 && !TestaCPF(cpf.replace(/\D/g, ''))) { 
       alert('CPF Inválido!');
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setPasswordError('')
     setGenericError('')
 
-    if (password.length < 8 || !regexUpperCase.test(password) || !regexSpecialChar.test(password)) {
-      setPasswordError('A senha não é forte o suficiente!')
+    if (password.length < 8) {
+      setPasswordError('A senha deve ter 8 caracteres ou mais')
       return
+    }else if(!regexUpperCase.test(password)){
+      setPasswordError('A senha deve conter ao menos uma letra maiúscula')
+    }else if(!regexSpecialChar.test(password)){
+      setPasswordError('A senha deve conter ao menos um caracter especial')
+    }else if(!regexNumber.test(password)){
+      setPasswordError('A senha deve conter ao menos um número')
+    }else if(!regexLowerCase.test(password)){
+      setPasswordError('A senha deve conter ao menos uma letra minúscula')
     }
+
     if(!(password === passwordConfirm)){
       setPasswordError('As senhas não coincidem')
       return
     }
 
     if(name.trim().split(' ').length < 2){
-      setGenericError('Verifique todos os campos!')
+      setGenericError('Campo "Nome" incompleto!')
       return
     }
 
@@ -159,8 +170,9 @@ const Cadastro = () => {
       navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        setErrorMessage(error.response.data); // Exibe a mensagem de erro do backend
-        alert(errorMessage)
+        const errorMsg = error.response.data; // Captura a mensagem de erro
+        setErrorMessage(errorMsg); // Atualiza o estado
+        alert(errorMsg); // Exibe o alerta imediatamente com a mensagem capturada
       }else{
         console.error('Erro ao cadastrar:', error);
       }
