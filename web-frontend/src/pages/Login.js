@@ -12,11 +12,11 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/login', { email, password });
+      const response = await axios.post('/auth/login', { email, password });
       // Salve o token de autenticação 
       localStorage.setItem('token', response.data.token);
 
-      navigate('/home'); // vai pra /home
+      navigate('/perfil'); // vai pra /home
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       // Trate o erro 

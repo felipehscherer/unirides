@@ -165,7 +165,7 @@ const Cadastro = () => {
 
     try {
       //await axios.post('/register', { name, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
-      await axios.post('/register', dataToSend);
+      await axios.post('/auth/register', dataToSend);
       console.log('Sucesso!');
       navigate('/login');
     } catch (error) {
