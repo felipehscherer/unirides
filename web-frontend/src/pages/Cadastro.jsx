@@ -129,12 +129,16 @@ const Cadastro = () => {
       return
     }else if(!regexUpperCase.test(password)){
       setPasswordError('A senha deve conter ao menos uma letra maiúscula')
+      return
     }else if(!regexSpecialChar.test(password)){
       setPasswordError('A senha deve conter ao menos um caracter especial')
+      return
     }else if(!regexNumber.test(password)){
       setPasswordError('A senha deve conter ao menos um número')
+      return
     }else if(!regexLowerCase.test(password)){
       setPasswordError('A senha deve conter ao menos uma letra minúscula')
+      return
     }
 
     if(!(password === passwordConfirm)){
