@@ -21,9 +21,11 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getProfile() {
-        // Obtain the authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -33,11 +35,9 @@ public class UserController {
             User user = (User) principal;
             email = user.getEmail();
         } else {
-            // Handle the case where the user is not authenticated
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Now use the email to find the user in the repository
         Optional<User> userOpt = repository.findByEmail(email);
 
         if (userOpt.isPresent()) {
@@ -49,11 +49,8 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-
-    // Endpoint para atualizar o email do usuário autenticado
     @PutMapping("/profile/email")
     public ResponseEntity<UserResponseDTO> updateEmail(@RequestBody Map<String, String> request) {
-        // Obter o usuário autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -63,18 +60,15 @@ public class UserController {
             User user = (User) principal;
             email = user.getEmail();
         } else {
-            // Caso o usuário não esteja autenticado
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Usar o email para encontrar o usuário no repositório
         Optional<User> userOpt = repository.findByEmail(email);
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             String newEmail = request.get("email");
 
-            // Verificar se o novo email já está em uso
             if (repository.findByEmail(newEmail).isPresent()) {
                 return ResponseEntity.badRequest().body(null);
             }
@@ -91,7 +85,6 @@ public class UserController {
 
     @PutMapping("/profile/password")
     public ResponseEntity<Void> updatePassword(@RequestBody Map<String, String> request) {
-        // Obter o usuário autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -101,11 +94,9 @@ public class UserController {
             User user = (User) principal;
             email = user.getEmail();
         } else {
-            // Caso o usuário não esteja autenticado
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Usar o email para encontrar o usuário no repositório
         Optional<User> userOpt = repository.findByEmail(email);
 
         if (userOpt.isPresent()) {
@@ -113,12 +104,10 @@ public class UserController {
             String currentPassword = request.get("currentPassword");
             String newPassword = request.get("newPassword");
 
-            // Verificar se a senha atual está correta
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            // Atualizar a senha
             user.setPassword(passwordEncoder.encode(newPassword));
             repository.save(user);
 
@@ -128,7 +117,69 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    // Injetar o PasswordEncoder
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @PutMapping("/profile/details")
+    public ResponseEntity<UserResponseDTO> updateDetails(@RequestBody Map<String, String> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // eu to repetindo essa linha pq sim, confia que da certo e de preferencia nao tentem mudar
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<User> userOpt = repository.findByEmail(email);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            // Atualizar nome e endereço
+            user.setName(request.getOrDefault("name", user.getName()));
+            user.setCidade(request.getOrDefault("cidade", user.getCidade()));
+            user.setEstado(request.getOrDefault("estado", user.getEstado()));
+            user.setEndereco(request.getOrDefault("endereco", user.getEndereco()));
+
+            // Atualizar número e complemento, se aplicável
+            String numeroStr = request.get("numero");
+            if (numeroStr != null) {
+                try {
+                    user.setNumero(Integer.parseInt(numeroStr));
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.badRequest().build(); // Número inválido
+                }
+            }
+
+            user.setComplemento(request.getOrDefault("complemento", user.getComplemento()));
+
+            // Atualizar email se fornecido e se não estiver em uso por outro usuário
+            String newEmail = request.get("email");
+            if (newEmail != null && !newEmail.equals(user.getEmail())) {
+                if (repository.findByEmail(newEmail).isPresent()) {
+                    return ResponseEntity.badRequest().build(); // Email já em uso
+                }
+                user.setEmail(newEmail);
+            }
+
+            // Atualizar senha se fornecido o currentPassword e newPassword
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+            if (currentPassword != null && newPassword != null) {
+                if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+                }
+                user.setPassword(passwordEncoder.encode(newPassword));
+            }
+
+            // Salvar as alterações
+            repository.save(user);
+
+            UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
+            return ResponseEntity.ok(responseDTO);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
