@@ -160,6 +160,22 @@ const Perfil = () => {
           {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit" className="btn-primary">Salvar Tudo</button>
         </form>
+
+        <div className="button-container">
+          <button
+            className="btn-action-green"
+            onClick={() => navigate('/vincular-cnh')}
+          >
+            Vincular CNH
+          </button>
+          <button
+            className="btn-action-green"
+            onClick={() => navigate('/veiculos')}
+          >
+            Meus Veículos
+          </button>
+        </div>
+
         <button
           className="btn-home"
           onClick={() => navigate('/home')}
