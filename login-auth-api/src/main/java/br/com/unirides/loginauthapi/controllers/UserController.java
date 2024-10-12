@@ -35,6 +35,7 @@ public class UserController {
             User user = (User) principal;
             email = user.getEmail();
         } else {
+            System.out.println("Erro ao buscar usuario");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -45,7 +46,7 @@ public class UserController {
             UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
             return ResponseEntity.ok(responseDTO);
         }
-
+        System.out.println("Usuario não encontrado");
         return ResponseEntity.notFound().build();
     }
 
@@ -60,6 +61,7 @@ public class UserController {
             User user = (User) principal;
             email = user.getEmail();
         } else {
+            System.out.println("Erro ao atualizar email");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -136,7 +138,7 @@ public class UserController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            // Atualizar nome e endereço
+            // basicamente se o que ele pegou for diferente do padrão atualiza
             user.setName(request.getOrDefault("name", user.getName()));
             user.setCidade(request.getOrDefault("cidade", user.getCidade()));
             user.setEstado(request.getOrDefault("estado", user.getEstado()));
