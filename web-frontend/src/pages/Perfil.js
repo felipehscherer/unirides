@@ -16,6 +16,7 @@ const Perfil = () => {
   const [complemento, setComplemento] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  // adicionar verificações nos campos
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -23,7 +24,6 @@ const Perfil = () => {
         const response = await axios.get('/user/profile');
         const data = response.data;
 
-        // Set initial values for fields
         setInitialData(data);
         setEmail(data.email);
         setName(data.name);
@@ -35,7 +35,7 @@ const Perfil = () => {
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
         if (error.response && error.response.status === 401) {
-          navigate('/login');
+          navigate('/login'); // se disparar um forbindem, redireciona para a página de login
         }
       }
     };
@@ -47,7 +47,6 @@ const Perfil = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Build request data with only the fields that have changed
     const updatedData = {};
     if (name !== initialData.name) updatedData.name = name;
     if (email !== initialData.email) updatedData.email = email;
@@ -61,7 +60,6 @@ const Perfil = () => {
       updatedData.newPassword = newPassword;
     }
 
-    // Only proceed if there are changes
     if (Object.keys(updatedData).length === 0) {
       alert('Nenhuma alteração foi feita.');
       return;
@@ -72,7 +70,6 @@ const Perfil = () => {
       alert('Informações atualizadas com sucesso!');
       setCurrentPassword('');
       setNewPassword('');
-      // Update initialData to the new values
       setInitialData((prev) => ({ ...prev, ...updatedData }));
     } catch (error) {
       setErrorMessage('Erro ao atualizar as informações.');
