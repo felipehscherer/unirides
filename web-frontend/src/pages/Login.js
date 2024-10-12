@@ -16,7 +16,7 @@ function Login() {
       // Salve o token de autenticação 
       localStorage.setItem('token', response.data.token);
 
-      navigate('/perfil'); // vai pra /home
+      navigate('/home'); // vai pra /home
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       // Trate o erro 
