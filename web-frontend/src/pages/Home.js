@@ -43,6 +43,12 @@ function Home() {
           >
             Cadastrar Veiculo
           </button>
+          <button
+              className="home-button"
+              onClick={() => navigate('/veiculo/apresentarLista')}
+          >
+            Visualizar lista de veiculos
+          </button>
         </div>
       </div>
     </div>

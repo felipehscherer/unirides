@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,27 @@ public class VehicleController {
 
         return vehicleResponseDTOList;
 
+    }
+
+    @GetMapping("/get/byUserEmail/{email}")
+    public ResponseEntity<List<VehicleResponseDTO>> getAllVehiclesByUserEmail(@PathVariable String email) {
+        Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(email);
+
+        if (driverOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+
+        List<Vehicle> vehicles = vehicleRepository.findByDriverId(driverOpt.get().getId());
+
+        if (vehicles.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+        }
+
+        List<VehicleResponseDTO> vehicleResponseDTOList = vehicles.stream()
+                .map(VehicleResponseDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(vehicleResponseDTOList);
     }
 
     //metodo para criar um novo veículo

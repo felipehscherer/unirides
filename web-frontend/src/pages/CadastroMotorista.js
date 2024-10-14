@@ -6,7 +6,7 @@ import logoImage from "../assets/logo.jpg";
 
 function CadastroMotorista() {
     const [email, setEmail] = useState('');
-    const [cnh, setCnh] = useState('');
+    const [numeroCnh, setNumeroCnh] = useState('');
     const [dataEmissao, setDataEmissao] = useState('');
     const [dataValidade, setDataValidade] = useState('');
     const [categoria, setCategoria] = useState('');
@@ -35,10 +35,14 @@ function CadastroMotorista() {
     const handleCadastro = async (e) => {
         e.preventDefault();
 
+        const dados = {email, numeroCnh, dataEmissao, dataValidade, categoria}
+
+        console.log(dados)
+
         try {
             const response = await axios.post(
                 'driver/register',
-                {email, cnh, dataEmissao, dataValidade, categoria}
+                dados
             );
             alert('Cadastro de motorista realizado com Sucesso!');
             navigate('/home');
@@ -60,11 +64,11 @@ function CadastroMotorista() {
 
                 <p className="register-title">🪪 Preencha as informações </p>
 
-                <label htmlFor="cnh" className="register-label">🪪 Digite o numero da sua CNH</label>
+                <label htmlFor="numeroCnh" className="register-label">🪪 Digite o numero da sua CNH</label>
                 <input
                     type="text"
-                    value={cnh}
-                    onChange={(e) => setCnh(e.target.value)}
+                    value={numeroCnh}
+                    onChange={(e) => setNumeroCnh(e.target.value)}
                     className={'input-container'}
                     placeholder="Cnh"
                     required

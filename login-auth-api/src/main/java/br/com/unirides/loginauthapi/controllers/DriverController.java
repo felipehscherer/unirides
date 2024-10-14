@@ -36,9 +36,8 @@ public class DriverController {
         }
 
         if (driverRepository.findByNumeroCnh(motoristaDTO.getNumeroCnh()).isPresent()) {
-            throw new RuntimeException("Já existe um motorista registrado com este número de CNH.");
+            throw new RuntimeException("Já existe um motorista registrado com este numero de CNH");
         }
-
 
         User usuario = userRepository.findByEmail(motoristaDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
@@ -68,10 +67,10 @@ public class DriverController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable Long id, @RequestBody DriverRequestDTO motoristaDTO) {
+    @PutMapping("/update/{email}")
+    public ResponseEntity<DriverResponseDTO> updateDriver(@PathVariable String email, @RequestBody DriverRequestDTO motoristaDTO) {
 
-        Driver driver = driverRepository.findById(id)
+        Driver driver = driverRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new RuntimeException("Motorista não encontrado."));
 
         driver.setNumeroCnh(motoristaDTO.getNumeroCnh());
@@ -86,9 +85,9 @@ public class DriverController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDriver(@PathVariable String email) {
 
-        Driver driver = driverRepository.findById(id)
+        Driver driver = driverRepository.findByUsuarioEmail(email)
                 .orElseThrow(() -> new RuntimeException("Motorista não encontrado."));
 
         driverRepository.delete(driver);

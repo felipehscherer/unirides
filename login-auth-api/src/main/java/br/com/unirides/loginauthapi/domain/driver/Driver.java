@@ -1,6 +1,5 @@
 package br.com.unirides.loginauthapi.domain.driver;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +7,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -29,7 +27,7 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverLicenseCategory categoria;
 
-    public static boolean validarCNH(String dataEmissaoStr, String dataValidadeStr, String dataNascimentoStr) {
+    public static boolean validarDataCNH(String dataEmissaoStr, String dataValidadeStr, String dataNascimentoStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         LocalDate dataEmissao;
@@ -87,5 +85,10 @@ public class Driver {
             return false;
         }
     }
+
+    public static boolean validarFormatoCNH(String numeroCNH) {
+        return numeroCNH != null && numeroCNH.matches("\\d{11}");
+    }
+
 
 }
