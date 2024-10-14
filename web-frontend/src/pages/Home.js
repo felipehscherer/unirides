@@ -1,20 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Importa o Link
+import { useNavigate } from 'react-router-dom';
 import './styles/Home.css';
 import logoImage from '../assets/logo.jpg';
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="home-container">
       <div className="home-box">
         <img src={logoImage} alt="Logo" className="home-logo" />
         <p className="home-title">Bem-vindo à página inicial!</p>
         <p className="home-text">Você está logado com sucesso.</p>
-
-        {/* Botão para navegar para a página de cadastro de motorista */}
-        <Link to="/cadastromotorista">
-          <button className="cadastro-button">Cadastrar Motorista</button>
-        </Link>
+        <div className="button-group">
+          <button
+            className="home-button"
+            onClick={() => navigate('/perfil')}
+          >
+            Meu Perfil
+          </button>
+          <button
+            className="home-button"
+            onClick={() => navigate('/caronas')}
+          >
+            Caronas
+          </button>
+          <button
+            className="home-button"
+            onClick={() => navigate('/horarios-onibus')}
+          >
+            Horários de Ônibus
+          </button>
+        </div>
       </div>
     </div>
   );

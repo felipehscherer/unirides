@@ -2,8 +2,6 @@ package br.com.unirides.loginauthapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import io.github.cdimascio.dotenv.Dotenv;
-
 
 @SpringBootApplication
 public class LoginAuthApiApplication {
