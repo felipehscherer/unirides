@@ -36,7 +36,7 @@ function ApresentarVeiculos() {
             } finally {
                 setLoading(false);
             }
-        };
+        }
         fetchVehicles();
     }, [email, navigate]);
 
@@ -54,9 +54,11 @@ function ApresentarVeiculos() {
                         <p><strong>Modelo:</strong> {vehicle.model}</p>
                         <p><strong>Cor:</strong> {vehicle.color}</p>
                         <p><strong>Placa:</strong> {vehicle.plate}</p>
-                        <button className="vehicle-detailsBtn">📄Detalhes</button>
-                        <button className="vehicle-UpdateBtn">✏️ Editar</button>
-                        <button className="vehicle-deleteBtn">🗑️ Editar</button>
+                        <button className="vehicle-detailsBtn">📄 Detalhes</button>
+                        <button className="vehicle-UpdateBtn" onClick={() => navigate(`/veiculo/apresentarLista/editar/${vehicle.plate}`)}>✏️ Editar
+
+                        </button>
+                        <button className="vehicle-deleteBtn">🗑️ Deletar</button>
                     </li>
                 ))
             ) : (

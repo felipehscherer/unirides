@@ -1,6 +1,5 @@
 package br.com.unirides.loginauthapi.dto.vehicle;
 
-import br.com.unirides.loginauthapi.domain.driver.Driver;
 import br.com.unirides.loginauthapi.domain.driver.Vehicle;
 
 import java.util.UUID;

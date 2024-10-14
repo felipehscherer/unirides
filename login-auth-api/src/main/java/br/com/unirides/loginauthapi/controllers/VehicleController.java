@@ -32,21 +32,35 @@ public class VehicleController {
     @Autowired
     private DriverRepository driverRepository;
 
-    // metodp que busca um veiculo pela placa
     @GetMapping("/get/{plate}")
     public ResponseEntity<VehicleResponseDTO> getVeiculoByPlate(@PathVariable String plate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
+        String email = null;
 
-        if (principal instanceof User) {
-            User user = (User) principal;
-            String email = user.getEmail();
+        if (authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
+            email = user.getEmail();
         } else {
-            System.out.println("Carro não encontrado");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate); //busca o veículo
 
+        Optional<Driver> optDriver = driverRepository.findByUsuarioEmail(email);
+
+        if (optDriver.isPresent()) {
+            Driver driver = optDriver.get();
+
+            Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
+
+            if (veiculoOpt.isPresent()) {
+                Vehicle vehicle = veiculoOpt.get();
+
+                VehicleResponseDTO vehicleResponseDTO = new VehicleResponseDTO(vehicle);
+
+                return ResponseEntity.ok(vehicleResponseDTO);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }
 
         return ResponseEntity.notFound().build();
     }
@@ -85,7 +99,6 @@ public class VehicleController {
     //metodo para criar um novo veículo
     @PostMapping("/register")
     public ResponseEntity<VehicleResponseDTO> createVeiculo(@RequestBody VehicleRequestDTO data) {
-        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         String email = data.email();
 
@@ -96,12 +109,9 @@ public class VehicleController {
 
             if (!Vehicle.validateCapacity(data.capacity())) {
                 throw new InvalidCapacityException("Capacidade do veiculo invalida");
-            }
-
-            else if (!Vehicle.validatePlate(data.plate())){
+            } else if (!Vehicle.validatePlate(data.plate())) {
                 throw new InvalidPlateException("Placa do veiculo invalida!");
-            }
-            else {
+            } else {
                 Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver);
 
                 vehicleRepository.save(vehicleData);
@@ -117,7 +127,6 @@ public class VehicleController {
     // meotodo para atualizar um veiculo pela placa
     @PutMapping("/update/{plate}")
     public ResponseEntity<VehicleResponseDTO> updateVeiculo(@PathVariable String plate, @RequestBody VehicleRequestDTO updatedVeiculo) {
-        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
@@ -126,6 +135,8 @@ public class VehicleController {
             vehicle.setModel(updatedVeiculo.model());
             vehicle.setBrand(updatedVeiculo.brand());
             vehicle.setPlate(updatedVeiculo.plate());
+            vehicle.setColor(updatedVeiculo.color());
+            vehicle.setCapacity(updatedVeiculo.capacity());
 
             vehicleRepository.save(vehicle);
 
@@ -140,7 +151,6 @@ public class VehicleController {
     // metodo para deletar um veiculo pela placa
     @DeleteMapping("/delete/{plate}")
     public ResponseEntity<Void> deleteVeiculo(@PathVariable String plate) {
-        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
@@ -152,19 +162,5 @@ public class VehicleController {
         return ResponseEntity.notFound().build();
     }
 
-    private boolean authenticated() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-        String email;
-
-        if (principal instanceof User) {
-            User user = (User) principal;
-            email = user.getEmail();
-        } else {
-            return true;
-        }
-        return false;
-    }
 
 }

@@ -69,7 +69,6 @@
         return (
             <div className="register-container">
                 <form className="register-box" onSubmit={handleCadastro}>
-
                     <button
                         className="btn-back"
                         onClick={() => navigate('/home')}
