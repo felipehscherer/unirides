@@ -1,6 +1,7 @@
 package br.com.unirides.loginauthapi.repositories;
 
 import br.com.unirides.loginauthapi.domain.user.User;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,29 +19,32 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    private Faker faker;
+
     @BeforeEach
     public void setUp() {
         userRepository.deleteAll();
+        faker = new Faker();
     }
 
     @Test
     public void testFindByEmail_UserExists() {
         User user = new User();
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-        user.setName("Test User");
-        user.setCpf("12345678900");
+        user.setEmail(faker.internet().emailAddress());
+        user.setPassword(faker.internet().password());
+        user.setName(faker.name().fullName());
+        user.setCpf(faker.idNumber().valid());
         userRepository.save(user);
 
-        Optional<User> foundUser = userRepository.findByEmail("test@example.com");
+        Optional<User> foundUser = userRepository.findByEmail(user.getEmail());
 
         assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().getEmail()).isEqualTo("test@example.com");
+        assertThat(foundUser.get().getEmail()).isEqualTo(user.getEmail());
     }
 
     @Test
     public void testFindByEmail_UserDoesNotExist() {
-        Optional<User> foundUser = userRepository.findByEmail("nonexistent@example.com");
+        Optional<User> foundUser = userRepository.findByEmail(faker.internet().emailAddress());
 
         assertThat(foundUser).isNotPresent();
     }
@@ -48,16 +52,16 @@ public class UserRepositoryTest {
     @Test
     public void testFindByCpf_UserExists() {
         User user = new User();
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-        user.setName("Test User");
-        user.setCpf("12345678900");
+        user.setEmail(faker.internet().emailAddress());
+        user.setPassword(faker.internet().password());
+        user.setName(faker.name().fullName());
+        user.setCpf(faker.idNumber().valid());
         userRepository.save(user);
 
-        Optional<User> foundUser = userRepository.findByCpf("12345678900");
+        Optional<User> foundUser = userRepository.findByCpf(user.getCpf());
 
         assertThat(foundUser).isPresent();
-        assertThat(foundUser.get().getCpf()).isEqualTo("12345678900");
+        assertThat(foundUser.get().getCpf()).isEqualTo(user.getCpf());
     }
 
     @Test
@@ -67,4 +71,3 @@ public class UserRepositoryTest {
         assertThat(foundUser).isNotPresent();
     }
 }
-
