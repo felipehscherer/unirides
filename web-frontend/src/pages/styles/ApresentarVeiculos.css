@@ -1,0 +1,66 @@
+/* CadastroVeiculo.css */
+.vehicle-list {
+    list-style-type: none; /* Remove os marcadores da lista */
+    padding: 0; /* Remove o padding padrão */
+}
+
+.vehicle-item {
+    background-color: #f9f9f9; /* Cor de fundo do item */
+    border: 1px solid #ccc; /* Borda do item */
+    border-radius: 5px; /* Cantos arredondados */
+    margin: 10px 0; /* Margem entre os itens */
+    padding: 15px; /* Espaçamento interno */
+    transition: background-color 0.3s; /* Transição suave para o hover */
+    width: 80%; /* Defina a largura desejada (ex: 80% da largura do contêiner pai) */
+    max-width: 600px; /* Defina uma largura máxima para o item */
+    margin-left: auto; /* Centraliza o item horizontalmente */
+    margin-right: auto; /* Centraliza o item horizontalmente */
+}
+
+
+.vehicle-item:hover {
+    background-color: #eaeaea; /* Cor de fundo ao passar o mouse */
+}
+
+.vehicle-detailsBtn {
+    background-color: #43A715; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Cantos arredondados do botão */
+    padding: 10px 15px; /* Espaçamento interno do botão */
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    margin-top: 10px; /* Espaçamento acima do botão */
+}
+
+.vehicle-UpdateBtn {
+    background-color: #43A715; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Cantos arredondados do botão */
+    padding: 10px 15px; /* Espaçamento interno do botão */
+    margin-left: 10px;
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    margin-top: 10px; /* Espaçamento acima do botão */
+}
+.vehicle-deleteBtn {
+    background-color: #43A715; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Cantos arredondados do botão */
+    padding: 10px 15px; /* Espaçamento interno do botão */
+    margin-left: 10px;
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    margin-top: 10px; /* Espaçamento acima do botão */
+}
+.vehicle-deleteBtn:hover {
+    background-color: #389e12; /* Cor do botão ao passar o mouse */
+}
+
+.vehicle-UpdateBtn:hover {
+    background-color: #389e12; /* Cor do botão ao passar o mouse */
+}
+
+.vehicle-UpdateBtn:hover {
+    background-color: #389e12; /* Cor do botão ao passar o mouse */
+}
+
