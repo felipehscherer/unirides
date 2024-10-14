@@ -17,20 +17,12 @@ public class DriverResponseDTO {
     private LocalDate dataValidade;
     private String categoria;
 
-    public DriverResponseDTO(String email, String numeroCnh, LocalDate dataEmissao, LocalDate dataValidade, DriverLicenseCategory categoria) {
-        this.email = email;
-        this.numeroCnh = numeroCnh;
-        this.dataEmissao = dataEmissao;
-        this.dataValidade = dataValidade;
-        this.categoria = String.valueOf(categoria);
-    }
-
     public DriverResponseDTO(Driver driver) {
         this.email = driver.getUsuarioEmail();
-        this.usuarioId = driver.getId();
         this.numeroCnh = driver.getNumeroCnh();
         this.dataEmissao = driver.getDataEmissao();
         this.dataValidade = driver.getDataValidade();
         this.categoria = driver.getCategoria().name();
     }
+
 }

@@ -18,8 +18,8 @@ function App() {
                 <Route path="/cadastro" element={<Cadastro />} />
                 <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
                 <Route path="/perfil" element={<protectRoute> <Perfil /> </protectRoute>} />
-                <Route path="/cadastroMotorista" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
-                <Route path="/cadastroVeiculo" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
+                <Route path="/motorista/cadastro" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
+                <Route path="/veiculo/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
             </Routes>
         </Router>
     );

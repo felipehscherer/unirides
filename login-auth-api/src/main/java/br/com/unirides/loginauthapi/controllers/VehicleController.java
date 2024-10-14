@@ -6,11 +6,16 @@ import br.com.unirides.loginauthapi.domain.driver.Vehicle;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.vehicle.VehicleRequestDTO;
 import br.com.unirides.loginauthapi.dto.vehicle.VehicleResponseDTO;
+import br.com.unirides.loginauthapi.exceptions.CnhNotRegisteredException;
+import br.com.unirides.loginauthapi.exceptions.InvalidCapacityException;
+import br.com.unirides.loginauthapi.exceptions.InvalidPlateException;
 import br.com.unirides.loginauthapi.repositories.DriverRepository;
-import br.com.unirides.loginauthapi.repositories.UserRepository;
 import br.com.unirides.loginauthapi.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,107 +26,123 @@ import java.util.Optional;
 public class VehicleController {
 
     @Autowired
-    private VehicleRepository repository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private DriverRepository driverRepository;
 
-    //método para buscar um veículo pela placa
-    @GetMapping("/{plate}")
+    // metodp que busca um veiculo pela placa
+    @GetMapping("/get/{plate}")
     public ResponseEntity<VehicleResponseDTO> getVeiculoByPlate(@PathVariable String plate) {
-        Optional<Vehicle> veiculoOpt = repository.findByPlate(plate); //busca o veículo
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
 
-
-        if (veiculoOpt.isPresent()) {
-            Vehicle vehicle = veiculoOpt.get();
-
-            Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(vehicle.getUsuarioEmail());
-
-            Driver driver = driverOpt.get();
-
-            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle.getId(), vehicle.getUsuarioEmail(), vehicle.getColor(), vehicle.getCapacity(), vehicle.getModel(), vehicle.getBrand(), vehicle.getPlate(), driver.getId());
-            return ResponseEntity.ok(responseDTO); //retorna o veiculo encontrado
+        if (principal instanceof User) {
+            User user = (User) principal;
+            String email = user.getEmail();
+        } else {
+            System.out.println("Carro não encontrado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate); //busca o veículo
 
-        return ResponseEntity.notFound().build(); //retorna 404se não encontrar
+
+        return ResponseEntity.notFound().build();
     }
 
     //Metodo que busca todos os veículos
-    @GetMapping
+    @GetMapping("/get/listAll")
     public List<VehicleResponseDTO> getAllVehicles() {
 
-        List<VehicleResponseDTO> vehicleResponseDTOList = repository.findAll().stream().map(VehicleResponseDTO::new).toList();
+        List<VehicleResponseDTO> vehicleResponseDTOList = vehicleRepository.findAll().stream().map(VehicleResponseDTO::new).toList();
 
         return vehicleResponseDTOList;
 
     }
 
     //metodo para criar um novo veículo
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<VehicleResponseDTO> createVeiculo(@RequestBody VehicleRequestDTO data) {
-        Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(data.email());
+        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        String email = data.email();
 
-        if (repository.findByPlate(data.plate()).isPresent()) {
-            throw new RuntimeException("Já existe um veiculo registrado com esta placa.");
+        Optional<Driver> optDriver = driverRepository.findByUsuarioEmail(email);
+
+        if (optDriver.isPresent()) {
+            Driver driver = optDriver.get();
+
+            if (!Vehicle.validateCapacity(data.capacity())) {
+                throw new InvalidCapacityException("Capacidade do veiculo invalida");
+            }
+
+            else if (!Vehicle.validatePlate(data.plate())){
+                throw new InvalidPlateException("Placa do veiculo invalida!");
+            }
+            else {
+                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver);
+
+                vehicleRepository.save(vehicleData);
+
+                VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
+                return ResponseEntity.status(201).body(responseDTO);
+            }
+        } else {
+            throw new CnhNotRegisteredException("Usuário não possui uma CNH registrada");
         }
-
-        if(driverOpt.isPresent()) {
-            Driver driver = driverOpt.get();
-            Vehicle vehicleData = new Vehicle(data.id(), data.email(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver.getId()); //cria um novo veiculo com os dados que foram recebidos
-
-
-            User usuario = userRepository.findByEmail(vehicleData.getUsuarioEmail())
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
-
-
-
-            repository.save(vehicleData); // salva o veiculo no BD
-
-            VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
-            return ResponseEntity.status(201).body(responseDTO); //retorna o veiculo que foi criado
-        }
-        else {
-            throw new RuntimeException("É necessario cadastrar uma cnh em sua conta antes de adicionar um veiculo.");
-        }
-
-
-
     }
 
-    //metodo que atualiza um veículo existente
-    @PutMapping("/{plate}")
+    // meotodo para atualizar um veiculo pela placa
+    @PutMapping("/update/{plate}")
     public ResponseEntity<VehicleResponseDTO> updateVeiculo(@PathVariable String plate, @RequestBody VehicleRequestDTO updatedVeiculo) {
-        Optional<Vehicle> veiculoOpt = repository.findByPlate(plate);
+        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
         if (veiculoOpt.isPresent()) {
             Vehicle vehicle = veiculoOpt.get();
-            vehicle.setModel(updatedVeiculo.model()); // Atualiza o modelo
-            vehicle.setBrand(updatedVeiculo.brand()); //atualiza a marca
-            vehicle.setPlate(updatedVeiculo.plate()); // Atualiza a placa
+            vehicle.setModel(updatedVeiculo.model());
+            vehicle.setBrand(updatedVeiculo.brand());
+            vehicle.setPlate(updatedVeiculo.plate());
 
-            repository.save(vehicle); // Salva as atualizações
+            vehicleRepository.save(vehicle);
 
             VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle);
-            return ResponseEntity.status(201).body(responseDTO); //Retorna o veiculo criado
+            return ResponseEntity.status(201).body(responseDTO);
         }
 
-        return ResponseEntity.notFound().build(); //retorna 404 se o veículo não for encontrado
+
+        return ResponseEntity.notFound().build();
     }
 
-    //metodo para deletar um veículo
-    @DeleteMapping("/{plate}")
+    // metodo para deletar um veiculo pela placa
+    @DeleteMapping("/delete/{plate}")
     public ResponseEntity<Void> deleteVeiculo(@PathVariable String plate) {
-        Optional<Vehicle> veiculoOpt = repository.findByPlate(plate);
+        if (authenticated()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
         if (veiculoOpt.isPresent()) {
-            repository.delete(veiculoOpt.get()); // Deleta o veículo encontrado
-            return ResponseEntity.noContent().build(); //retorna 204
+            vehicleRepository.delete(veiculoOpt.get());
+            return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.notFound().build(); //retorna 404 se o veículo não for encontrado
+        return ResponseEntity.notFound().build();
     }
+
+    private boolean authenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            return true;
+        }
+        return false;
+    }
+
 }

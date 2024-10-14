@@ -31,4 +31,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDataInvalidaException(DataInvalidaException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+    @ExceptionHandler(InvalidVehicleExeceptionException.class)
+    public ResponseEntity<String> handleInvalidVehicleExeception(InvalidVehicleExeceptionException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCapacityException.class)
+    public ResponseEntity<String> handleInvalidCapacityException(InvalidCapacityException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(InvalidCnhException.class)
+    public ResponseEntity<String> handleInvalidCnhException(InvalidCnhException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(InvalidPlateException.class)
+    public ResponseEntity<String> handleInvalidPlateException(InvalidPlateException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CnhNotRegisteredException.class)
+    public ResponseEntity<String> handleCnhNotRegisteredException(CnhNotRegisteredException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+
+
 }

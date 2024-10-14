@@ -1,127 +1,142 @@
-import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import axios from '../services/axiosConfig';
-import './styles/CadastroVeiculo.css';
-import logoImage from '../assets/logo.jpg';
-import {jwtDecode} from 'jwt-decode';
+    import React, {useEffect, useState} from 'react';
+    import {useNavigate} from 'react-router-dom';
+    import axios from '../services/axiosConfig';
+    import './styles/CadastroVeiculo.css';
+    import logoImage from '../assets/logo.jpg';
 
-function CadastroVeiculo() {
-    const [color, setColor] = useState("");
-    const [capacity, setCapacity] = useState("");
-    const [model, setModel] = useState("");
-    const [brand, setBrand] = useState("");
-    const [plate, setPlate] = useState("");
+    function CadastroVeiculo() {
+        const [email, setEmail] = useState('');
+        const [color, setColor] = useState("");
+        const [capacity, setCapacity] = useState("");
+        const [model, setModel] = useState("");
+        const [brand, setBrand] = useState("");
+        const [plate, setPlate] = useState("");
+        const [errorMessage, setErrorMessage] = useState('');
 
-    const [capacityError, setCapacityError] = useState('')
-    const [plateError, setPlateError] = useState('')
+        const [capacityError, setCapacityError] = useState('')
 
-    const navigate = useNavigate();
+        const navigate = useNavigate();
 
-    const handleCadastro = async (e) => {
-        e.preventDefault();
+        useEffect(() => {
+            const fetchUserData = async () => {
+                try {
+                    const response = await axios.get('/user/profile');
+                    const data = response.data;
 
-        setCapacityError('')
-        setPlateError('')
-        if (capacity <= 1) {
-            setCapacityError('O carro deve possuir no mínimo dois lugares');
-            return
-        }
+                    setEmail(data.email)
 
-        if (!(plate.length === 8)) {
-            setPlateError('A placa deve conter 8 caracteres')
-            return
-        }
-
-        try {
-            const token = localStorage.getItem('token');
-
-            const decodedToken = jwtDecode(token);  // decodific o token
-
-            const email = decodedToken.sub;  // sub possui o email
-
-            const response = await axios.post(
-                'http://localhost:8080/vehicle',
-                {email, color, capacity, model, brand, plate},
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
+                } catch (error) {
+                    console.error('Erro ao buscar dados do usuário:', error);
+                    if (error.response && error.response.status === 401) {
+                        navigate('/home');
                     }
                 }
-            ) // realiza o post
+            };
 
-            navigate('/home'); //navega para a home
+            fetchUserData();
+        }, [navigate]);
 
-        } catch (error) {
-            console.error("Erro ao cadastrar o veiculo:", error);
-            // exibe uma mensagem de erro
-        }
-    };
+        const handleCadastro = async (e) => {
+            e.preventDefault();
 
-    return (
-        <div className="register-container">
-            <form className="login-box" onSubmit={handleCadastro}>
-                <img src={logoImage} alt="Logo" className="register-logo"/>
-                <p className="register-title">🚗 Preencha as informações sobre seu carro </p>
+            setCapacityError('')
+            if (capacity <= 1 || capacity >7) {
+                setCapacityError('O carro deve possuir no mínimo dois lugares e no maximo 7');
+                return
+            }
 
-                <label htmlFor="color" className="register-label">🔵 Digite a cor</label>
-                <input
-                    id="color"
-                    type="text"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Cor"
-                    required
-                />
+            try {
 
-                <label htmlFor="capacity" className="register-label">💺 Digite a capacidade</label>
-                <input
-                    id="capacity"
-                    type="text"
-                    value={capacity}
-                    onChange={(e) => setCapacity(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Capacidade"
-                    required
-                /><label className="errorLabel">{capacityError}</label>
+                try {
+                    const response = await axios.post(
+                        'vehicle/register',
+                        {email, color, capacity, model, brand, plate}
+                    );
+                    alert('Cadastro Realizado com sucesso!');
+                    navigate('/home');
+                } catch (error) {
+                    if (error.response && error.response.status === 400) {
+                        const errorMsg = error.response.data;
+                        setErrorMessage(errorMsg);
+                        alert(errorMsg);
+                    }
+                }
+            }catch (error) {
+                console.error("Erro ao cadastrar o veiculo:", error);
+            }
+        };
 
-                <label htmlFor="model" className="register-label">🚙 Digite o modelo</label>
-                <input
-                    id="model"
-                    type="text"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Modelo"
-                    required
-                />
+        return (
+            <div className="register-container">
+                <form className="register-box" onSubmit={handleCadastro}>
 
-                <label htmlFor="brand" className="register-label">🏷️ Digite a marca</label>
-                <input
-                    id="brand"
-                    type="text"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Marca"
-                    required
-                />
+                    <button
+                        className="btn-back"
+                        onClick={() => navigate('/home')}
+                    >
+                        ↩
+                    </button>
+                    <img src={logoImage} alt="Logo" className="register-logo"/>
+                    <p className="register-title">🚗 Preencha as informações sobre seu carro </p>
 
-                <label htmlFor="plate" className="register-label">🔢 Digite a placa</label>
-                <input
-                    id="password"
-                    type="text"
-                    value={plate}
-                    onChange={(e) => setPlate(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Placa"
-                    required
-                /><label className="errorLabel">{plateError}</label>
+                    <label htmlFor="color" className="register-label">🔵 Digite a cor</label>
+                    <input
+                        id="color"
+                        type="text"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        className={'input-container'}
+                        placeholder="Cor"
+                        required
+                    />
 
-                <button type="submit">📝 Cadastrar</button>
-            </form>
-        </div>
-    );
-}
+                    <label htmlFor="capacity" className="register-label">💺 Digite a capacidade</label>
+                    <input
+                        id="capacity"
+                        type="text"
+                        value={capacity}
+                        onChange={(e) => setCapacity(e.target.value)}
+                        className={'input-container'}
+                        placeholder="Capacidade"
+                        required
+                    /><label className="errorLabel">{capacityError}</label>
 
-export default CadastroVeiculo;
+                    <label htmlFor="model" className="register-label">🚙 Digite o modelo</label>
+                    <input
+                        id="model"
+                        type="text"
+                        value={model}
+                        onChange={(e) => setModel(e.target.value)}
+                        className={'input-container'}
+                        placeholder="Modelo"
+                        required
+                    />
+
+                    <label htmlFor="brand" className="register-label">🏷️ Digite a marca</label>
+                    <input
+                        id="brand"
+                        type="text"
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
+                        className={'input-container'}
+                        placeholder="Marca"
+                        required
+                    />
+                    <label htmlFor="plate" className="register-label">🔢 Digite a placa</label>
+                    <input
+                        id="password"
+                        type="text"
+                        value={plate}
+                        onChange={(e) => setPlate(e.target.value)}
+                        className={'input-container'}
+                        placeholder="Placa"
+                        required
+                    />
+
+                    <button type="submit">📝 Cadastrar</button>
+                </form>
+            </div>
+        );
+    }
+
+    export default CadastroVeiculo;

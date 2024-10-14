@@ -1,6 +1,7 @@
 .register-container {
+    display: flex;
     justify-content: center;
-    text-align: center;
+    align-items: center;
     height: 100vh;
     background-color: #D9D9D9;
 }
@@ -22,21 +23,19 @@
 .register-box {
     background-color: #ffffff;
     padding: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 8);
     border-radius: 8px;
     text-align: center;
-    max-height: 900px;
+    max-height: 700px;
     height: 100%;
-    max-width: 450px;
+    max-width: 600px;
     width: 100%;
-
 }
 
 .register-logo {
-    max-width: 80%;
+    max-width: 70%;
     height: auto;
-    margin-top: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .register-title {
@@ -53,6 +52,7 @@
     color: #000000;
 }
 
+
 .register-box input {
     display: block;
     width: 100%;
@@ -61,11 +61,12 @@
     border: 1px solid #ffffff;
     border-radius: 4px;
 }
+
 .register-box button {
     width: 100%;
     padding: 10px;
     background-color: #43A715;
-    color: #ffffff;
+    color: #000000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
