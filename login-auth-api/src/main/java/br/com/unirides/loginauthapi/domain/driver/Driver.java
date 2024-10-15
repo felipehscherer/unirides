@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.UUID;
@@ -27,23 +26,19 @@ public class Driver {
     @Enumerated(EnumType.STRING)
     private DriverLicenseCategory categoria;
 
-    public static boolean validarDataCNH(String dataEmissaoStr, String dataValidadeStr, String dataNascimentoStr) {
+    public static boolean validarDataCNH(String dataEmissaoStr, String dataValidadeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         LocalDate dataEmissao;
         LocalDate dataValidade;
-        LocalDate dataNascimento;
 
         try {
             dataEmissao = LocalDate.parse(dataEmissaoStr, formatter);
             dataValidade = LocalDate.parse(dataValidadeStr, formatter);
-            dataNascimento = LocalDate.parse(dataNascimentoStr, formatter);
         } catch (DateTimeParseException e) {
             System.out.println("Erro: As datas devem estar no formato YYYY-MM-DD.");
             return false;
         }
-
-        int idade = Period.between(dataNascimento, LocalDate.now()).getYears();
 
         if (dataEmissao.isAfter(LocalDate.now())) {
             System.out.println("Erro: A data de emissão não pode ser uma data futura.");
@@ -54,40 +49,30 @@ public class Driver {
         LocalDate dataMudanca = LocalDate.of(2020, 1, 1);
 
         if (dataEmissao.isBefore(dataMudanca)) {
-            if (idade < 50) {
-                validadePadrao = dataEmissao.plusYears(5);
-            } else if (idade < 70) {
-                validadePadrao = dataEmissao.plusYears(5);
-            } else {
-                validadePadrao = dataEmissao.plusYears(3);
-            }
+            validadePadrao = dataEmissao.plusYears(5);
         } else {
-            if (idade < 50) {
-                validadePadrao = dataEmissao.plusYears(10);
-            } else if (idade < 70) {
-                validadePadrao = dataEmissao.plusYears(5);
-            } else {
-                validadePadrao = dataEmissao.plusYears(3);
-            }
+            validadePadrao = dataEmissao.plusYears(10);
         }
-
-        LocalDate dataAtual = LocalDate.now();
 
         if (dataValidade.isBefore(dataEmissao)) {
             System.out.println("Erro: A data de validade não pode ser anterior à data de emissão.");
             return false;
         }
 
-        if (dataValidade.isAfter(dataAtual) && !dataValidade.isBefore(validadePadrao)) {
+        LocalDate dataAtual = LocalDate.now();
+
+        if (dataValidade.isAfter(dataAtual) && (dataValidade.isEqual(validadePadrao) || dataValidade.isBefore(validadePadrao))) {
             return true;
         } else {
-            System.out.println("Erro: A CNH não é válida. A data de validade deve ser após a data atual e respeitar a validade padrão.");
+            System.out.println("Erro: A CNH não é válida. A data de validade deve estar dentro do período padrão.");
             return false;
         }
     }
 
     public static boolean validarFormatoCNH(String numeroCNH) {
-        return numeroCNH != null && numeroCNH.matches("\\d{11}");
+        String regex = "^[0-9]{11}$";
+
+        return numeroCNH != null && numeroCNH.matches(regex);
     }
 
 

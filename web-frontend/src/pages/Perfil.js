@@ -16,7 +16,6 @@ const Perfil = () => {
   const [complemento, setComplemento] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-  // adicionar verificações nos campos
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -35,7 +34,7 @@ const Perfil = () => {
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
         if (error.response && error.response.status === 401) {
-          navigate('/login'); // se disparar um forbindem, redireciona para a página de login
+          navigate('/login');
         }
       }
     };
@@ -85,73 +84,73 @@ const Perfil = () => {
           <div className="input-container">
             <label>Nome:</label>
             <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Email:</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Senha Atual (para alterar senha):</label>
             <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Nova Senha:</label>
             <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Cidade:</label>
             <input
-              type="text"
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
+                type="text"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Estado:</label>
             <input
-              type="text"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
+                type="text"
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Endereço:</label>
             <input
-              type="text"
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
+                type="text"
+                value={endereco}
+                onChange={(e) => setEndereco(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Número:</label>
             <input
-              type="text"
-              value={numero}
-              onChange={(e) => setNumero(e.target.value)}
+                type="text"
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
             />
           </div>
           <div className="input-container">
             <label>Complemento:</label>
             <input
-              type="text"
-              value={complemento}
-              onChange={(e) => setComplemento(e.target.value)}
+                type="text"
+                value={complemento}
+                onChange={(e) => setComplemento(e.target.value)}
             />
           </div>
           {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -160,22 +159,29 @@ const Perfil = () => {
 
         <div className="button-container">
           <button
-            className="btn-action-green"
-            onClick={() => navigate('/vincular-cnh')}
+              className="btn-action-green"
+              onClick={() => navigate('/Motorista/cadastro')}
           >
             Vincular CNH
           </button>
           <button
-            className="btn-action-green"
-            onClick={() => navigate('/veiculos')}
+              className="btn-action-green"
+              onClick={() => navigate('/veiculo/apresentarLista')}
           >
-            Meus Veículos
+            Meus Veiculos
+          </button>
+          <button
+              className="btn-action-green"
+              onClick={() => navigate('/veiculo/cadastro')}
+          >
+            Cadastrar Veiculo
           </button>
         </div>
 
+
         <button
-          className="btn-home"
-          onClick={() => navigate('/home')}
+            className="btn-home"
+            onClick={() => navigate('/home')}
         >
           Voltar para Home
         </button>

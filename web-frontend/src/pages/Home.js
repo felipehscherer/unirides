@@ -31,24 +31,6 @@ function Home() {
           >
             Horários de Ônibus
           </button>
-          <button
-              className="home-button"
-              onClick={() => navigate('/Motorista/cadastro')}
-          >
-            Cadastrar Motorista
-          </button>
-          <button
-              className="home-button"
-              onClick={() => navigate('/veiculo/cadastro')}
-          >
-            Cadastrar Veiculo
-          </button>
-          <button
-              className="home-button"
-              onClick={() => navigate('/veiculo/apresentarLista')}
-          >
-            Visualizar lista de veiculos
-          </button>
         </div>
       </div>
     </div>

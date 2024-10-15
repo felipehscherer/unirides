@@ -59,6 +59,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+    @ExceptionHandler(CnhAlreadyRegisteredException.class)
+    public ResponseEntity<String> handleCnhAlreadyRegisteredException(CnhAlreadyRegisteredException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(PlateAlreadyRegistered.class)
+    public ResponseEntity<String> handlePlateAlreadyRegistered(PlateAlreadyRegistered e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
 
 

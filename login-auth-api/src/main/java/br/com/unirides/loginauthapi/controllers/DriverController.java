@@ -5,13 +5,13 @@ import br.com.unirides.loginauthapi.domain.driver.DriverLicenseCategory;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.driver.DriverRequestDTO;
 import br.com.unirides.loginauthapi.dto.driver.DriverResponseDTO;
+import br.com.unirides.loginauthapi.exceptions.CnhAlreadyRegisteredException;
+import br.com.unirides.loginauthapi.exceptions.InvalidCnhException;
 import br.com.unirides.loginauthapi.repositories.DriverRepository;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +35,16 @@ public class DriverController {
             throw new RuntimeException("Já existe um motorista registrado com este e-mail.");
         }
 
+        if(!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())){
+            throw new InvalidCnhException("Formato da cnh invalida");
+        }
+
+        if(!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())){
+            throw new InvalidCnhException("Data da cnh Invalida");
+        }
+
         if (driverRepository.findByNumeroCnh(motoristaDTO.getNumeroCnh()).isPresent()) {
-            throw new RuntimeException("Já existe um motorista registrado com este numero de CNH");
+            throw new CnhAlreadyRegisteredException("Já existe um motorista registrado com este numero de CNH");
         }
 
         User usuario = userRepository.findByEmail(motoristaDTO.getEmail())

@@ -22,6 +22,50 @@
     background-color: #eaeaea; /* Cor de fundo ao passar o mouse */
 }
 
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+
+.vehicle-Btn {
+    background-color: #43A715; /* Cor do botão */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Cantos arredondados do botão */
+    padding: 10px 15px; /* Espaçamento interno do botão */
+    cursor: pointer; /* Muda o cursor ao passar o mouse */
+    margin-top: 10px; /* Espaçamento acima do botão */
+}
+
+
 .vehicle-detailsBtn {
     background-color: #43A715; /* Cor do botão */
     color: white; /* Cor do texto do botão */
@@ -31,6 +75,7 @@
     cursor: pointer; /* Muda o cursor ao passar o mouse */
     margin-top: 10px; /* Espaçamento acima do botão */
 }
+
 
 .vehicle-UpdateBtn {
     background-color: #43A715; /* Cor do botão */

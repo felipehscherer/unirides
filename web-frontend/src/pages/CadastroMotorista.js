@@ -10,6 +10,7 @@ function CadastroMotorista() {
     const [dataEmissao, setDataEmissao] = useState('');
     const [dataValidade, setDataValidade] = useState('');
     const [categoria, setCategoria] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -45,9 +46,13 @@ function CadastroMotorista() {
                 dados
             );
             alert('Cadastro de motorista realizado com Sucesso!');
-            navigate('/home');
+            navigate('/perfil');
         } catch (error) {
-            console.error('Erro ao cadastrar:', error);
+            if (error.response && error.response.status === 400) {
+                const errorMsg = error.response.data;
+                setErrorMessage(errorMsg);
+                alert(errorMsg);
+            }
         }
     };
 
@@ -56,7 +61,7 @@ function CadastroMotorista() {
             <form className="register-box" onSubmit={handleCadastro}>
                 <button
                     className="btn-back"
-                    onClick={() => navigate('/home')}
+                    onClick={() => navigate('/perfil')}
                 >
                     ↩
                 </button>

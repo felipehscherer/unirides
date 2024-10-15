@@ -9,6 +9,7 @@ import br.com.unirides.loginauthapi.dto.vehicle.VehicleResponseDTO;
 import br.com.unirides.loginauthapi.exceptions.CnhNotRegisteredException;
 import br.com.unirides.loginauthapi.exceptions.InvalidCapacityException;
 import br.com.unirides.loginauthapi.exceptions.InvalidPlateException;
+import br.com.unirides.loginauthapi.exceptions.PlateAlreadyRegistered;
 import br.com.unirides.loginauthapi.repositories.DriverRepository;
 import br.com.unirides.loginauthapi.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,6 @@ public class VehicleController {
         Optional<Driver> optDriver = driverRepository.findByUsuarioEmail(email);
 
         if (optDriver.isPresent()) {
-            Driver driver = optDriver.get();
-
             Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
             if (veiculoOpt.isPresent()) {
@@ -63,16 +62,6 @@ public class VehicleController {
         }
 
         return ResponseEntity.notFound().build();
-    }
-
-    //Metodo que busca todos os veículos
-    @GetMapping("/get/listAll")
-    public List<VehicleResponseDTO> getAllVehicles() {
-
-        List<VehicleResponseDTO> vehicleResponseDTOList = vehicleRepository.findAll().stream().map(VehicleResponseDTO::new).toList();
-
-        return vehicleResponseDTOList;
-
     }
 
     @GetMapping("/get/byUserEmail/{email}")
@@ -107,11 +96,8 @@ public class VehicleController {
         if (optDriver.isPresent()) {
             Driver driver = optDriver.get();
 
-            if (!Vehicle.validateCapacity(data.capacity())) {
-                throw new InvalidCapacityException("Capacidade do veiculo invalida");
-            } else if (!Vehicle.validatePlate(data.plate())) {
-                throw new InvalidPlateException("Placa do veiculo invalida!");
-            } else {
+            if(validarVeiculo(data.plate(), data.capacity())) {
+
                 Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver);
 
                 vehicleRepository.save(vehicleData);
@@ -119,9 +105,25 @@ public class VehicleController {
                 VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
                 return ResponseEntity.status(201).body(responseDTO);
             }
+
+            return ResponseEntity.notFound().build();
+
         } else {
             throw new CnhNotRegisteredException("Usuário não possui uma CNH registrada");
         }
+    }
+
+    public boolean validarVeiculo(String plate, int capacity) {
+        if (!Vehicle.validateCapacity(capacity)) {
+            throw new InvalidCapacityException("Capacidade do veiculo invalida");
+        }
+        if (!Vehicle.validatePlate(plate)) {
+            throw new InvalidPlateException("Placa do veiculo invalida!");
+        }
+        if(vehicleRepository.findByPlate(plate).isPresent()){
+            throw new PlateAlreadyRegistered("Placa do Veiculo ja registrada");
+        }
+        return true;
     }
 
     // meotodo para atualizar um veiculo pela placa
@@ -138,12 +140,16 @@ public class VehicleController {
             vehicle.setColor(updatedVeiculo.color());
             vehicle.setCapacity(updatedVeiculo.capacity());
 
+            if (!Vehicle.validateCapacity(vehicle.getCapacity())) {
+                throw new InvalidCapacityException("Capacidade do veiculo invalida");
+            }
+
             vehicleRepository.save(vehicle);
 
             VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle);
-            return ResponseEntity.status(201).body(responseDTO);
-        }
 
+            return ResponseEntity.status(201).body(responseDTO);
+            }
 
         return ResponseEntity.notFound().build();
     }

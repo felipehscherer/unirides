@@ -13,8 +13,6 @@
         const [plate, setPlate] = useState("");
         const [errorMessage, setErrorMessage] = useState('');
 
-        const [capacityError, setCapacityError] = useState('')
-
         const navigate = useNavigate();
 
         useEffect(() => {
@@ -38,13 +36,6 @@
 
         const handleCadastro = async (e) => {
             e.preventDefault();
-
-            setCapacityError('')
-            if (capacity <= 1 || capacity >7) {
-                setCapacityError('O carro deve possuir no mínimo dois lugares e no maximo 7');
-                return
-            }
-
             try {
 
                 try {
@@ -53,7 +44,7 @@
                         {email, color, capacity, model, brand, plate}
                     );
                     alert('Cadastro Realizado com sucesso!');
-                    navigate('/home');
+                    navigate('/perfil');
                 } catch (error) {
                     if (error.response && error.response.status === 400) {
                         const errorMsg = error.response.data;
@@ -71,7 +62,7 @@
                 <form className="register-box" onSubmit={handleCadastro}>
                     <button
                         className="btn-back"
-                        onClick={() => navigate('/home')}
+                        onClick={() => navigate('/perfil')}
                     >
                         ↩
                     </button>
@@ -98,7 +89,7 @@
                         className={'input-container'}
                         placeholder="Capacidade"
                         required
-                    /><label className="errorLabel">{capacityError}</label>
+                    />
 
                     <label htmlFor="model" className="register-label">🚙 Digite o modelo</label>
                     <input

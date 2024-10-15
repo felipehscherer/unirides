@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/EditarVeiculo.css';
 import logoImage from '../assets/logo.jpg';
 
 function EditarVeiculo() {
-    const { plate } = useParams();
+    const {plate} = useParams();
     const [color, setColor] = useState('');
     const [capacity, setCapacity] = useState('');
     const [model, setModel] = useState('');
     const [brand, setBrand] = useState('');
     const [email, setEmail] = useState('');
-    const [capacityError, setCapacityError] = useState('');
-    const [plateError, setPlateError] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
@@ -28,7 +26,12 @@ function EditarVeiculo() {
                 setModel(vehicleData.model || '');
                 setBrand(vehicleData.brand || '');
             } catch (error) {
-                console.error('Erro ao buscar dados do veículo:', error);
+                console.error('Erro ao buscar dados do usuário:', error);
+                if (error.response && error.response.status === 403) {
+                    console.error('Acesso negado - erro 403.');
+                } else if (error.response && error.response.status === 401) {
+                    navigate('/home');
+                }
             }
         };
 
@@ -37,16 +40,14 @@ function EditarVeiculo() {
 
     const handleCadastro = async (e) => {
         e.preventDefault();
-        setCapacityError('');
-        setPlateError('');
 
         try {
             await axios.put(
                 `vehicle/update/${plate}`,
-                { email, color, capacity, model, brand, plate }
+                {email, color, capacity, model, brand, plate}
             );
 
-            navigate('/home');
+            navigate('/perfil');
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const errorMsg = error.response.data;
@@ -61,7 +62,7 @@ function EditarVeiculo() {
             <form className="update-box" onSubmit={handleCadastro}>
                 <button
                     className="btn-back"
-                    onClick={() => navigate('/home')}
+                    onClick={() => navigate('/veiculo/apresentarLista')}
                 >
                     ↩
                 </button>
@@ -89,7 +90,6 @@ function EditarVeiculo() {
                     placeholder="Capacidade"
                     required
                 />
-                <label className="errorLabel">{capacityError}</label>
 
                 <label htmlFor="model" className="update-label">🚙 Digite o modelo</label>
                 <input
