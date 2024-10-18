@@ -1,83 +1,187 @@
 package br.com.unirides.loginauthapi.controllers;
 
-import br.com.unirides.loginauthapi.dto.RegisterRequestDTO;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import br.com.unirides.loginauthapi.dto.UserResponseDTO;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private UserRepository repository; // Injetar o repositório
+    private UserRepository repository;
 
-    // Método para buscar um usuário pelo email
-    @GetMapping("/{email}")
-    public ResponseEntity<UserResponseDTO> getUserByEmail(@PathVariable String email) {
-        Optional<User> userOpt = repository.findByEmail(email); // Busca o usuário
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
-            return ResponseEntity.ok(responseDTO); // Retorna o usuário encontrado
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponseDTO> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            System.out.println("Erro ao buscar usuario");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        return ResponseEntity.notFound().build(); // Retorna 404 se não encontrado
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        List<User> users = repository.findAll(); // Busca todos os usuários
-        List<UserResponseDTO> responseDTOs = users.stream()
-                .map(user -> new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf()))
-                .collect(Collectors.toList()); // Converte para UserResponseDTO
-
-        return ResponseEntity.ok(responseDTOs); // Retorna a lista de usuários
-    }
-
-     @PutMapping("/{email}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable String email, @RequestBody RegisterRequestDTO updatedUser) {
         Optional<User> userOpt = repository.findByEmail(email);
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            user.setName(updatedUser.name()); // Atualiza o nome
-            user.setCpf(updatedUser.cpf()); // Atualiza o CPF
-            user.setPassword(updatedUser.password()); // Atualiza a senha (você pode querer codificá-la)
-            
-            repository.save(user); // Salva as atualizações
+            UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
+            return ResponseEntity.ok(responseDTO);
+        }
+        System.out.println("Usuario não encontrado");
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/profile/email")
+    public ResponseEntity<UserResponseDTO> updateEmail(@RequestBody Map<String, String> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            System.out.println("Erro ao atualizar email");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<User> userOpt = repository.findByEmail(email);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            String newEmail = request.get("email");
+
+            if (repository.findByEmail(newEmail).isPresent()) {
+                return ResponseEntity.badRequest().body(null);
+            }
+
+            user.setEmail(newEmail);
+            repository.save(user);
 
             UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
             return ResponseEntity.ok(responseDTO);
         }
 
-        return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+        return ResponseEntity.notFound().build();
     }
 
-     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String email) {
+    @PutMapping("/profile/password")
+    public ResponseEntity<Void> updatePassword(@RequestBody Map<String, String> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         Optional<User> userOpt = repository.findByEmail(email);
 
         if (userOpt.isPresent()) {
-            repository.delete(userOpt.get()); // Deleta o usuário encontrado
-            return ResponseEntity.noContent().build(); // Retorna 204 No Content
+            User user = userOpt.get();
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            repository.save(user);
+
+            return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.notFound().build(); // Retorna 404 se o usuário não for encontrado
+        return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/profile/details")
+    public ResponseEntity<UserResponseDTO> updateDetails(@RequestBody Map<String, String> request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // eu to repetindo essa linha pq sim, confia que da certo e de preferencia nao tentem mudar
+        Object principal = authentication.getPrincipal();
+
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<User> userOpt = repository.findByEmail(email);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            // basicamente se o que ele pegou for diferente do padrão atualiza
+            user.setName(request.getOrDefault("name", user.getName()));
+            user.setCidade(request.getOrDefault("cidade", user.getCidade()));
+            user.setEstado(request.getOrDefault("estado", user.getEstado()));
+            user.setEndereco(request.getOrDefault("endereco", user.getEndereco()));
+
+            // Atualizar número e complemento, se aplicável
+            String numeroStr = request.get("numero");
+            if (numeroStr != null) {
+                try {
+                    user.setNumero(Integer.parseInt(numeroStr));
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.badRequest().build(); // Número inválido
+                }
+            }
+
+            user.setComplemento(request.getOrDefault("complemento", user.getComplemento()));
+
+            // Atualizar email se fornecido e se não estiver em uso por outro usuário
+            String newEmail = request.get("email");
+            if (newEmail != null && !newEmail.equals(user.getEmail())) {
+                if (repository.findByEmail(newEmail).isPresent()) {
+                    return ResponseEntity.badRequest().build(); // Email já em uso
+                }
+                user.setEmail(newEmail);
+            }
+
+            // Atualizar senha se fornecido o currentPassword e newPassword
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+            if (currentPassword != null && newPassword != null) {
+                if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+                }
+                user.setPassword(passwordEncoder.encode(newPassword));
+            }
+
+            // Salvar as alterações
+            repository.save(user);
+
+            UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
+            return ResponseEntity.ok(responseDTO);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
 }
