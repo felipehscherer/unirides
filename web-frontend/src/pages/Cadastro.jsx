@@ -8,6 +8,8 @@ import { Messages } from 'primereact/messages';
 // Importações de estilos do PrimeReact
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
+import { wait } from '@testing-library/user-event/dist/utils';
+import { waitFor } from '@testing-library/react';
 //import 'primeicons/primeicons.css';
 
 const regexUpperCase = /[A-Z]/;
@@ -123,7 +125,7 @@ const Cadastro = () => {
     setCpf(cpf)
   
     if (cpf.length>=14 && !TestaCPF(cpf.replace(/\D/g, ''))) { 
-      showError('warn', 'Alerta:', 'CPF Inválido!');
+      showError('error', 'Erro:', 'CPF Inválido!');
     }
   };
 
@@ -171,14 +173,13 @@ const Cadastro = () => {
 
     try {
       await axios.post('/register', dataToSend);
-      console.log('Sucesso!');
+      showError('success', 'Sucesso:', 'Cadastro realizado!');
       navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const errorMsg = error.response.data; 
         setErrorMessage(errorMsg);
-        alert(errorMsg); // Exibe o erro do backend
-        showError('error', 'Erro:', errorMessage);
+        showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
       }else{
         console.error('Erro ao cadastrar:', error);
       }
