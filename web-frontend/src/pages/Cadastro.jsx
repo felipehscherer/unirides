@@ -8,9 +8,6 @@ import { Messages } from 'primereact/messages';
 // Importações de estilos do PrimeReact
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
-import { wait } from '@testing-library/user-event/dist/utils';
-import { waitFor } from '@testing-library/react';
-//import 'primeicons/primeicons.css';
 
 const regexUpperCase = /[A-Z]/;
 const regexLowerCase = /[a-z]/;
