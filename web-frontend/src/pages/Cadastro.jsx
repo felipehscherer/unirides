@@ -1,18 +1,19 @@
-import React, { useState} from 'react';
+import React, { useState, useRef} from 'react';
 import axios from '../services/axiosConfig';
 import "./styles/Cadastro.css"
 import { useNavigate } from 'react-router-dom';
 import InputMask from 'react-input-mask';
 import logoImage from '../assets/logo.png';
-import Alert from '@mui/material/Alert';
+import { Messages } from 'primereact/messages';
+// Importações de estilos do PrimeReact
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+//import 'primeicons/primeicons.css';
 
-//TODO: O alert aparece mas ainda é possível salvar com cpf, cep e etc errados
-//TODO: Verificar se já existe alguém no banco com aquele cpf/celular/email
-
-const regexUpperCase = /[A-Z]/;  // Verifica se contém ao menos uma letra maiúscula
+const regexUpperCase = /[A-Z]/;
 const regexLowerCase = /[a-z]/;
 const regexNumber = /\d/;
-const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;  // Verifica se contém ao menos um símbolo especial
+const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
 const Cadastro = () => {
   const [name, setNome] = useState('')
@@ -24,14 +25,26 @@ const Cadastro = () => {
   const [cidade, setCidade] = useState('')
   const [estado, setEstado] = useState('')
   const [endereco, setEndereco] = useState('')
-  const [complemento, setComplemento] = useState('')  //adicionar no back
-  const [numero, setNumero] = useState('')  //adicionar no back
+  const [complemento, setComplemento] = useState('')
+  const [numero, setNumero] = useState('') 
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [genericError, setGenericError] = useState('')
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+  const messagesRef = useRef(null);
+
+  const showError = (severity, summary, detail) => {
+    messagesRef.current.clear();
+    messagesRef.current.show({
+      severity: severity,
+      summary: summary,  // Mensagem de resumo
+      detail: detail,    // Detalhe do erro
+      life: 5000         // Tempo de exibição
+    });
+  };
 
   const handleCepChange = async (e) => {
     const cep = e.target.value.replace(/\D/g, '');
@@ -41,19 +54,15 @@ const Cadastro = () => {
       try {
         const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
         if (response.data.erro) {
-          <Alert variant="filled" severity="error">
-            CEP não encontrado!
-          </Alert>
+          showError('error', 'Erro:', 'CEP não encontrado!');
+          return
         } else {
           setCidade(response.data.localidade)
           setEstado(response.data.estado)
           setEndereco(response.data.logradouro)
         }
       } catch (error) {
-        //alert('Erro ao buscar CEP!');
-        <Alert severity="error">
-          Erro ao buscar o CEP!
-        </Alert>
+        showError('error', 'Erro:', 'Erro ao buscar o CEP');
       }
     }
   };
@@ -82,8 +91,7 @@ const Cadastro = () => {
     setDataNascimento(date)
   
     if (date.length>= 10 && !validateDate(date)) {
-      alert('Data inválida!');
-      //<Alert variant="filled" severity="error">CEP não encontrado!</Alert>
+      showError('warn', 'Alerta:', '16 anos é a idade mínima para registro!');
     } 
   };
 
@@ -115,7 +123,7 @@ const Cadastro = () => {
     setCpf(cpf)
   
     if (cpf.length>=14 && !TestaCPF(cpf.replace(/\D/g, ''))) { 
-      alert('CPF Inválido!');
+      showError('warn', 'Alerta:', 'CPF Inválido!');
     }
   };
 
@@ -123,8 +131,10 @@ const Cadastro = () => {
     e.preventDefault();
     setPasswordError('')
     setGenericError('')
-
-    if (password.length < 8) {
+    if(!(password === passwordConfirm)){
+      setPasswordError('As senhas não coincidem')
+      return
+    }else if (password.length < 8) {
       setPasswordError('A senha deve ter 8 caracteres ou mais')
       return
     }else if(!regexUpperCase.test(password)){
@@ -139,14 +149,7 @@ const Cadastro = () => {
     }else if(!regexLowerCase.test(password)){
       setPasswordError('A senha deve conter ao menos uma letra minúscula')
       return
-    }
-
-    if(!(password === passwordConfirm)){
-      setPasswordError('As senhas não coincidem')
-      return
-    }
-
-    if(name.trim().split(' ').length < 2){
+    }else if(name.trim().split(' ').length < 2){
       setGenericError('Campo "Nome" incompleto!')
       return
     }
@@ -157,7 +160,6 @@ const Cadastro = () => {
       cpf: cpf.replace(/\D/g, ''),
       password: password,
       telefone: telefone.replace(/\D/g, ''),
-      //dataNascimento: dataNascimento.replace(/\D/g, ''),
       dataNascimento: dataNascimento,
       cep: cep.replace(/\D/g, ''),
       cidade: cidade,
@@ -168,15 +170,15 @@ const Cadastro = () => {
     };
 
     try {
-      //await axios.post('/register', { name, email, cpf, password, telefone, dataNascimento, cep, cidade, estado, endereco }); // passa o parametros do body da request
       await axios.post('/register', dataToSend);
       console.log('Sucesso!');
       navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        const errorMsg = error.response.data; // Captura a mensagem de erro
-        setErrorMessage(errorMsg); // Atualiza o estado
-        alert(errorMsg); // Exibe o alerta imediatamente com a mensagem capturada
+        const errorMsg = error.response.data; 
+        setErrorMessage(errorMsg);
+        alert(errorMsg); // Exibe o erro do backend
+        showError('error', 'Erro:', errorMessage);
       }else{
         console.error('Erro ao cadastrar:', error);
       }
@@ -320,8 +322,6 @@ const Cadastro = () => {
                 />
               </div>
 
-              
-
               <div id='complemento-numero'>
               <div className='inputContainer'>
                   <input
@@ -394,7 +394,9 @@ const Cadastro = () => {
           </div>
           
         </form>
+        
       </div>
+      <Messages className='custom-toast' ref={messagesRef} />
     </div>
   );
 } 
