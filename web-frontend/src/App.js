@@ -8,6 +8,9 @@ import CadastroVeiculo from "./pages/CadastroVeiculo";
 import Perfil from "./pages/Perfil";
 import ApresentarVeiculos from "./pages/ApresentarVeiculos";
 import EditarVeiculo from "./pages/EditarVeiculo";
+import GerenciarVeiculo from "./pages/GerenciarVeiculo";
+import GerenciarMotorista from "./pages/GerenciarMotorista";
+import EditarMotorista from "./pages/EditarMotorista";
 // Importar outras páginas conforme necessário ou for criando
 // quando necessario proteger uma routa só chamar "</ProtectedRoute.js>" dentro da routa
 // exemplo <Route path="" element={<protectRoute> element </protectRoute>}
@@ -20,10 +23,13 @@ function App() {
                 <Route path="/cadastro" element={<Cadastro />} />
                 <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
                 <Route path="/perfil" element={<protectRoute> <Perfil /> </protectRoute>} />
-                <Route path="/motorista/cadastro" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
-                <Route path="/veiculo/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
-                <Route path="/veiculo/apresentarLista" element={<protectRoute> <ApresentarVeiculos /> </protectRoute>} />
-                <Route path="/veiculo/apresentarLista/editar/:plate" element={<protectRoute> <EditarVeiculo /> </protectRoute>} />
+                <Route path="/motorista/gerenciar" element={<protectRoute> <GerenciarMotorista /> </protectRoute>} />
+                <Route path="/motorista/gerenciar/cadastro" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
+                <Route path="/motorista/gerenciar/editar" element={<protectRoute> <EditarMotorista /> </protectRoute>} />
+                <Route path="/veiculo/gerenciar" element={<protectRoute> <GerenciarVeiculo /> </protectRoute>} />
+                <Route path="/veiculo/gerenciar/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
+                <Route path="/veiculo/gerenciar/apresentarLista" element={<protectRoute> <ApresentarVeiculos /> </protectRoute>} />
+                <Route path="/veiculo/gerenciar/apresentarLista/editar/:plate" element={<protectRoute> <EditarVeiculo /> </protectRoute>} />
             </Routes>
         </Router>
     );

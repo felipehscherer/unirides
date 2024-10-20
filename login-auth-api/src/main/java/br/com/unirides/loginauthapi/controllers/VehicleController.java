@@ -45,7 +45,7 @@ public class VehicleController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        Optional<Driver> optDriver = driverRepository.findByUsuarioEmail(email);
+        Optional<Driver> optDriver = driverRepository.findDriverByUsuarioEmail(email);
 
         if (optDriver.isPresent()) {
             Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
@@ -66,7 +66,7 @@ public class VehicleController {
 
     @GetMapping("/get/byUserEmail/{email}")
     public ResponseEntity<List<VehicleResponseDTO>> getAllVehiclesByUserEmail(@PathVariable String email) {
-        Optional<Driver> driverOpt = driverRepository.findByUsuarioEmail(email);
+        Optional<Driver> driverOpt = driverRepository.findDriverByUsuarioEmail(email);
 
         if (driverOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -91,12 +91,12 @@ public class VehicleController {
 
         String email = data.email();
 
-        Optional<Driver> optDriver = driverRepository.findByUsuarioEmail(email);
+        Optional<Driver> optDriver = driverRepository.findDriverByUsuarioEmail(email);
 
         if (optDriver.isPresent()) {
             Driver driver = optDriver.get();
 
-            if(validarVeiculo(data.plate(), data.capacity())) {
+            if (validarVeiculo(data.plate(), data.capacity())) {
 
                 Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver);
 
@@ -120,7 +120,7 @@ public class VehicleController {
         if (!Vehicle.validatePlate(plate)) {
             throw new InvalidPlateException("Placa do veiculo invalida!");
         }
-        if(vehicleRepository.findByPlate(plate).isPresent()){
+        if (vehicleRepository.findByPlate(plate).isPresent()) {
             throw new PlateAlreadyRegistered("Placa do Veiculo ja registrada");
         }
         return true;
@@ -149,7 +149,7 @@ public class VehicleController {
             VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle);
 
             return ResponseEntity.status(201).body(responseDTO);
-            }
+        }
 
         return ResponseEntity.notFound().build();
     }
@@ -168,5 +168,24 @@ public class VehicleController {
         return ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/delete/AllByUserEmail/{email}")
+    public ResponseEntity<List<VehicleResponseDTO>> deleteAllByUserEmail(@PathVariable String email) {
+        Optional<Driver> driverOpt = driverRepository.findDriverByUsuarioEmail(email);
+
+        if (driverOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+
+        List<Vehicle> vehicles = vehicleRepository.findByDriverId(driverOpt.get().getId());
+
+        if (vehicles.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+        }
+
+        vehicleRepository.deleteAll(vehicles);
+
+        return ResponseEntity.status(201).body(new ArrayList<>());
+
+    }
 
 }

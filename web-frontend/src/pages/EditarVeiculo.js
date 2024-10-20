@@ -25,6 +25,7 @@ function EditarVeiculo() {
                 setCapacity(vehicleData.capacity || '');
                 setModel(vehicleData.model || '');
                 setBrand(vehicleData.brand || '');
+
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
                 if (error.response && error.response.status === 403) {
@@ -62,7 +63,7 @@ function EditarVeiculo() {
             <form className="update-box" onSubmit={handleCadastro}>
                 <button
                     className="btn-back"
-                    onClick={() => navigate('/veiculo/apresentarLista')}
+                    onClick={() => navigate('/veiculo/gerenciar/apresentarLista')}
                 >
                     ↩
                 </button>

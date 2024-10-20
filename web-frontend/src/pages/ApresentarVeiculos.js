@@ -87,44 +87,45 @@ function ApresentarVeiculos() {
     }
 
     return (
-        <div>
-            <ul className="vehicle-list">
-                {Array.isArray(vehicles) && vehicles.length > 0 ? (
-                    vehicles.map((vehicle, index) => (
-                        <li key={index} className="vehicle-item">
-                            <p><strong>Marca:</strong> {vehicle.brand}</p>
-                            <p><strong>Modelo:</strong> {vehicle.model}</p>
-                            <button className="vehicle-detailsBtn" onClick={() => handleDetailsClick(vehicle)}>📄
-                                Detalhes
-                            </button>
-                            <button className="vehicle-UpdateBtn"
-                                    onClick={() => navigate(`/veiculo/apresentarLista/editar/${vehicle.plate}`)}>✏️
-                                Editar
-                            </button>
-                            <button className="vehicle-deleteBtn" onClick={() => handleDeleteClick(vehicle)}>🗑️
-                                Deletar
-                            </button>
-                        </li>
-                    ))
-                ) : (
-                    <div className="register-container">
-                        <div className="vehicle-list">
-                        <p>Nenhum veículo encontrado.</p>
-                            <button
-                                className="vehicle-Btn"
-                                onClick={() => navigate('/perfil')}>
-                                ↩ Voltar
-                            </button>
+        <div className="gerenciar-container">
+            <div className={"gerenciar-box"}>
+                <ul className="vehicle-list">
+                    <button
+                        className="gerenciar-Btn"
+                        onClick={() => navigate('/perfil')}>
+                        ↩ Voltar
+                    </button>
+                    {Array.isArray(vehicles) && vehicles.length > 0 ? (
+                        vehicles.map((vehicle, index) => (
+                            <li key={index} className="vehicle-item">
+                                <p><strong>Marca:</strong> {vehicle.brand}</p>
+                                <p><strong>Modelo:</strong> {vehicle.model}</p>
+                                <button className="vehicle-detailsBtn" onClick={() => handleDetailsClick(vehicle)}>📄
+                                    Detalhes
+                                </button>
+                                <button className="vehicle-UpdateBtn"
+                                        onClick={() => navigate(`/veiculo/gerenciar/apresentarLista/editar/${vehicle.plate}`)}>✏️
+                                    Editar
+                                </button>
+                                <button className="vehicle-deleteBtn" onClick={() => handleDeleteClick(vehicle)}>🗑️
+                                    Deletar
+                                </button>
+                            </li>
+                        ))
+                    ) : (
+                        <div className="register-container">
+                            <div className="vehicle-list">
+                                <p>Nenhum veículo encontrado.</p>
+                            </div>
                         </div>
-                    </div>
-                )}
-            </ul>
+                    )}
+                </ul>
 
-            {/* Modal de Detalhes */}
-            {isDetailsModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Detalhes do Veículo</h2>
+                {/* Modal de Detalhes */}
+                {isDetailsModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <h2>Detalhes do Veículo</h2>
                         {selectedVehicle && (
                             <div>
                                 <p><strong>Marca:</strong> {selectedVehicle.brand}</p>
@@ -134,7 +135,7 @@ function ApresentarVeiculos() {
                                 <p><strong>Placa:</strong> {selectedVehicle.plate}</p>
                             </div>
                         )}
-                        <button className={'vehicle-Btn'} onClick={closeDetailsModal}>Fechar</button>
+                        <button className={'gerenciar-Btn'} onClick={closeDetailsModal}>Fechar</button>
                     </div>
                 </div>
             )}
@@ -149,8 +150,8 @@ function ApresentarVeiculos() {
                             {selectedVehicle && (
 
                                 <div className="button-container">
-                                    <button className={'vehicle-Btn'} onClick={handleConfirmDelete}>✔ Confirmar</button>
-                                    <button className={'vehicle-Btn'}
+                                    <button className={'gerenciar-Btn'} onClick={handleConfirmDelete}>✔ Confirmar</button>
+                                    <button className={'gerenciar-Btn'}
                                             onClick={closeDeleteModal}>❌
                                         Cancelar
                                     </button>
@@ -160,6 +161,7 @@ function ApresentarVeiculos() {
                     </div>
                 </div>
             )}
+        </div>
         </div>
     )
 }

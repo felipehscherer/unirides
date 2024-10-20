@@ -160,21 +160,15 @@ const Perfil = () => {
         <div className="button-container">
           <button
               className="btn-action-green"
-              onClick={() => navigate('/Motorista/cadastro')}
+              onClick={() => navigate('/Motorista/gerenciar')}
           >
-            Vincular CNH
+            Gerenciar CNH
           </button>
           <button
               className="btn-action-green"
-              onClick={() => navigate('/veiculo/apresentarLista')}
-          >
-            Meus Veiculos
-          </button>
-          <button
-              className="btn-action-green"
-              onClick={() => navigate('/veiculo/cadastro')}
-          >
-            Cadastrar Veiculo
+              onClick={() => navigate('/veiculo/gerenciar')}
+              >
+            Gerenciar Veiculos
           </button>
         </div>
 

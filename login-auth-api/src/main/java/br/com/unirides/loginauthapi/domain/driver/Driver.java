@@ -9,7 +9,10 @@ import java.time.format.DateTimeParseException;
 import java.util.UUID;
 
 @Entity
-@Table(name = "drivers")
+@Table(name = "drivers",  uniqueConstraints = {
+        @UniqueConstraint(columnNames = "usuario_email"),
+        @UniqueConstraint(columnNames = "numero_cnh")
+})
 @Getter
 @Setter
 @NoArgsConstructor
