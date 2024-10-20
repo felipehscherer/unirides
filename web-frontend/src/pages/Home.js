@@ -14,20 +14,20 @@ function Home() {
         <p className="home-text">Você está logado com sucesso.</p>
         <div className="button-group">
           <button
-            className="home-button"
-            onClick={() => navigate('/perfil')}
+              className="home-button"
+              onClick={() => navigate('/perfil')}
           >
             Meu Perfil
           </button>
           <button
-            className="home-button"
-            onClick={() => navigate('/caronas')}
+              className="home-button"
+              onClick={() => navigate('/caronas')}
           >
             Caronas
           </button>
           <button
-            className="home-button"
-            onClick={() => navigate('/horarios-onibus')}
+              className="home-button"
+              onClick={() => navigate('/horarios-onibus')}
           >
             Horários de Ônibus
           </button>

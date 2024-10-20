@@ -4,7 +4,7 @@ import axios from '../services/axiosConfig';
 import './styles/CadastroMotorista.css';
 import logoImage from "../assets/logo.jpg";
 
-function CadastroMotorista() {
+function EditarMotorista() {
     const [email, setEmail] = useState('');
     const [numeroCnh, setNumeroCnh] = useState('');
     const [dataEmissao, setDataEmissao] = useState('');
@@ -21,6 +21,15 @@ function CadastroMotorista() {
                 const data = response.data;
 
                 setEmail(data.email);
+
+                const responseDriver = await axios.get(`/driver/get/${data.email}`);
+
+                const driverData = responseDriver.data;
+
+                setNumeroCnh(driverData.numeroCnh || '');
+                setDataEmissao(driverData.dataEmissao || '');
+                setDataValidade(driverData.dataValidade || '');
+                setCategoria(driverData.categoria || '');
 
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
@@ -41,14 +50,14 @@ function CadastroMotorista() {
         console.log(dados)
 
         try {
-            const response = await axios.post(
-                'driver/register',
+            const response = await axios.put(
+                `driver/update/${email}`,
                 dados
             );
-            alert('Cadastro de motorista realizado com Sucesso!');
+            alert('Dados de motorista atualizado com Sucesso!');
             navigate('/perfil');
         } catch (error) {
-            if (error.response && error.response.status === 400) {
+            if (error.response) {
                 const errorMsg = error.response.data;
                 setErrorMessage(errorMsg);
                 alert(errorMsg);
@@ -67,7 +76,7 @@ function CadastroMotorista() {
                 </button>
                 <img src={logoImage} alt="Logo" className="register-logo"/>
 
-                <p className="register-title">🪪 Preencha as informações </p>
+                <p className="register-title">✏️ Edite suas as informações </p>
 
                 <label htmlFor="numeroCnh" className="register-label">🪪 Digite o numero da sua CNH</label>
                 <input
@@ -112,4 +121,4 @@ function CadastroMotorista() {
     );
 }
 
-export default CadastroMotorista;
+export default EditarMotorista;
