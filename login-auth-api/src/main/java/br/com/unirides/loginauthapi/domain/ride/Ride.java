@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,9 +38,13 @@ public class Ride {
             joinColumns = @JoinColumn(name = "ride_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> passengers = new HashSet<>();
+    private Set<User> passengers = new HashSet<>(); // TODO rever isso aqui tambem
 
-    private String paradas;
+    @ElementCollection
+    @CollectionTable(name = "ride_stops", joinColumns = @JoinColumn(name = "ride_id"))
+    @Column(name = "parada")
+    private List<String> paradas; // TODO rever isso aqui
+
     private int lugaresDisponiveis;
 
     private LocalDateTime horarioPartida;

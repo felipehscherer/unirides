@@ -14,6 +14,7 @@ import java.net.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 
@@ -26,7 +27,7 @@ import java.util.regex.Pattern;
 public class User { //nome, email, cpf, telefone, datanasciemnto, cep, cidade, estado, endereco, senha
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
     private String name;
     private String email;
     private String cpf;
