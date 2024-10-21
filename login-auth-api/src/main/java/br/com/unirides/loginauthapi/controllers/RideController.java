@@ -5,6 +5,9 @@ import br.com.unirides.loginauthapi.domain.driver.Vehicle;
 import br.com.unirides.loginauthapi.domain.ride.Ride;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.dto.ride.CreateRideDTO;
+import br.com.unirides.loginauthapi.exceptions.CaronaNotFoundException;
+import br.com.unirides.loginauthapi.exceptions.UserNotFoundException;
+import br.com.unirides.loginauthapi.exceptions.VehicleNotFoundException;
 import br.com.unirides.loginauthapi.repositories.DriverRepository;
 import br.com.unirides.loginauthapi.repositories.RideRepository;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
@@ -37,11 +40,11 @@ public class RideController {
     public ResponseEntity<Ride> createRide(@RequestBody CreateRideDTO rideDTO) {
         // Verificar se o motorista existe
         Driver driver = driverRepository.findById(rideDTO.getDriverId())
-                .orElseThrow(() -> new RuntimeException("Motorista não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Motorista não encontrado"));
 
         // Verificar se o veículo existe e está vinculado ao motorista
         Vehicle vehicle = vehicleRepository.findById(rideDTO.getVehicleId())
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new VehicleNotFoundException("Veículo não encontrado"));
 
         if (!vehicle.getDriver().getId().equals(driver.getId())) {
             throw new RuntimeException("Veículo não vinculado ao motorista");
@@ -51,7 +54,7 @@ public class RideController {
         Set<User> passengers = new HashSet<>();
         for (UUID passengerId : rideDTO.getPassengerIds()) {
             User passenger = userRepository.findById(String.valueOf(passengerId))
-                    .orElseThrow(() -> new RuntimeException("Passageiro não encontrado"));
+                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
             passengers.add(passenger);
         }
 
@@ -68,5 +71,61 @@ public class RideController {
         Ride savedRide = rideRepository.save(ride);
 
         return ResponseEntity.ok(savedRide);
+    }
+
+    @DeleteMapping("/{rideId}")
+    public ResponseEntity<Void> deleteRide(@PathVariable UUID rideId) {
+        // Verificar se a carona existe
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new CaronaNotFoundException("Carona não encontrada"));
+
+        // Excluir a carona
+        rideRepository.delete(ride);
+
+        // Retornar 204 No Content para indicar sucesso
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @PutMapping("/{rideId}")
+    public ResponseEntity<Ride> updateRide(@PathVariable UUID rideId, @RequestBody CreateRideDTO rideDTO) {
+        // Verificar se a carona existe
+        Ride existingRide = rideRepository.findById(rideId)
+                .orElseThrow(() -> new CaronaNotFoundException("Carona não encontrada"));
+
+        // Verificar se o motorista existe
+        Driver driver = driverRepository.findById(rideDTO.getDriverId())
+                .orElseThrow(() -> new UserNotFoundException("Motorista não encontrado"));
+
+        // Verificar se o veículo existe e está vinculado ao motorista
+        Vehicle vehicle = vehicleRepository.findById(rideDTO.getVehicleId())
+                .orElseThrow(() -> new VehicleNotFoundException("Veículo não encontrado"));
+
+        if (!vehicle.getDriver().getId().equals(driver.getId())) {
+            throw new RuntimeException("Veículo não vinculado ao motorista");
+        }
+
+        // Verificar se os passageiros existem
+        Set<User> passengers = new HashSet<>();
+        for (UUID passengerId : rideDTO.getPassengerIds()) {
+            User passenger = userRepository.findById(String.valueOf(passengerId))
+                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
+            passengers.add(passenger);
+        }
+
+        // Atualizar os dados da carona existente
+        existingRide.setDriver(driver);
+        existingRide.setVehicle(vehicle);
+        existingRide.setPassengers(passengers);
+        existingRide.setParadas(rideDTO.getParadas());
+        existingRide.setLugaresDisponiveis(rideDTO.getLugaresDisponiveis());
+        existingRide.setHorarioPartida(rideDTO.getHorarioPartida());
+        existingRide.setHorarioChegada(rideDTO.getHorarioChegada());
+
+        // Salvar as mudanças
+        Ride updatedRide = rideRepository.save(existingRide);
+
+        // Retornar a carona atualizada
+        return ResponseEntity.ok(updatedRide);
     }
 }
