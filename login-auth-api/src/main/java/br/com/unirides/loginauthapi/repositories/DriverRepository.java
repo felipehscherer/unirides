@@ -5,13 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface DriverRepository extends JpaRepository<Driver, Long> {
+public interface DriverRepository extends JpaRepository<Driver, UUID> {
 
     Optional<Driver> findByNumeroCnh(String numeroCnh);
 
-    Optional<Driver> findByUsuarioEmail(String email);
+    boolean existsByNumeroCnhAndIdNot(String numeroCnh, UUID id);
+
+    Optional<Driver> findDriverByUsuarioEmail(String email);
 
     boolean existsByUsuarioEmail(String email);
 }

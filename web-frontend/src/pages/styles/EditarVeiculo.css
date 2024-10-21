@@ -1,0 +1,88 @@
+.update-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #D9D9D9;
+}
+
+.btn-back{
+    background-color: #D9D9D9;
+    max-width: 50px;
+    float: left;
+}
+
+.update-box {
+    background-color: #FFFFFF; /* Fundo branco */
+    padding: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Leve sombra */
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.update-box {
+    background-color: #ffffff;
+    padding: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    border-radius: 8px;
+    text-align: center;
+    max-height: 900px;
+    height: 100%;
+    max-width: 450px;
+    width: 100%;
+
+}
+
+.update-logo {
+    max-width: 80%;
+    height: auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.update-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: #000000;
+}
+
+.update-label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.update-box input {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+}
+.update-box button {
+    width: 100%;
+    padding: 10px;
+    background-color: #43A715;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.update-box button:hover {
+    background-color: #389e12;
+}

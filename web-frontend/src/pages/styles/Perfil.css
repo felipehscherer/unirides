@@ -86,7 +86,7 @@
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  margin: 5px 0;
+  margin-inline: 10px;
 }
 
 .btn-action-green:hover {
