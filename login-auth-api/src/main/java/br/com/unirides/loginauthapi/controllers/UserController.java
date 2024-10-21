@@ -1,7 +1,7 @@
 package br.com.unirides.loginauthapi.controllers;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import br.com.unirides.loginauthapi.dto.UserResponseDTO;
+import br.com.unirides.loginauthapi.dto.user.UserResponseDTO;
 import br.com.unirides.loginauthapi.domain.user.User;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

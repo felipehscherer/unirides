@@ -1,9 +1,9 @@
 package br.com.unirides.loginauthapi.controllers;
 
 import br.com.unirides.loginauthapi.domain.user.User;
-import br.com.unirides.loginauthapi.dto.LoginRequestDTO;
-import br.com.unirides.loginauthapi.dto.RegisterRequestDTO;
-import br.com.unirides.loginauthapi.dto.ResponseDTO;
+import br.com.unirides.loginauthapi.dto.user.LoginRequestDTO;
+import br.com.unirides.loginauthapi.dto.user.RegisterRequestDTO;
+import br.com.unirides.loginauthapi.dto.user.ResponseDTO;
 import br.com.unirides.loginauthapi.exceptions.*;
 import br.com.unirides.loginauthapi.infra.security.TokenService;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
