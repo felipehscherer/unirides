@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/user")
@@ -72,7 +73,7 @@ public class UserController {
             String newEmail = request.get("email");
 
             if (repository.findByEmail(newEmail).isPresent()) {
-                return ResponseEntity.badRequest().body(null);
+                return ResponseEntity.badRequest().body(null); // Email já em uso
             }
 
             user.setEmail(newEmail);
@@ -107,7 +108,21 @@ public class UserController {
             String newPassword = request.get("newPassword");
 
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+            }
+
+            // Validação da nova senha
+            if (newPassword.length() < 8) {
+                return ResponseEntity.badRequest().body(null); // Nova senha deve ter no mínimo 8 caracteres
+            }
+            if (!Pattern.compile("[A-Z]").matcher(newPassword).find()) {
+                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra maiúscula
+            }
+            if (!Pattern.compile("[a-z]").matcher(newPassword).find()) {
+                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra minúscula
+            }
+            if (!Pattern.compile("[0-9]").matcher(newPassword).find()) {
+                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos um número
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));
@@ -121,7 +136,7 @@ public class UserController {
 
     @PutMapping("/profile/details")
     public ResponseEntity<UserResponseDTO> updateDetails(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // eu to repetindo essa linha pq sim, confia que da certo e de preferencia nao tentem mudar
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
         String email;
@@ -138,8 +153,21 @@ public class UserController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            // basicamente se o que ele pegou for diferente do padrão atualiza
-            user.setName(request.getOrDefault("name", user.getName()));
+            // Validação do nome
+            String newName = request.get("name");
+            if (newName != null) {
+                if (newName.trim().isEmpty()) {
+                    return ResponseEntity.badRequest().body(null); // Nome não pode estar vazio
+                }
+                if (newName.length() < 3 || newName.length() > 50) {
+                    return ResponseEntity.badRequest().body(null); // Nome deve ter entre 3 e 50 caracteres
+                }
+                if (!Pattern.compile("^[A-Za-z\\s]+$").matcher(newName).matches()) {
+                    return ResponseEntity.badRequest().body(null); // Nome deve conter apenas letras
+                }
+                user.setName(newName);
+            }
+
             user.setCidade(request.getOrDefault("cidade", user.getCidade()));
             user.setEstado(request.getOrDefault("estado", user.getEstado()));
             user.setEndereco(request.getOrDefault("endereco", user.getEndereco()));
@@ -160,7 +188,7 @@ public class UserController {
             String newEmail = request.get("email");
             if (newEmail != null && !newEmail.equals(user.getEmail())) {
                 if (repository.findByEmail(newEmail).isPresent()) {
-                    return ResponseEntity.badRequest().build(); // Email já em uso
+                    return ResponseEntity.badRequest().body(null); // Email já em uso
                 }
                 user.setEmail(newEmail);
             }
@@ -171,6 +199,19 @@ public class UserController {
             if (currentPassword != null && newPassword != null) {
                 if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+                }
+                // Validação da nova senha
+                if (newPassword.length() < 8) {
+                    return ResponseEntity.badRequest().body(null); // Nova senha deve ter no mínimo 8 caracteres
+                }
+                if (!Pattern.compile("[A-Z]").matcher(newPassword).find()) {
+                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra maiúscula
+                }
+                if (!Pattern.compile("[a-z]").matcher(newPassword).find()) {
+                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra minúscula
+                }
+                if (!Pattern.compile("[0-9]").matcher(newPassword).find()) {
+                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos um número
                 }
                 user.setPassword(passwordEncoder.encode(newPassword));
             }
