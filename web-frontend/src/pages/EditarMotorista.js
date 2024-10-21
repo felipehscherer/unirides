@@ -15,7 +15,7 @@ function EditarMotorista() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchDriverData = async () => {
             try {
                 const response = await axios.get('/user/profile');
                 const data = response.data;
@@ -39,7 +39,7 @@ function EditarMotorista() {
             }
         };
 
-        fetchUserData();
+        fetchDriverData();
     }, [navigate]);
 
     const handleCadastro = async (e) => {

@@ -15,7 +15,7 @@ function CadastroMotorista() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchDriverData = async () => {
             try {
                 const response = await axios.get('/user/profile');
                 const data = response.data;
@@ -30,7 +30,7 @@ function CadastroMotorista() {
             }
         };
 
-        fetchUserData();
+        fetchDriverData();
     }, [navigate]);
 
     const handleCadastro = async (e) => {
@@ -38,7 +38,7 @@ function CadastroMotorista() {
 
         const dados = {email, numeroCnh, dataEmissao, dataValidade, categoria}
 
-        console.log(dados)
+        console.log(dataValidade)
 
         try {
             const response = await axios.post(

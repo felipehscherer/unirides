@@ -25,8 +25,10 @@ public class DriverController {
 
     @Autowired
     private DriverRepository driverRepository;
+
     @Autowired
     UserRepository userRepository;
+
 
     @PostMapping("/register")
     public ResponseEntity<DriverResponseDTO> registerDriver(@RequestBody DriverRequestDTO motoristaDTO) {
@@ -49,16 +51,16 @@ public class DriverController {
         return ResponseEntity.status(201).body(driverDTO);
     }
 
-    public boolean validarDriver(DriverRequestDTO motoristaDTO){
+    public boolean validarDriver(DriverRequestDTO motoristaDTO) {
         if (driverRepository.existsByUsuarioEmail(motoristaDTO.getEmail())) {
             throw new RuntimeException("Já existe um motorista registrado com este e-mail.");
         }
 
-        if(!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())){
+        if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
             throw new InvalidCnhException("Formato da cnh invalida");
         }
 
-        if(!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())){
+        if (!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())) {
             throw new InvalidCnhException("Data da cnh Invalida");
         }
 
@@ -114,24 +116,23 @@ public class DriverController {
             }
         } catch (InvalidCnhException e) {
             throw new InvalidCnhException(e.getMessage());
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new CnhAlreadyRegisteredException("já existe um motorista com este número de CNH.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar dados do motorista, tente novamente.");
         }
 
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{email}")
     public ResponseEntity<Void> deleteDriver(@PathVariable String email) {
 
         Driver driver = driverRepository.findDriverByUsuarioEmail(email)
                 .orElseThrow(() -> new RuntimeException("Motorista não encontrado."));
 
         driverRepository.delete(driver);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.status(201).build();
 
     }
 

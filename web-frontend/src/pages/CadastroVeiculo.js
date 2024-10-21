@@ -16,7 +16,7 @@
         const navigate = useNavigate();
 
         useEffect(() => {
-            const fetchUserData = async () => {
+            const fetchVehicleData = async () => {
                 try {
                     const response = await axios.get('/user/profile');
                     const data = response.data;
@@ -31,7 +31,7 @@
                 }
             };
 
-            fetchUserData();
+            fetchVehicleData();
         }, [navigate]);
 
         const handleCadastro = async (e) => {
