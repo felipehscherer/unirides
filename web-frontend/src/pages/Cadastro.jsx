@@ -169,16 +169,16 @@ const Cadastro = () => {
     };
 
     try {
-      await axios.post('/register', dataToSend);
+      await axios.post('/auth/register', dataToSend);
       showError('success', 'Sucesso:', 'Cadastro realizado!');
       navigate('/login');
     } catch (error) {
-      if (error.response && error.response.status === 400) {
+      if (error.response && error.response.status === 403) {
         const errorMsg = error.response.data; 
         setErrorMessage(errorMsg);
         showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
       }else{
-        console.error('Erro ao cadastrar:', error);
+        showError('error', 'Erro:', "Algo deu errado..");
       }
     }
   };
