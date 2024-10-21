@@ -6,6 +6,7 @@ import br.com.unirides.loginauthapi.dto.user.RegisterRequestDTO;
 import br.com.unirides.loginauthapi.dto.user.ResponseDTO;
 import br.com.unirides.loginauthapi.exceptions.CpfAlreadyExistsException;
 import br.com.unirides.loginauthapi.exceptions.CpfInvalidoException;
+import br.com.unirides.loginauthapi.exceptions.GlobalExceptionHandler;
 import br.com.unirides.loginauthapi.exceptions.emailAlreadyExistsException;
 import br.com.unirides.loginauthapi.infra.security.TokenService;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
@@ -51,7 +52,10 @@ public class AuthControllerTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
         faker = new Faker();
     }
 
@@ -243,10 +247,11 @@ public class AuthControllerTest {
     @Test
     public void testLogin_Success_HTTP() throws Exception {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = "password"; // Senha de teste
         User mockUser = new User();
         mockUser.setEmail(email);
         mockUser.setPassword(password);
+        mockUser.setName(faker.name().fullName());
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(password, mockUser.getPassword())).thenReturn(true);
@@ -257,8 +262,9 @@ public class AuthControllerTest {
                         .content("{\"email\": \"" + email + "\", \"password\": \"" + password + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json("{\"email\": \"" + email + "\", \"token\": \"fake-token\"}"));
+                .andExpect(content().json("{\"name\": \"" + mockUser.getEmail() + "\", \"token\": \"fake-token\"}"));
     }
+
 
     @Test
     public void testLogin_UserNotFound_HTTP() throws Exception {
@@ -269,15 +275,9 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{ \"email\": \"nonexistent@example.com\", \"password\": \"password\" }"))
-                .andExpect(status().isBadRequest())  // Espera um status 400
-                .andExpect(content().string(""));  // Verifica que não há conteúdo na resposta
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(containsString("User not found")));  // Verifica a mensagem de erro
     }
-
-
-
-
-
-
 
     // Testes de Requisição HTTP para Registro
     @Test
@@ -313,7 +313,6 @@ public class AuthControllerTest {
         // Simula a resposta do repositório indicando que o CPF já existe
         when(userRepository.findByCpf(cpf)).thenReturn(Optional.of(new User()));
 
-        // Executa a requisição de registro e verifica se o status e a mensagem de erro estão corretos
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"" + request.name() + "\",\"email\":\"" + email + "\",\"cpf\":\"" + cpf + "\",\"password\":\"" + request.password() + "\"}"))
@@ -370,10 +369,10 @@ public class AuthControllerTest {
         RegisterRequestDTO invalidRequest = new RegisterRequestDTO(
                 faker.name().fullName(),
                 faker.internet().emailAddress(),
-                "12345678909",
-                "senha123",
+                "04935708026",
+                "Uu975656785@",
                 faker.phoneNumber().phoneNumber(),
-                "31/02/2023",
+                "31/02/2023", // Data inválida
                 faker.address().zipCode(),
                 faker.address().city(),
                 faker.address().state(),
@@ -385,6 +384,8 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"" + invalidRequest.name() + "\",\"email\":\"" + invalidRequest.email() + "\",\"cpf\":\"" + invalidRequest.cpf() + "\",\"password\":\"" + invalidRequest.password() + "\"}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Data inválida"))); // Verifica a mensagem de erro
     }
+
 }

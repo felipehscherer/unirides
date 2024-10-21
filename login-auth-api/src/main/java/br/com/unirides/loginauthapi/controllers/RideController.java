@@ -10,8 +10,10 @@ import br.com.unirides.loginauthapi.repositories.RideRepository;
 import br.com.unirides.loginauthapi.repositories.UserRepository;
 import br.com.unirides.loginauthapi.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,11 +39,11 @@ public class RideController {
     public ResponseEntity<Ride> createRide(@RequestBody CreateRideDTO rideDTO) {
         // Verificar se o motorista existe
         Driver driver = driverRepository.findById(rideDTO.getDriverId())
-                .orElseThrow(() -> new RuntimeException("Motorista não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Motorista não encontrado"));
 
         // Verificar se o veículo existe e está vinculado ao motorista
         Vehicle vehicle = vehicleRepository.findById(rideDTO.getVehicleId())
-                .orElseThrow(() -> new RuntimeException("Veículo não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
 
         if (!vehicle.getDriver().getId().equals(driver.getId())) {
             throw new RuntimeException("Veículo não vinculado ao motorista");
