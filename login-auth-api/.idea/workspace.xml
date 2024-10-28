@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bf604154-4d82-4dba-831d-a1a70c5b59a5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HELP.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/UniridesApiApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/config/DataSourceConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/controllers/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/controllers/DriverController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/controllers/RideController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/controllers/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/controllers/VehicleController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/domain/driver/Driver.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/domain/driver/DriverLicenseCategory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/domain/driver/Vehicle.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/domain/ride/Ride.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/domain/user/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/driver/DriverRequestDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/driver/DriverResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/ride/CreateRideDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/user/LoginRequestDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/user/RegisterRequestDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/user/ResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/user/UserResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/vehicle/VehicleRequestDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/dto/vehicle/VehicleResponseDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/CepInvalidoException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/CnhAlreadyRegisteredException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/CnhNotRegisteredException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/CpfAlreadyExistsException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/CpfInvalidoException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/DataInvalidaException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/InvalidCapacityException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/InvalidCnhException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/InvalidPlateException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/InvalidVehicleExeceptionException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/PlateAlreadyRegistered.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/UserNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/exceptions/emailAlreadyExistsException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/infra/cors/CorsConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/infra/security/CustomUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/infra/security/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/infra/security/SecurityFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/infra/security/TokenService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/repositories/DriverRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/repositories/RideRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/repositories/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/unirides/api/repositories/VehicleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/br/com/unirides/api/LoginAuthApiApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/br/com/unirides/api/controllers/AuthControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/br/com/unirides/api/controllers/RideControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/br/com/unirides/api/controllers/UserControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/br/com/unirides/api/repositories/UserRepositoryTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/UniridesApiApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/config/DataSourceConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/controllers/AuthController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/controllers/DriverController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/controllers/RideController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/controllers/UserController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/controllers/VehicleController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/domain/driver/Driver.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/domain/driver/DriverLicenseCategory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/domain/driver/Vehicle.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/domain/ride/Ride.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/domain/user/User.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/driver/DriverRequestDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/driver/DriverResponseDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/ride/CreateRideDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/user/LoginRequestDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/user/RegisterRequestDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/user/ResponseDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/user/UserResponseDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/vehicle/VehicleRequestDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/dto/vehicle/VehicleResponseDTO.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/CepInvalidoException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/CnhAlreadyRegisteredException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/CnhNotRegisteredException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/CpfAlreadyExistsException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/CpfInvalidoException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/DataInvalidaException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/GlobalExceptionHandler.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/InvalidCapacityException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/InvalidCnhException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/InvalidPlateException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/InvalidVehicleExeceptionException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/PlateAlreadyRegistered.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/UserNotFoundException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/exceptions/emailAlreadyExistsException.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/infra/cors/CorsConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/infra/security/CustomUserDetailsService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/infra/security/SecurityConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/infra/security/SecurityFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/infra/security/TokenService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/repositories/DriverRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/repositories/RideRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/repositories/UserRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/br/com/unirides/api/repositories/VehicleRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/login-auth-api-0.0.1-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/login-auth-api-0.0.1-SNAPSHOT.jar.original" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/br/com/unirides/loginauthapi/LoginAuthApiApplicationTests.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/br/com/unirides/loginauthapi/controllers/AuthControllerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/br/com/unirides/loginauthapi/controllers/RideControllerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/br/com/unirides/loginauthapi/controllers/UserControllerTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/test-classes/br/com/unirides/loginauthapi/repositories/UserRepositoryTest.class" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Interface" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;felipehscherer&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:felipehscherer/unirides.git&quot;,
+    &quot;accountId&quot;: &quot;c42696e4-4129-406e-a43e-3dc56395bd90&quot;
+  }
+}</component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2moOfrKvzCmzSHdswD4ovTlJiom" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.LoginAuthApiApplication.executor": "Run",
+    "Spring Boot.UniridesApiApplication.executor": "Run",
+    "git-widget-placeholder": "dev",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/felip/OneDrive/Documentos/Quarto Semestre/RPIV/unirides/unirides/unirides-api",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Spring Boot.UniridesApiApplication">
+    <configuration name="LoginAuthApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="unirides-api" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.unirides.loginauthapi.LoginAuthApiApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.unirides.loginauthapi.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UniridesApiApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="unirides-api" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.unirides.api.UniridesApiApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.unirides.api.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.UniridesApiApplication" />
+        <item itemvalue="Spring Boot.LoginAuthApiApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bf604154-4d82-4dba-831d-a1a70c5b59a5" name="Changes" comment="" />
+      <created>1727739572021</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727739572021</updated>
+      <workItem from="1727739573731" duration="3975000" />
+      <workItem from="1727829171339" duration="79000" />
+      <workItem from="1728309524975" duration="26000" />
+      <workItem from="1728520805084" duration="469000" />
+      <workItem from="1728575983569" duration="8510000" />
+      <workItem from="1728598435406" duration="3048000" />
+      <workItem from="1728690019737" duration="2433000" />
+      <workItem from="1728692482653" duration="1566000" />
+      <workItem from="1728768988640" duration="3103000" />
+      <workItem from="1728772136348" duration="1215000" />
+      <workItem from="1728778856044" duration="199000" />
+      <workItem from="1728924874758" duration="56000" />
+      <workItem from="1728942945372" duration="1299000" />
+      <workItem from="1729212329665" duration="464000" />
+      <workItem from="1729295543551" duration="295000" />
+      <workItem from="1729295913676" duration="11000" />
+      <workItem from="1729295993223" duration="86000" />
+      <workItem from="1729296290705" duration="645000" />
+      <workItem from="1729458623822" duration="3486000" />
+      <workItem from="1729518945334" duration="428000" />
+      <workItem from="1729542666741" duration="1395000" />
+      <workItem from="1729691470966" duration="185000" />
+      <workItem from="1730145010320" duration="578000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.RuntimeException" package="java.lang" />
+          <option name="timeStamp" value="10" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
