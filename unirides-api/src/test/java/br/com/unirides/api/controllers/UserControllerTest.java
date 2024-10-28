@@ -2,7 +2,7 @@ package br.com.unirides.api.controllers;
 
 import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.dto.user.UserResponseDTO;
-import br.com.unirides.api.repositories.UserRepository;
+import br.com.unirides.api.repository.UserRepository;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

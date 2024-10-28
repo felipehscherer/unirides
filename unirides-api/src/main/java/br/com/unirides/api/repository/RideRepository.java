@@ -1,4 +1,4 @@
-package br.com.unirides.api.repositories;
+package br.com.unirides.api.repository;
 
 import br.com.unirides.api.domain.ride.Ride;
 import org.springframework.data.jpa.repository.JpaRepository;

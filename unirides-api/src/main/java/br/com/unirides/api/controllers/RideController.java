@@ -1,22 +1,19 @@
-package br.com.unirides.api.controllers;
+package br.com.unirides.api.controller;
 
 import br.com.unirides.api.domain.driver.Driver;
 import br.com.unirides.api.domain.driver.Vehicle;
 import br.com.unirides.api.domain.ride.Ride;
+import br.com.unirides.api.domain.ride.RideStatus;
 import br.com.unirides.api.domain.user.User;
-import br.com.unirides.api.dto.ride.CreateRideDTO;
-import br.com.unirides.api.repositories.DriverRepository;
-import br.com.unirides.api.repositories.RideRepository;
-import br.com.unirides.api.repositories.UserRepository;
-import br.com.unirides.api.repositories.VehicleRepository;
+import br.com.unirides.api.dto.ride.RideCreationDTO;
+import br.com.unirides.api.dto.ride.RideJoinDTO;
+import br.com.unirides.api.repository.DriverRepository;
+import br.com.unirides.api.repository.RideRepository;
+import br.com.unirides.api.repository.UserRepository;
+import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -35,40 +32,76 @@ public class RideController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping
-    public ResponseEntity<Ride> createRide(@RequestBody CreateRideDTO rideDTO) {
-        // Verificar se o motorista existe
-        Driver driver = driverRepository.findById(rideDTO.getDriverId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Motorista não encontrado"));
+    @PostMapping("/create")
+    public ResponseEntity<?> createRide(@RequestBody RideCreationDTO rideCreationDTO) {
+        try {
+            Driver driver = driverRepository.findById(rideCreationDTO.getDriverId())
+                    .orElseThrow(() -> new IllegalArgumentException("Motorista não encontrado"));
 
-        // Verificar se o veículo existe e está vinculado ao motorista
-        Vehicle vehicle = vehicleRepository.findById(rideDTO.getVehicleId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
+            Vehicle vehicle = vehicleRepository.findById(rideCreationDTO.getVehicleId())
+                    .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
 
-        if (!vehicle.getDriver().getId().equals(driver.getId())) {
-            throw new RuntimeException("Veículo não vinculado ao motorista");
+            Ride ride = new Ride();
+            ride.setDriver(driver);
+            ride.setVehicle(vehicle);
+            ride.setDestinoInicial(rideCreationDTO.getDestinoInicial());
+            ride.setDestinoFinal(rideCreationDTO.getDestinoFinal());
+            ride.setLugaresDisponiveis(rideCreationDTO.getLugaresDisponiveis());
+            ride.setHorarioPartida(rideCreationDTO.getHorarioPartida());
+            ride.setHorarioChegada(rideCreationDTO.getHorarioChegada());
+            ride.setStatus(RideStatus.ABERTA);
+
+            rideRepository.save(ride);
+
+            return ResponseEntity.ok(ride);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
-        // Verificar se os passageiros existem
-        Set<User> passengers = new HashSet<>();
-        for (UUID passengerId : rideDTO.getPassengerIds()) {
+    @PostMapping("/{rideId}/join")
+    public ResponseEntity<?> joinRide(@PathVariable UUID rideId, @RequestBody RideJoinDTO rideJoinDTO) {
+        try {
+            Ride ride = rideRepository.findById(rideId)
+                    .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
+
+            if (ride.getStatus() != RideStatus.ABERTA) {
+                throw new IllegalStateException("Não é possível ingressar em uma carona que não está aberta");
+            }
+
+            if (ride.getLugaresDisponiveis() <= ride.getPassengers().size()) {
+                throw new IllegalStateException("Não há lugares disponíveis nesta carona");
+            }
+
+            User passenger = userRepository.findById(String.valueOf(rideJoinDTO.getPassengerId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
+
+            ride.getPassengers().add(passenger);
+            rideRepository.save(ride);
+
+            return ResponseEntity.ok(ride);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{rideId}/passengers/{passengerId}")
+    public ResponseEntity<?> cancelRide(@PathVariable UUID rideId, @PathVariable UUID passengerId) {
+        try {
+            Ride ride = rideRepository.findById(rideId)
+                    .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
+
             User passenger = userRepository.findById(String.valueOf(passengerId))
-                    .orElseThrow(() -> new RuntimeException("Passageiro não encontrado"));
-            passengers.add(passenger);
+                    .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
+
+            if (ride.getPassengers().remove(passenger)) {
+                rideRepository.save(ride);
+                return ResponseEntity.ok("Passageiro removido da carona com sucesso");
+            } else {
+                throw new IllegalStateException("O passageiro não está nesta carona");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        // Criar a carona
-        Ride ride = new Ride();
-        ride.setDriver(driver);
-        ride.setVehicle(vehicle);
-        ride.setPassengers(passengers);
-        ride.setParadas(rideDTO.getParadas()); // Aqui passamos a lista de paradas
-        ride.setLugaresDisponiveis(rideDTO.getLugaresDisponiveis());
-        ride.setHorarioPartida(rideDTO.getHorarioPartida());
-        ride.setHorarioChegada(rideDTO.getHorarioChegada());
-
-        Ride savedRide = rideRepository.save(ride);
-
-        return ResponseEntity.ok(savedRide);
     }
 }

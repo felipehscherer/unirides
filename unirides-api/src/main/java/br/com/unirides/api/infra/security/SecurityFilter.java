@@ -1,7 +1,7 @@
 package br.com.unirides.api.infra.security;
 
 import br.com.unirides.api.domain.user.User;
-import br.com.unirides.api.repositories.UserRepository;
+import br.com.unirides.api.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

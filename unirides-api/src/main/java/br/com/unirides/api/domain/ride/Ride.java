@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Ride {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -34,19 +34,20 @@ public class Ride {
 
     @ManyToMany
     @JoinTable(
+            // essa belezinha aqui vai garantir a relação caronaxpassageiro
             name = "ride_passengers",
             joinColumns = @JoinColumn(name = "ride_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            inverseJoinColumns = @JoinColumn(name = "passenger_id")
     )
-    private Set<User> passengers = new HashSet<>(); // TODO rever isso aqui tambem
+    private Set<User> passengers = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "ride_stops", joinColumns = @JoinColumn(name = "ride_id"))
-    @Column(name = "parada")
-    private List<String> paradas; // TODO rever isso aqui
-
+    private String destinoInicial;
+    private String destinoFinal;
     private int lugaresDisponiveis;
-
     private LocalDateTime horarioPartida;
     private LocalDateTime horarioChegada;
+
+    @Enumerated(EnumType.STRING)
+    private RideStatus status;
+
 }

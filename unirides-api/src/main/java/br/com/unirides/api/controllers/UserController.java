@@ -3,7 +3,7 @@ package br.com.unirides.api.controllers;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import br.com.unirides.api.dto.user.UserResponseDTO;
 import br.com.unirides.api.domain.user.User;
-import br.com.unirides.api.repositories.UserRepository;
+import br.com.unirides.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

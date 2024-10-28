@@ -6,7 +6,7 @@ import br.com.unirides.api.dto.user.RegisterRequestDTO;
 import br.com.unirides.api.dto.user.ResponseDTO;
 import br.com.unirides.api.exceptions.*;
 import br.com.unirides.api.infra.security.TokenService;
-import br.com.unirides.api.repositories.UserRepository;
+import br.com.unirides.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

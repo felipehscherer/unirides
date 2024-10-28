@@ -1,6 +1,7 @@
 package br.com.unirides.api.repositories;
 
 import br.com.unirides.api.domain.user.User;
+import br.com.unirides.api.repository.UserRepository;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

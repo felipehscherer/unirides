@@ -4,17 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class CreateRideDTO {
+public class RideCreationDTO {
     private UUID driverId;
     private UUID vehicleId;
-    private Set<UUID> passengerIds;
-    private List<String> paradas;
+    private String destinoInicial;
+    private String destinoFinal;
     private int lugaresDisponiveis;
     private LocalDateTime horarioPartida;
     private LocalDateTime horarioChegada;

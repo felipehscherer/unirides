@@ -9,7 +9,7 @@ import br.com.unirides.api.exceptions.CpfInvalidoException;
 import br.com.unirides.api.exceptions.GlobalExceptionHandler;
 import br.com.unirides.api.exceptions.emailAlreadyExistsException;
 import br.com.unirides.api.infra.security.TokenService;
-import br.com.unirides.api.repositories.UserRepository;
+import br.com.unirides.api.repository.UserRepository;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
