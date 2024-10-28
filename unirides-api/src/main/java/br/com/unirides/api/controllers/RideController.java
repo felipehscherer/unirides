@@ -1,4 +1,4 @@
-package br.com.unirides.api.controller;
+package br.com.unirides.api.controllers;
 
 import br.com.unirides.api.domain.driver.Driver;
 import br.com.unirides.api.domain.driver.Vehicle;
@@ -73,7 +73,7 @@ public class RideController {
                 throw new IllegalStateException("Não há lugares disponíveis nesta carona");
             }
 
-            User passenger = userRepository.findById(String.valueOf(rideJoinDTO.getPassengerId()))
+            User passenger = userRepository.findById(rideJoinDTO.getPassengerId())
                     .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
 
             ride.getPassengers().add(passenger);
@@ -91,7 +91,7 @@ public class RideController {
             Ride ride = rideRepository.findById(rideId)
                     .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
 
-            User passenger = userRepository.findById(String.valueOf(passengerId))
+            User passenger = userRepository.findById(passengerId)
                     .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
 
             if (ride.getPassengers().remove(passenger)) {

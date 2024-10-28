@@ -84,7 +84,7 @@ public class AuthController {
         if (responseOk){
             this.repository.save(newUser);
             String token = this.tokenService.generateToken(newUser);
-            return ResponseEntity.ok(new ResponseDTO(newUser.getName(), token));
+            return ResponseEntity.ok("Usuário cadastrado com sucesso!");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado!");
     }
