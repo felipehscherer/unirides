@@ -14,6 +14,9 @@ import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -104,4 +107,24 @@ public class RideController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/search")
+    public ResponseEntity<?> searchRides(@RequestBody Map<String, String> searchParams) {
+        try {
+            String destino = searchParams.get("destino");
+
+            List<Ride> rides = rideRepository.findByStatusAndDestinoInicialContainingIgnoreCaseOrStatusAndDestinoFinalContainingIgnoreCase(
+                    RideStatus.ABERTA, destino, RideStatus.ABERTA, destino);
+
+            if (rides.isEmpty()) {
+                throw new IllegalArgumentException("Nenhuma carona encontrada para este destino!");
+            }
+            
+            return ResponseEntity.ok(rides);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 }
