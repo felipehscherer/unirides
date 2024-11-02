@@ -11,6 +11,7 @@ import EditarVeiculo from "./pages/EditarVeiculo";
 import GerenciarVeiculo from "./pages/GerenciarVeiculo";
 import GerenciarMotorista from "./pages/GerenciarMotorista";
 import EditarMotorista from "./pages/EditarMotorista";
+import BuscarCarona from "./pages/BuscarCarona";
 // Importar outras páginas conforme necessário ou for criando
 // quando necessario proteger uma routa só chamar "</ProtectedRoute.js>" dentro da routa
 // exemplo <Route path="" element={<protectRoute> element </protectRoute>}
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/cadastro" element={<Cadastro />} />
                 <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
                 <Route path="/perfil" element={<protectRoute> <Perfil /> </protectRoute>} />
+                <Route path="/caronas" element={<protectRoute> <BuscarCarona /> </protectRoute>} />
                 <Route path="/motorista/gerenciar" element={<protectRoute> <GerenciarMotorista /> </protectRoute>} />
                 <Route path="/motorista/gerenciar/cadastro" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
                 <Route path="/motorista/gerenciar/editar" element={<protectRoute> <EditarMotorista /> </protectRoute>} />

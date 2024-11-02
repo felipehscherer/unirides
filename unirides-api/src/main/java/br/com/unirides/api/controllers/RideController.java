@@ -12,6 +12,7 @@ import br.com.unirides.api.repository.RideRepository;
 import br.com.unirides.api.repository.UserRepository;
 import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -117,9 +118,9 @@ public class RideController {
                     RideStatus.ABERTA, destino, RideStatus.ABERTA, destino);
 
             if (rides.isEmpty()) {
-                throw new IllegalArgumentException("Nenhuma carona encontrada para este destino!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mensagem de erro personalizada");
             }
-            
+
             return ResponseEntity.ok(rides);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
