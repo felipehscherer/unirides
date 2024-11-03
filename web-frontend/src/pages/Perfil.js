@@ -42,9 +42,56 @@ const Perfil = () => {
     fetchUserData();
   }, [navigate]);
 
+  // Funções de validação
+  const validateName = () => {
+    if (!name.trim()) {
+      return "Nome não pode estar vazio.";
+    } else if (name.length < 3 || name.length > 50) {
+      return "Nome deve ter entre 3 e 50 caracteres.";
+    } else if (!/^[A-Za-z\s]+$/.test(name)) {
+      return "Nome deve conter apenas letras.";
+    }
+    return null;
+  };
+
+  const validateEmail = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      return "E-mail não pode estar vazio.";
+    } else if (!emailRegex.test(email)) {
+      return "Formato de e-mail inválido.";
+    }
+    return null;
+  };
+
+  const validatePassword = () => {
+    if (newPassword && newPassword.length < 8) {
+      return "A nova senha deve ter no mínimo 8 caracteres.";
+    } else if (newPassword && !/[A-Z]/.test(newPassword)) {
+      return "A nova senha deve conter ao menos uma letra maiúscula.";
+    } else if (newPassword && !/[a-z]/.test(newPassword)) {
+      return "A nova senha deve conter ao menos uma letra minúscula.";
+    } else if (newPassword && !/[0-9]/.test(newPassword)) {
+      return "A nova senha deve conter ao menos um número.";
+    } else if (newPassword && !currentPassword) {
+      return "Informe a senha atual para mudar a senha.";
+    }
+    return null;
+  };
+
   const handleSaveAll = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    // Validando todos os campos
+    const nameError = validateName();
+    const emailError = validateEmail();
+    const passwordError = validatePassword();
+
+    if (nameError || emailError || passwordError) {
+      setErrorMessage(nameError || emailError || passwordError);
+      return;
+    }
 
     const updatedData = {};
     if (name !== initialData.name) updatedData.name = name;
@@ -171,7 +218,6 @@ const Perfil = () => {
             Gerenciar Veiculos
           </button>
         </div>
-
 
         <button
             className="btn-home"
