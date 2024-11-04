@@ -1,5 +1,11 @@
 package br.com.unirides.api.controllers;
 
+import br.com.unirides.api.domain.driver.Driver;
+import br.com.unirides.api.dto.user.UserDriverInfoResponseDTO;
+import br.com.unirides.api.exceptions.UserNotFoundException;
+import br.com.unirides.api.exceptions.VehicleNotFoundException;
+import br.com.unirides.api.repository.DriverRepository;
+import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import br.com.unirides.api.dto.user.UserResponseDTO;
 import br.com.unirides.api.domain.user.User;
@@ -24,6 +30,12 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DriverRepository driverRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getProfile() {
@@ -224,5 +236,37 @@ public class UserController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/driver-info")
+    public ResponseEntity<UserDriverInfoResponseDTO> getInfoDriver() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        String email;
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            email = user.getEmail();
+        } else {
+            System.out.println("Erro ao buscar usuario");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Busca o Driver e o Vehicle usando o userId
+        Driver driver = driverRepository.findDriverByUsuarioEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Motorista não encontrado"));
+
+        UserDriverInfoResponseDTO responseDTO;
+        if (driverRepository.findDriverByUsuarioEmail(email).isPresent() &&
+                vehicleRepository.findFirstActiveVehicleByDriverId(driver.getId()).isPresent()){
+            responseDTO = new UserDriverInfoResponseDTO(true);
+
+        }else{
+            responseDTO = new UserDriverInfoResponseDTO(false);
+        }
+
+        return ResponseEntity.ok(responseDTO);
+
+
     }
 }

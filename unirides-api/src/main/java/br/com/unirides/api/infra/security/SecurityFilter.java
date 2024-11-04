@@ -1,6 +1,7 @@
 package br.com.unirides.api.infra.security;
 
 import br.com.unirides.api.domain.user.User;
+import br.com.unirides.api.exceptions.UserNotFoundException;
 import br.com.unirides.api.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,7 +57,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var login = tokenService.validateToken(token);
 
         if(login != null){
-            User user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
+            User user = userRepository.findByEmail(login).orElseThrow(() -> new UserNotFoundException("User Not Found"));
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);

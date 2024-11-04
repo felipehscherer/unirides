@@ -7,6 +7,11 @@ import br.com.unirides.api.domain.ride.RideStatus;
 import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.dto.ride.RideCreationDTO;
 import br.com.unirides.api.dto.ride.RideJoinDTO;
+import br.com.unirides.api.dto.ride.RideSearchDTO;
+import br.com.unirides.api.dto.ride.RideSearchResponseDTO;
+import br.com.unirides.api.exceptions.UserNotFoundException;
+import br.com.unirides.api.exceptions.VehicleNotFoundException;
+import br.com.unirides.api.infra.security.TokenService;
 import br.com.unirides.api.repository.DriverRepository;
 import br.com.unirides.api.repository.RideRepository;
 import br.com.unirides.api.repository.UserRepository;
@@ -16,9 +21,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/rides")
@@ -36,24 +43,59 @@ public class RideController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createRide(@RequestBody RideCreationDTO rideCreationDTO) {
-        try {
-            Driver driver = driverRepository.findById(rideCreationDTO.getDriverId())
-                    .orElseThrow(() -> new IllegalArgumentException("Motorista não encontrado"));
+    TokenService tokenService;
 
-            Vehicle vehicle = vehicleRepository.findById(rideCreationDTO.getVehicleId())
-                    .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
+    @Autowired
+    public RideController(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createRide(@RequestHeader("Authorization") String token, @RequestBody RideCreationDTO rideCreationDTO) {
+        try {
+            // Valida o token e recupera o userId
+            String email = tokenService.validateToken(token.replace("Bearer ", "")); // Supondo que você extraiu o email do token
+            if (email == null) {
+                throw new IllegalArgumentException("Token inválido ou expirado");
+            }
+
+            // Busca o Driver e o Vehicle usando o userId
+            Driver driver = driverRepository.findDriverByUsuarioEmail(email)
+                    .orElseThrow(() -> new UserNotFoundException("Motorista não encontrado"));
+
+            Vehicle vehicle = vehicleRepository.findFirstActiveVehicleByDriverId(driver.getId())
+                    .orElseThrow(() -> new VehicleNotFoundException("Veículo não encontrado"));
+
+            if (rideCreationDTO.getDesiredPassengersNumber() > vehicle.getCapacity()){
+                throw new IllegalArgumentException("Limite de passageiros excedido!");
+            }
 
             Ride ride = new Ride();
-            ride.setDriver(driver);
-            ride.setVehicle(vehicle);
-            ride.setDestinoInicial(rideCreationDTO.getDestinoInicial());
-            ride.setDestinoFinal(rideCreationDTO.getDestinoFinal());
-            ride.setLugaresDisponiveis(rideCreationDTO.getLugaresDisponiveis());
-            ride.setHorarioPartida(rideCreationDTO.getHorarioPartida());
-            ride.setHorarioChegada(rideCreationDTO.getHorarioChegada());
+            ride.setDriverId(driver.getId());
+            ride.setVehicleId(vehicle.getId());
+            ride.setCnh(driver.getNumeroCnh());
+            ride.setOrigin(rideCreationDTO.getOrigin());
+            ride.setDestination(rideCreationDTO.getDestination());
+            ride.setOriginAddress(rideCreationDTO.getOriginAddress());
+            ride.setDestinationAddress(rideCreationDTO.getDestinationAddress());
+            ride.setDate(rideCreationDTO.getDate());
+            ride.setTime(rideCreationDTO.getTime());
+            ride.setDesiredPassengersNumber(rideCreationDTO.getDesiredPassengersNumber());
+            ride.setPassengersLimit(vehicle.getCapacity());
+            ride.setPrice(rideCreationDTO.getPrice());
+            ride.setDistance(rideCreationDTO.getDistance());
+            ride.setDuration(rideCreationDTO.getDuration());
             ride.setStatus(RideStatus.ABERTA);
+            ride.setFreeSeatsNumber(rideCreationDTO.getDesiredPassengersNumber());
+
+
+            if (!rideRepository.getRideByAllArguments(
+                    rideCreationDTO.getOrigin(), rideCreationDTO.getDestination(), rideCreationDTO.getDistance(),
+                    driver.getId(), rideCreationDTO.getDate(),
+                    rideCreationDTO.getTime()).isEmpty()
+            ){
+                throw new IllegalArgumentException("Carona já cadastrada!");
+            }
 
             rideRepository.save(ride);
 
@@ -73,12 +115,12 @@ public class RideController {
                 throw new IllegalStateException("Não é possível ingressar em uma carona que não está aberta");
             }
 
-            if (ride.getLugaresDisponiveis() <= ride.getPassengers().size()) {
+            if (ride.getFreeSeatsNumber() <= ride.getPassengers().size()) {
                 throw new IllegalStateException("Não há lugares disponíveis nesta carona");
             }
 
             User passenger = userRepository.findById(rideJoinDTO.getPassengerId())
-                    .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
+                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
 
             ride.getPassengers().add(passenger);
             rideRepository.save(ride);
@@ -96,7 +138,7 @@ public class RideController {
                     .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
 
             User passenger = userRepository.findById(passengerId)
-                    .orElseThrow(() -> new IllegalArgumentException("Passageiro não encontrado"));
+                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
 
             if (ride.getPassengers().remove(passenger)) {
                 rideRepository.save(ride);
@@ -110,18 +152,39 @@ public class RideController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchRides(@RequestBody Map<String, String> searchParams) {
+    public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
         try {
-            String destino = searchParams.get("destino");
-
-            List<Ride> rides = rideRepository.findByStatusAndDestinoInicialContainingIgnoreCaseOrStatusAndDestinoFinalContainingIgnoreCase(
-                    RideStatus.ABERTA, destino, RideStatus.ABERTA, destino);
+            List<Ride> rides = rideRepository.findByDestinationContainingIgnoreCase(searchDTO.getDestination());
 
             if (rides.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mensagem de erro personalizada");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
             }
 
-            return ResponseEntity.ok(rides);
+            // Converte as entidades `Ride` para `RideDTO`
+            List<RideSearchResponseDTO> rideDTOs = rides.stream().map(ride -> {
+                RideSearchResponseDTO dto = new RideSearchResponseDTO();
+                dto.setOrigin(ride.getOrigin());
+                dto.setDestination(ride.getDestination());
+                dto.setOriginAddress(ride.getOriginAddress());
+                dto.setDestinationAddress(ride.getDestinationAddress());
+                dto.setPrice(ride.getPrice());
+
+                Driver driver = driverRepository.findById(ride.getDriverId()).orElseThrow(
+                        () -> new UserNotFoundException("Motorista não encontrado")
+                );
+                User user = userRepository.findUserIdByDriverId(driver.getId()).orElseThrow(
+                        () -> new UserNotFoundException("Usuário não encontrado")
+                );
+
+                dto.setDriverName(user.getName());  // Exemplo, supondo que tenha um objeto `driver`
+                dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
+                dto.setDate(ride.getDate());  // Converte para string, se necessário
+                dto.setDuration(ride.getDuration());
+                dto.setDistance(ride.getDistance());
+                return dto;
+            }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(rideDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
