@@ -19,12 +19,17 @@ function Home() {
           >
             Meu Perfil
           </button>
+          
           <button
               className="home-button"
               onClick={() => navigate('/caronas')}
-          >
-            Caronas
-          </button>
+          >Procurar Caronas</button>
+
+          <button
+              className="home-button"
+              onClick={() => navigate('/cadastro-carona')}
+          >Oferecer Caronas</button>
+
           <button
               className="home-button"
               onClick={() => navigate('/horarios-onibus')}
