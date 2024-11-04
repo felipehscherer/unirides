@@ -27,15 +27,27 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
 
-    private static final List<String> EXCLUDED_PATHS = Arrays.asList("/auth/login", "/auth/register");
+    private static final List<String> EXCLUDED_PATHS = Arrays.asList("/auth/login", "/auth/register", "/api/distance");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
 
+        // Adicionar log para debug
+        logger.debug("Requested URI: " + uri);
+        logger.debug("Is excluded path: " + EXCLUDED_PATHS.contains(uri));
+
+        // Verificar se a URI começa com algum dos caminhos excluídos
+        boolean isExcludedPath = EXCLUDED_PATHS.stream()
+                .anyMatch(path -> uri.startsWith(path));
+
         if (EXCLUDED_PATHS.contains(uri)) {
             // Não aplicar o filtro aos endpoints públicos
+            // Adicionar headers CORS aqui para rotas públicas
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
             filterChain.doFilter(request, response);
             return;
         }
