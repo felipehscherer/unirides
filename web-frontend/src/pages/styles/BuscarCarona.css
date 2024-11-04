@@ -38,7 +38,7 @@
   border-radius: 4px;
 }
 
-.ride-search-box button {
+.buscar-carona-box-button {
   width: 100%;
   padding: 10px;
   background-color: #43A715;
@@ -47,6 +47,7 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin-bottom: 0.3rem;
 }
 
 .ride-search-box button:hover {
@@ -87,3 +88,103 @@
   margin: 5px 0;
   color: #333333;
 }
+
+.ride-registration {
+  max-width: 500px;
+  margin: auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ride-registration h2 {
+  text-align: center;
+}
+
+.ride-registration label {
+  font-weight: bold;
+  margin-top: 1rem;
+  display: block;
+}
+
+.ride-registration input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.ride-registration .suggestions-list {
+  list-style: none;
+  padding: 0rem;
+  margin-top: 0.2rem;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+}
+
+.suggestions-list li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background-color: #3ead44;
+}
+
+.suggestion-item {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #d9eeda;
+}
+
+.confirmar-carona-button{
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1.5rem;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.confirmar-carona-button:hover {
+  background-color: #45a049;
+}
+
+.data-hora-box{
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+}
+
+.input-data{
+  width: 130px;
+  padding-right: 10px;
+  height: '15px';
+}
+
+
+.custom-toast {
+  position: fixed;
+  bottom: 20px; /* Ajuste conforme necessário */
+  left: 20px; /* Ajuste conforme necessário */
+  z-index: 9999; /* Garantir que fique sobreposto ao conteúdo */
+  width: 400px;
+  height: 90px;
+}
+
+.custom-toast .p-message {
+  margin-bottom: 0.5rem; /* Espaçamento entre múltiplos alertas, se necessário */
+}
+
+

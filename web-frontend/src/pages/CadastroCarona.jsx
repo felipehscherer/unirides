@@ -21,6 +21,8 @@ const CadastroCarona = () => {
     const [distanceInKm, setDistanceInKm] = useState(null)
     const [duration, setDuration] = useState(null)
     const [errorMessage, setErrorMessage] = useState('');
+    const [originAddress, setOriginAddress] = useState('');
+    const [destinationAddress, setDestinationAddress] = useState('');
     const messagesRef = useRef(null);
 
     const showError = (severity, summary, detail) => {
@@ -124,11 +126,18 @@ const CadastroCarona = () => {
             }
     
             const element = data.rows[0].elements[0];
-    
             if (element.status === "OK") {
                 setDuration(element.duration.text);
                 setDistanceInKm(element.distance.text);
                 setSuggestedPrice(calculatePrice(element.distance.value/1000));
+
+                setOriginAddress(data.origin_addresses[0])
+                setDestinationAddress(data.destination_addresses[0])
+
+                console.log('desT:' + destinationAddress)
+                console.log('desCRU:' + data.destination_addresses[0])
+                console.log('origin:' + originAddress)
+                console.log('originCRU:' + data.origin_addresses[0])
                 return true;
             } else {
                 showError('error', 'Erro:', 'Não foi possível calcular a distância');
@@ -180,22 +189,24 @@ const CadastroCarona = () => {
         }
         
         const dataToSend = {
-            origin: originPosition,
-            destination: destinationPosition,
+            origin: `${originPosition.lat},${originPosition.lng}`,
+            destination: `${destinationPosition.lat},${destinationPosition.lng}`,
+            originAddress: originAddress, 
+            destinationAddress: destinationAddress,
             date: date,
             time: time,
-            passengersNumber: passengers,
+            desiredPassengersNumber: passengers,
             price: suggestedPrice,
             distance: distanceInKm,
             duration: duration
         }
 
         try {
-            await axios.post('/home/cadastro-carona', dataToSend);
+            await axios.post('/rides/create', dataToSend);
             showError('success', 'Sucesso:', 'Cadastro realizado!');
             //navigate('/login');
           } catch (error) {
-            if (error.response && error.response.status === 403) {
+            if (error.response && (error.response.status === 403 || error.response.status === 400)) {
               const errorMsg = error.response.data; 
               setErrorMessage(errorMsg);
               showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
@@ -333,7 +344,7 @@ const CadastroCarona = () => {
                 color: isConfirmarEnabled ? "white" : "#aaa",
                 cursor: isConfirmarEnabled ? "pointer" : "not-allowed",
             }}>
-            Agendar Carona
+            Oferecer Carona
       </button>
 
       <Messages className='custom-toast' ref={messagesRef} />
