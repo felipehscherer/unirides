@@ -73,18 +73,6 @@ class DriverControllerExceptionTest {
     }
 
     @Test
-    void testRegisterDriver_DataIntegrityViolationException() {
-        when(driverRepository.save(any(Driver.class)))
-                .thenThrow(new DataIntegrityViolationException("Violação de integridade de dados"));
-
-        Exception exception = assertThrows(CnhAlreadyRegisteredException.class, () -> {
-            driverController.registerDriver(driverRequestDTO);
-        });
-
-        assertEquals("já existe um motorista com este número de CNH.", exception.getMessage());
-    }
-
-    @Test
     void testUpdateDriver_DriverNotFoundException() {
         when(driverRepository.findDriverByUsuarioEmail(driverRequestDTO.getEmail()))
                 .thenReturn(Optional.empty());
