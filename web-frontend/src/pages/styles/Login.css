@@ -61,3 +61,14 @@
     background-color: #389e12; /* Cor um pouco mais escura ao passar o mouse */
   }
   
+  .custom-toast {
+    position: fixed;
+    bottom: 20px; /* Ajuste conforme necessário */
+    left: 20px; /* Ajuste conforme necessário */
+    z-index: 9999; /* Garantir que fique sobreposto ao conteúdo */
+    width: 470px;
+  }
+  
+  .custom-toast .p-message {
+    margin-bottom: 0.5rem; /* Espaçamento entre múltiplos alertas, se necessário */
+  }

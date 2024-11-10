@@ -98,7 +98,7 @@ public class VehicleController {
 
             if (validarVeiculo(data.plate(), data.capacity())) {
 
-                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver);
+                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver, true);
 
                 vehicleRepository.save(vehicleData);
 
@@ -117,9 +117,9 @@ public class VehicleController {
         if (!Vehicle.validateCapacity(capacity)) {
             throw new InvalidCapacityException("Capacidade do veiculo invalida");
         }
-        if (!Vehicle.validatePlate(plate)) {
-            throw new InvalidPlateException("Placa do veiculo invalida!");
-        }
+        //if (!Vehicle.validatePlate(plate)) {
+            //throw new InvalidPlateException("Placa do veiculo invalida!");
+        //}
         if (vehicleRepository.findByPlate(plate).isPresent()) {
             throw new PlateAlreadyRegistered("Placa do Veiculo ja registrada");
         }
