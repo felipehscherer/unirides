@@ -29,6 +29,7 @@ public class Vehicle {
     @JsonIgnore
     @JoinColumn(name = "driver_id", nullable = false)
     private Driver driver;
+    boolean isActive;
 
     @JsonProperty("driver_id")
     public UUID getDriverId() {

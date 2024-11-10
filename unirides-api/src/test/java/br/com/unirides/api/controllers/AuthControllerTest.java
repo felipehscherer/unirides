@@ -7,7 +7,7 @@ import br.com.unirides.api.dto.user.ResponseDTO;
 import br.com.unirides.api.exceptions.CpfAlreadyExistsException;
 import br.com.unirides.api.exceptions.CpfInvalidoException;
 import br.com.unirides.api.exceptions.GlobalExceptionHandler;
-import br.com.unirides.api.exceptions.emailAlreadyExistsException;
+import br.com.unirides.api.exceptions.EmailAlreadyExistsException;
 import br.com.unirides.api.infra.security.TokenService;
 import br.com.unirides.api.repository.UserRepository;
 import com.github.javafaker.Faker;
@@ -192,7 +192,7 @@ public class AuthControllerTest {
 
         when(userRepository.findByEmail(registerRequest.email())).thenReturn(Optional.of(new User()));
 
-        assertThrows(emailAlreadyExistsException.class, () -> authController.register(registerRequest));
+        assertThrows(EmailAlreadyExistsException.class, () -> authController.register(registerRequest));
     }
 
     @Test

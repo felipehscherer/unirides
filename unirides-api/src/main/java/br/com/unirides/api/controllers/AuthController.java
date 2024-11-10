@@ -33,7 +33,7 @@ public class AuthController {
             String token = this.tokenService.generateToken(user);
             return ResponseEntity.ok(new ResponseDTO(user.getEmail(), token));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Credenciais Inválidas");
     }
 
     @PostMapping("/register")
@@ -43,7 +43,7 @@ public class AuthController {
         if (this.repository.findByCpf(body.cpf()).isPresent()) {
             throw new CpfAlreadyExistsException("Usuário com este CPF já cadastrado!");
         } else if (this.repository.findByEmail(body.email()).isPresent()) {
-            throw new emailAlreadyExistsException("E-mail já cadastrado!");
+            throw new EmailAlreadyExistsException("E-mail já cadastrado!");
         }else{
             if (User.validateCpf(body.cpf())){
                 newUser.setCpf(body.cpf());
@@ -86,6 +86,6 @@ public class AuthController {
             String token = this.tokenService.generateToken(newUser);
             return ResponseEntity.ok("Usuário cadastrado com sucesso!");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado!");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu erradoo!");
     }
 }

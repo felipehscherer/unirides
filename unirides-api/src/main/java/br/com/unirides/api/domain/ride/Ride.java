@@ -6,8 +6,10 @@ import br.com.unirides.api.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,13 +26,13 @@ public class Ride {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "driver_id", nullable = false)
-    private Driver driver;
-
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicle;
+//    @ManyToOne
+//    @JoinColumn(name = "driver_id", nullable = false)
+//    private Driver driver;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "vehicle_id", nullable = false)
+//    private Vehicle vehicle;
 
     @ManyToMany
     @JoinTable(
@@ -41,13 +43,24 @@ public class Ride {
     )
     private Set<User> passengers = new HashSet<>();
 
-    private String destinoInicial;
-    private String destinoFinal;
-    private int lugaresDisponiveis;
-    private LocalDateTime horarioPartida;
-    private LocalDateTime horarioChegada;
+    private UUID driverId;
+    private UUID vehicleId;
+    private String cnh;
+    private String origin;
+    private String destination;
+    private String originAddress;
+    private String destinationAddress;
+    private LocalDate date;
+    private String time;
+    private int desiredPassengersNumber;
+    private int passengersLimit;
+    private String price;
+    private String distance;
+    private String duration;
+    private int freeSeatsNumber;
 
     @Enumerated(EnumType.STRING)
     private RideStatus status;
+
 
 }
