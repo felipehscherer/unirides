@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from '../services/axiosConfig';
 import {useNavigate} from 'react-router-dom';
 import './styles/Perfil.css';
+import {Messages} from "primereact/messages";
 
 const Perfil = () => {
     const [initialData, setInitialData] = useState({});
@@ -18,6 +19,7 @@ const Perfil = () => {
     const navigate = useNavigate();
     const [motorista, setMotorista] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const messagesRef = useRef(null);
 
 
     useEffect(() => {
@@ -58,6 +60,17 @@ const Perfil = () => {
 
         fetchUserData();
     }, [navigate]);
+
+
+    const showError = (severity, summary, detail) => {
+        messagesRef.current.clear();
+        messagesRef.current?.show({
+            severity: severity,
+            summary: summary,
+            detail: detail,
+            life: 5000
+        });
+    };
 
     // Funções de validação
     const validateName = () => {
@@ -153,11 +166,17 @@ const Perfil = () => {
             await axios.delete(`/vehicle/delete/AllByUserEmail/${email}`)
 
             await axios.delete(`/driver/delete/${email}`);
-            alert('Cnh desvinculada com sucesso!');
-            navigate('/home')
+            const mensagem = "Cnh desvinculada com sucesso!"
+
+            showError('success', 'Sucesso:', mensagem);
+            setTimeout(() => {
+                navigate('/home');
+            }, 2000);
         } catch (error) {
-            console.error('Erro ao desvincular cnh:', error);
-            alert(error);
+            if (error.response && error.response.status === 400) {
+                const errorMsg = error.response.data;
+                showError('error', 'Erro:', errorMsg);
+            }
         }
     };
 
@@ -252,46 +271,46 @@ const Perfil = () => {
                 <div className="button-container-driver">
                     {motorista ? (
                         <>
-                        <div className="button-container-driver-vehicle">
-                            <div className={'button-container-driver'}>
-                                <button
-                                    className="button-driver-vehicle"
-                                    onClick={() => navigate('/motorista/gerenciar/editar')}
-                                >
-                                    Editar Cnh
-                                </button>
-                                <button className="button-driver-vehicle" onClick={() => handleDeleteClick(email)}>
-                                    Deletar Cnh
-                                </button>
-                                {/* Modal de Exclusão */}
-                                {isDeleteModalOpen && (
-                                    <div className="modal-overlay">
-                                        <div className="modal-content">
-                                            <h2>Confirmar Exclusão</h2>
-                                            <p>Você tem certeza que deseja desvincular sua cnh?
-                                                Todos os seus veiculos vinculados serao deletados
-                                            </p>
-                                            <div>
-                                                <div className="button-container">
-                                                    <button className={'manage-Btn'} onClick={handleConfirmDelete}>✔
-                                                        Confirmar
-                                                    </button>
-                                                    <button className={'manage-Btn'}
-                                                            onClick={closeDeleteModal}>❌
-                                                        Cancelar
-                                                    </button>
+                            <div className="button-container-driver-vehicle">
+                                <div className={'button-container-driver'}>
+                                    <button
+                                        className="button-driver-vehicle"
+                                        onClick={() => navigate('/motorista/gerenciar/editar')}
+                                    >
+                                        Editar Cnh
+                                    </button>
+                                    <button className="button-driver-vehicle" onClick={() => handleDeleteClick(email)}>
+                                        Deletar Cnh
+                                    </button>
+                                    {/* Modal de Exclusão */}
+                                    {isDeleteModalOpen && (
+                                        <div className="modal-overlay">
+                                            <div className="modal-content">
+                                                <h2>Confirmar Exclusão</h2>
+                                                <p>Você tem certeza que deseja desvincular sua cnh?
+                                                    Todos os seus veiculos vinculados serao deletados
+                                                </p>
+                                                <div>
+                                                    <div className="button-container">
+                                                        <button className={'manage-Btn'} onClick={handleConfirmDelete}>✔
+                                                            Confirmar
+                                                        </button>
+                                                        <button className={'manage-Btn'}
+                                                                onClick={closeDeleteModal}>❌
+                                                            Cancelar
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    </div>
                                     )}
-                            </div>
-                            <div className="button-container-driver">
-                                <button
-                                    className="button-driver-vehicle"
-                                    onClick={() => navigate('/veiculo/gerenciar/cadastro')}
-                                >
-                                    Cadastrar Veiculo
+                                </div>
+                                <div className="button-container-driver">
+                                    <button
+                                        className="button-driver-vehicle"
+                                        onClick={() => navigate('/veiculo/gerenciar/cadastro')}
+                                    >
+                                        Cadastrar Veiculo
                                     </button>
                                     <button
                                         className="button-driver-vehicle"
@@ -300,27 +319,28 @@ const Perfil = () => {
                                         Visualizar Veiculos
                                     </button>
                                 </div>
-                        </div>
-                                </>
-                                ) : (
-                                <>
-                                <button className="button-driver-vehicle"
-                                onClick={() => navigate('/motorista/gerenciar/cadastro')}>
-                            Cadastrar Cnh
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <button className="button-driver-vehicle"
+                                    onClick={() => navigate('/motorista/gerenciar/cadastro')}>
+                                Cadastrar Cnh
                             </button>
-            </>
-            )}
-            <div/>
+                        </>
+                    )}
+                    <div/>
+                </div>
+                <button
+                    className="btn-home"
+                    onClick={() => navigate('/home')}
+                >
+                    Voltar para home
+                </button>
+                <Messages className='custom-toast' ref={messagesRef}/>
+            </div>
         </div>
-    <button
-        className="btn-home"
-        onClick={() => navigate('/home')}
-    >
-        Voltar para home
-    </button>
-</div>
-</div>
-)
+    )
 }
 
 export default Perfil;

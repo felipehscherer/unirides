@@ -6,10 +6,7 @@ import br.com.unirides.api.domain.driver.Vehicle;
 import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.dto.vehicle.VehicleRequestDTO;
 import br.com.unirides.api.dto.vehicle.VehicleResponseDTO;
-import br.com.unirides.api.exceptions.CnhNotRegisteredException;
-import br.com.unirides.api.exceptions.InvalidCapacityException;
-import br.com.unirides.api.exceptions.InvalidPlateException;
-import br.com.unirides.api.exceptions.PlateAlreadyRegistered;
+import br.com.unirides.api.exceptions.*;
 import br.com.unirides.api.repository.DriverRepository;
 import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +82,6 @@ public class VehicleController {
         return ResponseEntity.ok(vehicleResponseDTOList);
     }
 
-    //metodo para criar um novo veículo
     @PostMapping("/register")
     public ResponseEntity<VehicleResponseDTO> createVeiculo(@RequestBody VehicleRequestDTO data) {
 
@@ -98,7 +94,7 @@ public class VehicleController {
 
             if (validarVeiculo(data.plate(), data.capacity())) {
 
-                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate(), driver, true);
+                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate().toUpperCase(), driver, true);
 
                 vehicleRepository.save(vehicleData);
 
@@ -114,47 +110,61 @@ public class VehicleController {
     }
 
     public boolean validarVeiculo(String plate, int capacity) {
+
         if (!Vehicle.validateCapacity(capacity)) {
-            throw new InvalidCapacityException("Capacidade do veiculo invalida");
+            throw new CapacityInvalidException("Capacidade do veiculo invalida");
         }
-        //if (!Vehicle.validatePlate(plate)) {
-            //throw new InvalidPlateException("Placa do veiculo invalida!");
-        //}
+        if (!Vehicle.validatePlate(plate.toUpperCase())) {
+            throw new PlateInvalidException("Placa do veiculo invalida!");
+        }
         if (vehicleRepository.findByPlate(plate).isPresent()) {
             throw new PlateAlreadyRegistered("Placa do Veiculo ja registrada");
         }
         return true;
     }
 
-    // meotodo para atualizar um veiculo pela placa
     @PutMapping("/update/{plate}")
     public ResponseEntity<VehicleResponseDTO> updateVeiculo(@PathVariable String plate, @RequestBody VehicleRequestDTO updatedVeiculo) {
 
         Optional<Vehicle> veiculoOpt = vehicleRepository.findByPlate(plate);
 
         if (veiculoOpt.isPresent()) {
+            if (updatedVeiculo.plate() != null &&
+                    vehicleRepository.existsByPlateAndIdNot(updatedVeiculo.plate(), veiculoOpt.get().getId())) {
+                throw new PlateAlreadyRegistered("Já existe um veículo registrado com esta placa");
+            }
+
+            if (!Vehicle.validateCapacity(updatedVeiculo.capacity())) {
+                throw new CapacityInvalidException("Capacidade do veiculo invalida");
+            }
+
+            if (!Vehicle.validatePlate(updatedVeiculo.plate().toUpperCase())) {
+                throw new PlateInvalidException("Placa do veiculo invalida!");
+            }
+
+            if (vehicleRepository.existsByPlateAndIdNot(plate, veiculoOpt.get().getId())) {
+                throw new PlateAlreadyRegistered("Placa do Veiculo ja registrada");
+            }
+
             Vehicle vehicle = veiculoOpt.get();
+
             vehicle.setModel(updatedVeiculo.model());
             vehicle.setBrand(updatedVeiculo.brand());
-            vehicle.setPlate(updatedVeiculo.plate());
             vehicle.setColor(updatedVeiculo.color());
             vehicle.setCapacity(updatedVeiculo.capacity());
-
-            if (!Vehicle.validateCapacity(vehicle.getCapacity())) {
-                throw new InvalidCapacityException("Capacidade do veiculo invalida");
-            }
+            vehicle.setPlate(updatedVeiculo.plate().toUpperCase());
 
             vehicleRepository.save(vehicle);
 
             VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle);
 
             return ResponseEntity.status(201).body(responseDTO);
+
         }
 
         return ResponseEntity.notFound().build();
     }
 
-    // metodo para deletar um veiculo pela placa
     @DeleteMapping("/delete/{plate}")
     public ResponseEntity<Void> deleteVeiculo(@PathVariable String plate) {
 

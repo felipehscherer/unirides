@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from '../services/axiosConfig';
 import './styles/ApresentarVeiculos.css';
 import {useNavigate} from 'react-router-dom';
+import {Messages} from "primereact/messages";
 
 function ApresentarVeiculos() {
     const [vehicles, setVehicles] = useState([]);
@@ -10,6 +11,7 @@ function ApresentarVeiculos() {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [email, setEmail] = useState('');
+    const messagesRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -68,11 +70,29 @@ function ApresentarVeiculos() {
         try {
             await axios.delete(`/vehicle/delete/${plate}`);
             setVehicles(vehicles.filter(vehicle => vehicle.plate !== plate));
-            alert('Veículo deletado com sucesso!');
+            const mensagem = "Veículo deletado com sucesso!"
+
+            showError('success', 'Sucesso:', mensagem);
+            setTimeout(() => {
+                navigate('/perfil');
+            }, 2000);
+
         } catch (error) {
-            console.error('Erro ao deletar veículo:', error);
-            alert('Ocorreu um erro ao tentar deletar o veículo.');
+            if (error.response && error.response.status === 400) {
+                const errorMsg = error.response.data;
+                showError('error', 'Erro:', errorMsg);
+            }
         }
+    };
+
+    const showError = (severity, summary, detail) => {
+        messagesRef.current.clear();
+        messagesRef.current?.show({
+            severity: severity,
+            summary: summary,
+            detail: detail,
+            life: 5000
+        });
     };
 
     const handleConfirmDelete = () => {
@@ -164,6 +184,8 @@ function ApresentarVeiculos() {
                     Voltar para Perfil
                 </button>
             </div>
+            <Messages className='custom-toast' ref={messagesRef} />
+
         </div>
     )
 }

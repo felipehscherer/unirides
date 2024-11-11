@@ -6,7 +6,9 @@ import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.dto.driver.DriverRequestDTO;
 import br.com.unirides.api.dto.driver.DriverResponseDTO;
 import br.com.unirides.api.exceptions.CnhAlreadyRegisteredException;
-import br.com.unirides.api.exceptions.InvalidCnhException;
+import br.com.unirides.api.exceptions.CnhInvalidCategoryException;
+import br.com.unirides.api.exceptions.CnhInvalidDateException;
+import br.com.unirides.api.exceptions.CnhInvalidFormatException;
 import br.com.unirides.api.repository.DriverRepository;
 import br.com.unirides.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +59,19 @@ public class DriverController {
         }
 
         if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
-            throw new InvalidCnhException("Formato da cnh invalida");
+            throw new CnhInvalidFormatException("Formato da cnh invalida");
         }
 
         if (!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())) {
-            throw new InvalidCnhException("Data da cnh Invalida");
+            throw new CnhInvalidDateException("Data da cnh Invalida");
         }
 
         if (driverRepository.findByNumeroCnh(motoristaDTO.getNumeroCnh()).isPresent()) {
             throw new CnhAlreadyRegisteredException("Já existe um motorista registrado com este numero de CNH");
+        }
+
+        if (!Driver.validarCategoria(motoristaDTO.getCategoria())) {
+            throw new CnhInvalidCategoryException("Categoria invalida");
         }
         return true;
     }
@@ -96,11 +102,11 @@ public class DriverController {
                 }
 
                 if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
-                    throw new InvalidCnhException("Formato da CNH inválido");
+                    throw new CnhInvalidFormatException("Formato da CNH inválido");
                 }
 
                 if (!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())) {
-                    throw new InvalidCnhException("Data da CNH inválida");
+                    throw new CnhInvalidFormatException("Data da CNH inválida");
                 }
 
                 driver.setNumeroCnh(motoristaDTO.getNumeroCnh());
@@ -114,8 +120,8 @@ public class DriverController {
             } else {
                 return ResponseEntity.status(404).body("Motorista não encontrado.");
             }
-        } catch (InvalidCnhException e) {
-            throw new InvalidCnhException(e.getMessage());
+        } catch (CnhInvalidFormatException e) {
+            throw new CnhInvalidFormatException(e.getMessage());
         } catch (DataIntegrityViolationException e) {
             throw new CnhAlreadyRegisteredException("já existe um motorista com este número de CNH.");
         } catch (Exception e) {

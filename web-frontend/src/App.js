@@ -8,7 +8,6 @@ import CadastroVeiculo from "./pages/CadastroVeiculo";
 import Perfil from "./pages/Perfil";
 import ApresentarVeiculos from "./pages/ApresentarVeiculos";
 import EditarVeiculo from "./pages/EditarVeiculo";
-import GerenciarMotorista from "./pages/GerenciarMotorista";
 import EditarMotorista from "./pages/EditarMotorista";
 import BuscarCarona from "./pages/BuscarCarona";
 import CadastroCarona from './pages/CadastroCarona';
@@ -26,7 +25,6 @@ function App() {
                 <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
                 <Route path="/perfil" element={<protectRoute> <Perfil /> </protectRoute>} />
                 <Route path="/caronas" element={<protectRoute> <BuscarCarona /> </protectRoute>} />
-                <Route path="/motorista/gerenciar" element={<protectRoute> <GerenciarMotorista /> </protectRoute>} />
                 <Route path="/motorista/gerenciar/cadastro" element={<protectRoute> <CadastroMotorista /> </protectRoute>} />
                 <Route path="/motorista/gerenciar/editar" element={<protectRoute> <EditarMotorista /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />

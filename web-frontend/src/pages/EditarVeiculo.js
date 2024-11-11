@@ -1,23 +1,32 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/EditarVeiculo.css';
 import logoImage from '../assets/logo.jpg';
+import {Messages} from "primereact/messages";
 
 function EditarVeiculo() {
-    const {plate} = useParams();
+    const { plate } = useParams();
     const [color, setColor] = useState('');
     const [capacity, setCapacity] = useState('');
     const [model, setModel] = useState('');
     const [brand, setBrand] = useState('');
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [plateState, setPlate] = useState('');
+    const messagesRef = useRef(null);
+
 
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchVehicleData = async () => {
             try {
+                const response = await axios.get('/user/profile');
+                const data = response.data;
+
+                setEmail(data.email);
+
                 const responseVeiculo = await axios.get(`/vehicle/get/${plate}`);
                 const vehicleData = responseVeiculo.data;
 
@@ -25,6 +34,7 @@ function EditarVeiculo() {
                 setCapacity(vehicleData.capacity || '');
                 setModel(vehicleData.model || '');
                 setBrand(vehicleData.brand || '');
+                setPlate(vehicleData.plate || ''); // Atualiza a variável de estado usada no formulário
 
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
@@ -39,21 +49,38 @@ function EditarVeiculo() {
         fetchVehicleData();
     }, [plate]);
 
+
+    const showError = (severity, summary, detail) => {
+        messagesRef.current.clear();
+        messagesRef.current?.show({
+            severity: severity,
+            summary: summary,
+            detail: detail,
+            life: 5000
+        });
+    };
+
     const handleCadastro = async (e) => {
         e.preventDefault();
 
         try {
-            await axios.put(
-                `vehicle/update/${plate}`,
-                {email, color, capacity, model, brand, plate}
-            );
+            const dados = { email, color, capacity, model, brand, plate: plateState };
+            console.log(dados);
 
-            navigate('/perfil');
+            const response = await axios.put(`vehicle/update/${plate}`, dados);
+
+            const mensagem = "Veiculo atualizado com Sucesso!"
+
+            showError('success', 'Sucesso:', mensagem);
+
+            setTimeout(() => {
+                navigate('/perfil');
+            }, 2000);
+
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const errorMsg = error.response.data;
-                setErrorMessage(errorMsg);
-                alert(errorMsg);
+                showError('error', 'Erro:', errorMsg);
             }
         }
     };
@@ -62,7 +89,7 @@ function EditarVeiculo() {
         <div className="edit-container-vehicle">
             <div className="edit-box-vehicle">
                 <form onSubmit={handleCadastro}>
-                    <img src={logoImage} alt="Logo" className="edit-logo-vehicle"/>
+                    <img src={logoImage} alt="Logo" className="edit-logo-vehicle" />
 
                     <p className="edit-title-vehicle">Edite as informações do seu carro</p>
 
@@ -110,20 +137,22 @@ function EditarVeiculo() {
                     <input
                         id="plate"
                         type="text"
-                        value={plate}
-                        readOnly
+                        value={plateState}
+                        onChange={(e) => setPlate(e.target.value)}
                         placeholder="Placa"
+                        required
                     />
 
-                    <button type="submit" className={'button-edit-vehicle'}>📝 Salvar</button>
+                    <button type="submit" className="button-edit-vehicle">📝 Salvar</button>
                     <button
-                        className={'btn-profile-vehicle'}
+                        className="btn-profile-vehicle"
                         onClick={() => navigate('/perfil')}
                     >
                         Voltar para Perfil
                     </button>
                 </form>
             </div>
+            <Messages className='custom-toast' ref={messagesRef} />
         </div>
     );
 }

@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/EditarMotorista.css';
 import logoImage from "../assets/logo.jpg";
+import {Messages} from "primereact/messages";
 
 function EditarMotorista() {
     const [email, setEmail] = useState('');
@@ -11,6 +12,8 @@ function EditarMotorista() {
     const [dataValidade, setDataValidade] = useState('');
     const [categoria, setCategoria] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const messagesRef = useRef(null);
+
 
     const navigate = useNavigate();
 
@@ -52,16 +55,31 @@ function EditarMotorista() {
                 `driver/update/${email}`,
                 dados
             );
-            alert('Dados de motorista atualizado com Sucesso!');
-            navigate('/perfil');
+            const mensagem = "Dados de motorista atualizado com Sucesso!"
+
+            showError('success', 'Sucesso:', mensagem);
+            setTimeout(() => {
+                navigate('/perfil');
+            }, 2000);
+
         } catch (error) {
-            if (error.response) {
+            if (error.response && error.response.status === 400) {
                 const errorMsg = error.response.data;
-                setErrorMessage(errorMsg);
-                alert(errorMsg);
+                showError('error', 'Erro:', errorMsg);
             }
         }
     };
+
+    const showError = (severity, summary, detail) => {
+        messagesRef.current.clear();
+        messagesRef.current?.show({
+            severity: severity,
+            summary: summary,
+            detail: detail,
+            life: 5000
+        });
+    };
+
 
     return (
         <div className="edit-container-driver">
@@ -111,6 +129,7 @@ function EditarMotorista() {
                     Voltar para Perfil
                 </button>
             </form>
+            <Messages className='custom-toast' ref={messagesRef} />
         </div>
     );
 }

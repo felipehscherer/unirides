@@ -61,6 +61,20 @@
     background-color: green;
 }
 
+.custom-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 400px;
+    height: 90px;
+}
+
+.custom-toast .p-message {
+    margin-bottom: 0.5rem;
+}
+
+
 .btn-profile-vehicle{
     background-color: #007bff;
     color: white;

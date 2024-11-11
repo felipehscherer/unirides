@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/CadastroVeiculo.css';
 import logoImage from '../assets/logo.jpg';
+import {Messages} from "primereact/messages";
 
 function CadastroVeiculo() {
     const [email, setEmail] = useState('');
@@ -12,6 +13,8 @@ function CadastroVeiculo() {
     const [brand, setBrand] = useState('');
     const [plate, setPlate] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const messagesRef = useRef(null);
+
 
     const navigate = useNavigate();
 
@@ -39,23 +42,40 @@ function CadastroVeiculo() {
         try {
 
             try {
+
+                const dados = {email, color, capacity, model, brand, plate};
                 const response = await axios.post(
-                    'vehicle/register',
-                    {email, color, capacity, model, brand, plate}
+                    'vehicle/register',dados
+
                 );
-                alert('Cadastro Realizado com sucesso!');
-                navigate('/perfil');
+                const mensagem = "Cadastro Realizado com sucesso!"
+
+                showError('success', 'Sucesso:', mensagem);
+                setTimeout(() => {
+                    navigate('/perfil');
+                }, 2000);
             } catch (error) {
                 if (error.response && error.response.status === 400) {
                     const errorMsg = error.response.data;
-                    setErrorMessage(errorMsg);
-                    alert(errorMsg);
+                    showError('error', 'Erro:', errorMsg);
+
                 }
             }
         } catch (error) {
             console.error("Erro ao cadastrar o veiculo:", error);
         }
     };
+
+    const showError = (severity, summary, detail) => {
+        messagesRef.current.clear();
+        messagesRef.current.show({
+            severity: severity,
+            summary: summary,  // Mensagem de resumo
+            detail: detail,    // Detalhe do erro
+            life: 5000         // Tempo de exibição
+        });
+
+    }
 
     return (
         <div className="register-container-vehicle">
@@ -116,6 +136,7 @@ function CadastroVeiculo() {
                         Voltar para Perfil
                     </button>
                 </form>
+                <Messages className='custom-toast' ref={messagesRef} />
             </div>
         </div>
     )

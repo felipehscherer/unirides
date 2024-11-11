@@ -37,13 +37,14 @@ public class Vehicle {
     }
 
     public static boolean validatePlate(String strPlate) {
-        final String REGEX_MERCOSUL = "^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
-        final String REGEX_PRE_MERCOSUL = "^[A-Z]{3}-[0-9]{4}$";
-        final String REGEX_ANTIGO = "^[A-Z]{2}-[0-9]{1,4}$";
+        final String REGEX_MERCOSUL = "^[A-Z]{3}[0-9][A-Z][0-9]{2}$";        // 7 caracteres fixos
+        final String REGEX_PRE_MERCOSUL = "^[A-Z]{3}-[0-9]{4}$";              // 8 caracteres fixos
+        final String REGEX_ANTIGO = "^[A-Z]{2}-[0-9]{1,4}$";                  // 4 a 7 caracteres
 
-        return strPlate.matches(REGEX_MERCOSUL) || strPlate.matches(REGEX_PRE_MERCOSUL) || strPlate.matches(REGEX_ANTIGO);
+        return (strPlate.length() == 7 && strPlate.matches(REGEX_MERCOSUL)) ||
+                (strPlate.length() == 8 && strPlate.matches(REGEX_PRE_MERCOSUL)) ||
+                (strPlate.length() >= 4 && strPlate.length() <= 7 && strPlate.matches(REGEX_ANTIGO));
     }
-
     public static boolean validateCapacity(int capacityInt) {
         return (capacityInt > 1 && capacityInt < 8);
     }
