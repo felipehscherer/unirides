@@ -59,74 +59,71 @@ function EditarVeiculo() {
     };
 
     return (
-        <div className="update-container">
-            <form className="update-box" onSubmit={handleCadastro}>
-                <button
-                    className="btn-back"
-                    onClick={() => navigate('/veiculo/gerenciar/apresentarLista')}
-                >
-                    ↩
-                </button>
-                <img src={logoImage} alt="Logo" className="update-logo"/>
-                <p className="update-title">✏️ Edite as informações do seu carro</p>
+        <div className="edit-container-vehicle">
+            <div className="edit-box-vehicle">
+                <form onSubmit={handleCadastro}>
+                    <img src={logoImage} alt="Logo" className="edit-logo-vehicle"/>
 
-                <label htmlFor="color" className="update-label">🔵 Digite a cor</label>
-                <input
-                    id="color"
-                    type="text"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Cor"
-                    required
-                />
+                    <p className="edit-title-vehicle">Edite as informações do seu carro</p>
 
-                <label htmlFor="capacity" className="update-label">💺 Digite a capacidade</label>
-                <input
-                    id="capacity"
-                    type="text"
-                    value={capacity}
-                    onChange={(e) => setCapacity(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Capacidade"
-                    required
-                />
+                    <label htmlFor="color" className="edit-label-vehicle">Digite a cor</label>
+                    <input
+                        id="color"
+                        type="text"
+                        value={color}
+                        onChange={(e) => setColor(e.target.value)}
+                        placeholder="Cor"
+                        required
+                    />
 
-                <label htmlFor="model" className="update-label">🚙 Digite o modelo</label>
-                <input
-                    id="model"
-                    type="text"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Modelo"
-                    required
-                />
+                    <label htmlFor="capacity" className="edit-label-vehicle">Digite a capacidade</label>
+                    <input
+                        id="capacity"
+                        type="text"
+                        value={capacity}
+                        onChange={(e) => setCapacity(e.target.value)}
+                        placeholder="Capacidade"
+                        required
+                    />
 
-                <label htmlFor="brand" className="update-label">🏷️ Digite a marca</label>
-                <input
-                    id="brand"
-                    type="text"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
-                    className={'inputBox'}
-                    placeholder="Marca"
-                    required
-                />
+                    <label htmlFor="model" className="edit-label-vehicle">Digite o modelo</label>
+                    <input
+                        id="model"
+                        type="text"
+                        value={model}
+                        onChange={(e) => setModel(e.target.value)}
+                        placeholder="Modelo"
+                        required
+                    />
 
-                <label htmlFor="plate" className="update-label">🔢 Digite a placa</label>
-                <input
-                    id="plate"
-                    type="text"
-                    value={plate}
-                    readOnly
-                    className={'inputBox'}
-                    placeholder="Placa"
-                    required
-                />
+                    <label htmlFor="brand" className="edit-label-vehicle">Digite a marca</label>
+                    <input
+                        id="brand"
+                        type="text"
+                        value={brand}
+                        onChange={(e) => setBrand(e.target.value)}
+                        placeholder="Marca"
+                        required
+                    />
 
-                <button type="submit">📝 Salvar</button>
-            </form>
+                    <label htmlFor="plate" className="edit-label-vehicle">Digite a placa</label>
+                    <input
+                        id="plate"
+                        type="text"
+                        value={plate}
+                        readOnly
+                        placeholder="Placa"
+                    />
+
+                    <button type="submit" className={'button-edit-vehicle'}>📝 Salvar</button>
+                    <button
+                        className={'btn-profile-vehicle'}
+                        onClick={() => navigate('/perfil')}
+                    >
+                        Voltar para Perfil
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

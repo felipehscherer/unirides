@@ -1,51 +1,35 @@
-.register-container {
+.register-container-vehicle{
+    display: flex;
     justify-content: center;
-    text-align: center;
+    align-items: center;
     height: 100vh;
-    background-color: #D9D9D9;
+    background-color: #f0f2f5;
 }
-
-.btn-back{
-    background-color: #D9D9D9;
-    max-width: 50px;
-    float: left;
-}
-
-.input-container input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.register-box {
-    background-color: #ffffff;
+.register-box-vehicle{
+    background-color: #fff;
     padding: 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
     max-height: 900px;
     height: 100%;
-    max-width: 450px;
+    max-width: 600px;
     width: 100%;
-
 }
 
-.register-logo {
-    max-width: 80%;
+.register-logo-vehicle{
+    max-width: 70%;
     height: auto;
-    margin-top: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.register-title {
+.register-title-vehicle{
     font-size: 24px;
     margin-bottom: 30px;
     color: #000000;
 }
 
-.register-label {
+.register-label-vehicle{
     display: block;
     text-align: left;
     margin-bottom: 5px;
@@ -53,26 +37,42 @@
     color: #000000;
 }
 
-.register-box input {
+.register-box-vehicle input{
     display: block;
     width: 100%;
     margin-bottom: 20px;
     padding: 10px;
-    border: 1px solid #ffffff;
+    border: 1px solid #ccc;
     border-radius: 4px;
-}
-.register-box button {
-    width: 100%;
-    padding: 10px;
-    background-color: #43A715;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
 }
 
-.register-box button:hover {
-    background-color: #389e12;
+.button-register-vehicle{
+    background-color: #089F08;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
 }
-  
+.button-register-vehicle:hover{
+    background-color: green;
+}
+
+.btn-profile-vehicle{
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 12px;
+    margin-top: auto;
+}
+
+.btn-profile-vehicle:hover{
+    background-color: #0056b3;
+}

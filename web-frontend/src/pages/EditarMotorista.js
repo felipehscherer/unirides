@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from '../services/axiosConfig';
-import './styles/CadastroMotorista.css';
+import './styles/EditarMotorista.css';
 import logoImage from "../assets/logo.jpg";
 
 function EditarMotorista() {
@@ -47,8 +47,6 @@ function EditarMotorista() {
 
         const dados = {email, numeroCnh, dataEmissao, dataValidade, categoria}
 
-        console.log(dados)
-
         try {
             const response = await axios.put(
                 `driver/update/${email}`,
@@ -66,56 +64,52 @@ function EditarMotorista() {
     };
 
     return (
-        <div className="register-container">
-            <form className="register-box" onSubmit={handleCadastro}>
-                <button
-                    className="btn-back"
-                    onClick={() => navigate('/perfil')}
-                >
-                    ↩
-                </button>
+        <div className="edit-container-driver">
+            <form className="edit-box-driver" onSubmit={handleCadastro}>
                 <img src={logoImage} alt="Logo" className="register-logo"/>
 
-                <p className="register-title">✏️ Edite suas as informações </p>
+                <p className="edit-title-driver">Edite suas as informações </p>
 
-                <label htmlFor="numeroCnh" className="register-label">🪪 Digite o numero da sua CNH</label>
+                <label htmlFor="numeroCnh" className="edit-label-driver">Digite o numero da sua CNH</label>
                 <input
                     type="text"
                     value={numeroCnh}
                     onChange={(e) => setNumeroCnh(e.target.value)}
-                    className={'input-container'}
                     placeholder="Cnh"
                     required
                 />
-                <label htmlFor="dataEmissao" className="register-label">📆 Digite a data de emissão</label>
+                <label htmlFor="dataEmissao" className="edit-label-driver">Digite a data de emissão</label>
                 <input
                     type="date"
                     value={dataEmissao}
                     onChange={(e) => setDataEmissao(e.target.value)}
-                    className={'input-container'}
                     placeholder="Data de Emissao"
                     required
                 />
-                <label htmlFor="dataValidade" className="register-label">📆 Digite a data de validade</label>
+                <label htmlFor="dataValidade" className="edit-label-driver">Digite a data de validade</label>
                 <input
                     type="date"
                     value={dataValidade}
                     onChange={(e) => setDataValidade(e.target.value)}
-                    className={'input-container'}
                     placeholder="Data de validade"
                     required
                 />
-                <label htmlFor="categoria" className="register-label">🔠 Digite a categoria</label>
+                <label htmlFor="categoria" className="edit-label-driver">Digite a categoria</label>
                 <input
                     type="text"
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
-                    className={'input-container'}
                     placeholder="Categoria"
                     required
                 />
 
-                <button type="submit">📝 Cadastrar</button>
+                <button type="submit" className={'button-edit-driver'}>Cadastrar</button>
+                <button
+                    className={'btn-profile-driver'}
+                    onClick={() => navigate('/perfil')}
+                >
+                    Voltar para Perfil
+                </button>
             </form>
         </div>
     );
