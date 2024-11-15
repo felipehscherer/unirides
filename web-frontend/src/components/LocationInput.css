@@ -1,0 +1,38 @@
+.ride-registration .suggestions-list {
+    list-style: none;
+    padding: 0rem;
+    margin-top: 0.2rem;
+    max-height: 150px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+  }
+
+  .ride-registration{
+    padding:0rem;
+  }
+  
+  .suggestions-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .suggestions-list li:hover {
+    background-color: #3ead44;
+  }
+
+  .suggestion-item {
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .suggestion-item:hover {
+    background-color: #d9eeda;
+  }
+
+  .input-data{
+    width: 130px;
+    padding-right: 10px;
+    height: '15px';
+  }

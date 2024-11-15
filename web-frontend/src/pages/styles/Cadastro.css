@@ -3,9 +3,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
     overflow-y: auto;
     box-sizing: border-box;
+    background-color: #D9D9D9; /* Cor cinza de fundo */
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
   
 .titleContainer {
@@ -16,6 +18,27 @@
     align-items: center;
     justify-content: center;
     color: darkgreen;
+}
+
+#div-form-completo {
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF; /* Fundo branco */
+  padding: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Leve sombra */
+  border-radius: 8px;
+  text-align: center;
+  max-width: 1000px;
+  width: 100%;
+  height: fit-content;
+}
+
+#div-infos-endereco{
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  justify-items: space-between;
+  align-items: center;
 }
   
 .resultContainer,
@@ -59,8 +82,9 @@
 
   .errorLabel{
     color: red;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 800;
+    align-self: center;
   }
   
   .inputBox {
@@ -80,7 +104,6 @@
     padding: 12px 24px;
     margin: 8px;
     font-size: 24px;
-    border-radius: 8px;
     cursor: pointer;
     align-self: center;
 }
@@ -92,14 +115,6 @@
     align-content: center;
     align-items: center;
     text-align: center;
-}
-
-.div-infos-endereco{
-  flex-direction: column;
-  display: flex;
-  justify-content: space-between;
-  justify-items: space-between;
-  align-items: center;
 }
 
 .login-logo{
@@ -116,11 +131,6 @@
   box-sizing: border-box;
 }
 
-#div-form-completo {
-  height: 100%;
-  overflow-y: auto; 
-}
-
 .cadastrar:hover {
   background-color: green;
 }
@@ -128,6 +138,116 @@
 body{
   overflow-x: auto;
   overflow-y: auto;
-  background: rgb(191,255,176);
-  background: linear-gradient(90deg, rgba(191,255,176,0.31976540616246496) 30%, rgba(238,255,241,0) 52%, rgba(191,255,176,0.3701855742296919) 70%);
+}
+
+#input-box-numero{
+  width: 100px;
+  height: 48px;
+  font-size: large;
+  border-radius: 8px;
+  border: 1px solid grey;
+  align-self: center;
+  text-align: center;
+}
+
+#input-box-complemento{
+  width: 280px;
+  height: 48px;
+  font-size: large;
+  border-radius: 8px;
+  border: 1px solid grey;
+  align-self: center;
+  padding-left: 8px;
+}
+
+#complemento-numero{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#input-container-senha{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-bottom: 12px;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.circle {
+  width: 25px;
+  height: 25px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  /*background-color: #4CAF50; */
+  color: white;
+  background-color: red;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Move the tooltip above the circle */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%; /* Bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+#box-senha{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-self: center;
+  padding-top: 15px;
+}
+
+.tooltip-hidden > span{
+  visibility: hidden;
+}
+
+.custom-toast {
+  position: fixed;
+  bottom: 20px; /* Ajuste conforme necessário */
+  left: 20px; /* Ajuste conforme necessário */
+  z-index: 9999; /* Garantir que fique sobreposto ao conteúdo */
+  width: 470px;
+}
+
+.custom-toast .p-message {
+  margin-bottom: 0.5rem; /* Espaçamento entre múltiplos alertas, se necessário */
 }
