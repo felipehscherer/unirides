@@ -243,7 +243,7 @@ public class RideControllerTest {
         UUID driverId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
         RideCreationDTO rideCreationDTO = new RideCreationDTO();
-        rideCreationDTO.setDriverId(driverId);
+        rideCreationDTO.setdriverId(driverId);
         rideCreationDTO.setVehicleId(vehicleId);
         rideCreationDTO.setDestinoInicial("A");
         rideCreationDTO.setDestinoFinal("B");
@@ -279,7 +279,7 @@ public class RideControllerTest {
         Ride ride = new Ride();
         ride.setId(rideId);
         ride.setStatus(RideStatus.ABERTA);
-        ride.setLugaresDisponiveis(3);
+        ride.setfreeSeatsNumber(3);
         when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
 
         User passenger = new User();
@@ -323,8 +323,8 @@ public class RideControllerTest {
         // Configurar o comportamento do repositório
         List<Ride> rides = new ArrayList<>();
         Ride ride = new Ride();
-        ride.setDestinoInicial("A");
-        ride.setDestinoFinal("B");
+        ride.setOrigin("A");
+        ride.setDestination("B");
         rides.add(ride);
         when(rideRepository.findByStatusAndDestinoInicialContainingIgnoreCaseOrStatusAndDestinoFinalContainingIgnoreCase(
                 RideStatus.ABERTA, destino, RideStatus.ABERTA, destino)).thenReturn(rides);

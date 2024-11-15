@@ -4,7 +4,7 @@ import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.exceptions.CpfAlreadyExistsException;
 import br.com.unirides.api.exceptions.CpfInvalidoException;
 import br.com.unirides.api.exceptions.DataInvalidaException;
-import br.com.unirides.api.exceptions.emailAlreadyExistsException;
+import br.com.unirides.api.exceptions.EmailAlreadyExistsException;
 import br.com.unirides.api.exceptions.CepInvalidoException;
 import br.com.unirides.api.repository.UserRepository;
 
@@ -24,7 +24,7 @@ public class UserValidationUtils {
 
     public static void validateEmail(String email, UserRepository repository) {
         if (repository.findByEmail(email).isPresent()) {
-            throw new emailAlreadyExistsException("E-mail já cadastrado!");
+            throw new EmailAlreadyExistsException("E-mail já cadastrado!");
         }
     }
 

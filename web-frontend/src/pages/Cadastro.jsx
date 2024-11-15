@@ -3,6 +3,9 @@ import axios from '../services/axiosConfig';
 import "./styles/Cadastro.css"
 import { useNavigate } from 'react-router-dom';
 import InputMask from 'react-input-mask';
+import PasswordValidator from '../components/PasswordValidator.js';
+import DateValidator from '../components/DateValidator.js';
+import CpfValidator from '../components/CpfValidator.js';
 import logoImage from '../assets/logo.png';
 import { Messages } from 'primereact/messages';
 // Importações de estilos do PrimeReact
@@ -25,7 +28,7 @@ const Cadastro = () => {
   const [estado, setEstado] = useState('')
   const [endereco, setEndereco] = useState('')
   const [complemento, setComplemento] = useState('')
-  const [numero, setNumero] = useState('') 
+  const [numero, setNumero] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordError, setPasswordError] = useState('')
@@ -43,6 +46,22 @@ const Cadastro = () => {
       detail: detail,    // Detalhe do erro
       life: 5000         // Tempo de exibição
     });
+  };
+
+  const [cpfError, setCpfError] = useState(false); //
+  const [isError, setIsError] = useState(false);
+  const [cepError, setCepError] = useState(null);
+  const [isTyping, setIsTyping] = useState(false); //
+
+
+    const handleDateChange = (ev) => {
+        const date = ev.target.value;
+        setDataNascimento(date);
+};
+
+  const handleCpfChange = (ev) => {
+    const cpfValue = ev.target.value;
+    setCpf(cpfValue); // Atualiza o estado do CPF
   };
 
   const handleCepChange = async (e) => {
@@ -66,95 +85,25 @@ const Cadastro = () => {
     }
   };
 
-  const validateDate = (date) => {
-    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;  //regex DD/MM/AAAA
-      if (!dateRegex.test(date)) {
-      return false;
-    }
-    const [day, month, year] = date.split('/').map(Number);
+const handlePasswordFocus = () => {
+  setIsTyping(true); // Marca que o usuário está começando a digitar
+};
 
-    //Date vai ajustar datas inválidas automaticamente, precisamos verificar que isso nao ocorreu
-    const parsedDate = new Date(year, month - 1, day); // Mês começa em 0
-    const data = new Date();
-    const anoAtual = data.getFullYear();
-    return (
-      parsedDate.getFullYear() === year &&
-      parsedDate.getFullYear() <= (anoAtual - 16) && //ano de nascimento de pelo menos 16 anos atras
-      parsedDate.getMonth() === month - 1 &&
-      parsedDate.getDate() === day
-    );
-  };
-  
-  const handleDateChange = (ev) => {
-    const date = ev.target.value;
-    setDataNascimento(date)
-  
-    if (date.length>= 10 && !validateDate(date)) {
-      showError('warn', 'Alerta:', '16 anos é a idade mínima para registro!');
-    } 
-  };
-
-  function TestaCPF(strCPF) {  //código da receita federal + modificações
-    var Soma;
-    var Resto;
-    Soma = 0;
-    if (strCPF.split('').every(c => c === cpf[0])) {  //testa se todos os numeros são iguais
-      return false;
-    }
-
-    for (let i=1; i<=9; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
-    Resto = (Soma * 10) % 11;
-
-    if ((Resto === 10) || (Resto === 11))  Resto = 0;
-    if (Resto !== parseInt(strCPF.substring(9, 10)) ) return false;
-
-    Soma = 0;
-    for (let i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i);
-    Resto = (Soma * 10) % 11;
-
-    if ((Resto === 10) || (Resto === 11))  Resto = 0;
-    if (Resto !== parseInt(strCPF.substring(10, 11) ) ) return false;
-    return true;
-  }
-
-  const handleCpfChange = (ev) => {
-    const cpf = ev.target.value;
-    setCpf(cpf)
-  
-    if (cpf.length>=14 && !TestaCPF(cpf.replace(/\D/g, ''))) { 
-      showError('error', 'Erro:', 'CPF Inválido!');
-    }
-  };
-
+const handlePasswordBlur = () => {
+  setIsTyping(false); // Marca que o usuário parou de digitar
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setPasswordError('')
     setGenericError('')
-    if(!(password === passwordConfirm)){
-      setPasswordError('As senhas não coincidem')
-      return
-    }else if (password.length < 8) {
-      setPasswordError('A senha deve ter 8 caracteres ou mais')
-      return
-    }else if(!regexUpperCase.test(password)){
-      setPasswordError('A senha deve conter ao menos uma letra maiúscula')
-      return
-    }else if(!regexSpecialChar.test(password)){
-      setPasswordError('A senha deve conter ao menos um caracter especial')
-      return
-    }else if(!regexNumber.test(password)){
-      setPasswordError('A senha deve conter ao menos um número')
-      return
-    }else if(!regexLowerCase.test(password)){
-      setPasswordError('A senha deve conter ao menos uma letra minúscula')
-      return
-    }else if(name.trim().split(' ').length < 2){
+     if(name.trim().split(' ').length < 2){
       setGenericError('Campo "Nome" incompleto!')
       return
     }
 
+
     const dataToSend = {  //remoção de mascaras
-      name: name, 
+      name: name,
       email: email,
       cpf: cpf.replace(/\D/g, ''),
       password: password,
@@ -174,7 +123,7 @@ const Cadastro = () => {
       navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        const errorMsg = error.response.data; 
+        const errorMsg = error.response.data;
         setErrorMessage(errorMsg);
         showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
       }else{
@@ -190,10 +139,10 @@ const Cadastro = () => {
         <img src={logoImage} alt="Logo" className="login-logo" />
       </div>
 
-        <form onSubmit={handleSubmit}> 
+        <form onSubmit={handleSubmit}>
           <div id='div-infos-endereco'>
             <div id='div-infos-basicas'>
-              
+
               <div className='centro'>
                 <h3>Algumas Informações Básicas</h3>
               </div>
@@ -223,21 +172,22 @@ const Cadastro = () => {
               </div>
 
               <div className='inputContainer'>
-                  <InputMask 
-                    mask="999.999.999-99" 
-                    maskChar={null} 
+                  <InputMask
+                    mask="999.999.999-99"
+                    maskChar={null}
                     placeholder='CPF'
                     value={cpf}
                     onChange={(ev) => handleCpfChange(ev)}
                     className={'inputBox'}
                     required
-                  /> 
+                  />
+                        <CpfValidator cpf={cpf} onError={setCpfError} showError={showError} />
               </div>
 
               <div className='inputContainer'>
                 <InputMask
-                  mask={telefone === '' ? null : "(99) 99999-9999"} 
-                  maskChar={null} 
+                  mask={telefone === '' ? null : "(99) 99999-9999"}
+                  maskChar={null}
                   placeholder='Telefone'
                   value={telefone}
                   onChange={(ev) => setTelefone(ev.target.value)}
@@ -248,19 +198,20 @@ const Cadastro = () => {
 
               <div className='inputContainer'>
                 <InputMask
-                  mask={dataNascimento === '' ? null : "99/99/9999"} 
-                  maskChar={null} 
+                  mask={dataNascimento === '' ? null : "99/99/9999"}
+                  maskChar={null}
                   placeholder='Data de nascimento'
                   value={dataNascimento}
                   onChange={(ev) => handleDateChange(ev)}
                   className={'inputBox'}
                   required
                 />
+                <DateValidator date={dataNascimento} onError={setIsError} showError={showError} />
               </div>
             </div>
-            
+
             <div className='espaco'>
-              
+
             </div>
 
             <div id='div-endereco'>
@@ -268,11 +219,10 @@ const Cadastro = () => {
               <div className='centro'>
                 <h3>Endereço</h3>
               </div>
-
-              <div className='inputContainer'>
+                <div className='inputContainer'>
                 <InputMask
-                  mask={cep === '' ? null : "99999-999"} 
-                  maskChar={null} 
+                  mask={cep === '' ? null : "99999-999"}
+                  maskChar={null}
                   type="text"
                   name="cep"
                   placeholder='CEP'
@@ -281,15 +231,14 @@ const Cadastro = () => {
                   className={'inputBox'}
                   required
                 />
-              </div>
-
+                </div>
               <div className='inputContainer'>
                 <input
                   type="text"
                   name="estado"
                   pattern="[^0-9]*"
                   placeholder='Estado'
-                  value={estado} 
+                  value={estado}
                   onChange={(ev) => setEstado(ev.target.value)}
                   className={'inputBox'}
                   required
@@ -307,7 +256,7 @@ const Cadastro = () => {
                   required
                 />
               </div>
-              
+
               <div className='inputContainer'>
                 <input
                   type="text"
@@ -357,30 +306,39 @@ const Cadastro = () => {
               placeholder='Uma senha forte'
               value={password}
               onChange={(ev) => setPassword(ev.target.value)}
+              onFocus={handlePasswordFocus} // Marca o foco
+              onBlur={handlePasswordBlur} // Marca quando perde o foco
               className={'inputBox'}
               required
             />
           </div>
 
-          <div className='inputContainer'> 
+          <div className='inputContainer'>
             <input
               type="password"
               name="passwordConfirm"
               placeholder='Confirmar Senha'
               value={passwordConfirm}
               onChange={(ev) => setPasswordConfirm(ev.target.value)}
+              onFocus={handlePasswordFocus} // Marca o foco
+              onBlur={handlePasswordBlur} // Marca quando perde o foco
               className={'inputBox'}
               required
             />
+            <PasswordValidator
+              password={password}
+              passwordConfirm={passwordConfirm}
+              onPasswordError={(error) => setPasswordError(error)}
+              isTyping={isTyping}
+            />
             <div id='box-senha'>
-              <label className="errorLabel">{passwordError}</label>
+              <label className="errorLabel">{}</label>
 
               <div className={passwordError === '' ? 'tooltip-hidden' : 'tooltip'}>
-                <span class="circle">?</span>
-                <span class="tooltip-text">A senha deve conter, no mínimo: 8 caracteres, 1 letra maiúscula, 1 letra minúscula e 1 símbolo especial</span>
+                <span class="tooltip-text">A  no mínimo: 8 caracteres, 1 letra maiúscula, 1 letra minúscula e 1 símbolo especial</span>
               </div>
             </div>
-            
+
           </div>
           <br />
 
@@ -390,14 +348,13 @@ const Cadastro = () => {
           </div>
           <button className='cadastrar' type="submit">Cadastrar</button>
           </div>
-          
+
         </form>
-        
+
       </div>
       <Messages className='custom-toast' ref={messagesRef} />
     </div>
   );
-} 
+}
 
 export default Cadastro;
-

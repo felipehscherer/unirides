@@ -11,6 +11,7 @@ const PasswordValidator = ({ password, passwordConfirm, onPasswordError, isTypin
   useEffect(() => {
     let error = '';
 
+    // Verifica se as senhas coincidem
     if (password !== passwordConfirm) {
       error = 'As senhas não coincidem';
     } else if (password.length < 8) {
@@ -26,12 +27,12 @@ const PasswordValidator = ({ password, passwordConfirm, onPasswordError, isTypin
     }
 
     setPasswordError(error);
-    onPasswordError(error);
+    onPasswordError(error);  // Notifica o componente pai sobre o erro
   }, [password, passwordConfirm, onPasswordError]);
 
   return (
     <div id='box-senha'>
-      {isTyping && (
+      {isTyping && (  // Só exibe se o usuário estiver digitando
         <>
           <label className="errorLabel">{passwordError}</label>
           <div className={passwordError === '' ? 'tooltip-hidden' : 'tooltip'}>

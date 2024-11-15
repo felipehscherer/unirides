@@ -30,7 +30,7 @@ public class RideValidationUtils {
     }
 
     public static void validateAvailableSeats(Ride ride) {
-        if (ride.getLugaresDisponiveis() <= ride.getPassengers().size()) {
+        if (ride.getFreeSeatsNumber() <= ride.getPassengers().size()) {
             throw new IllegalStateException("Não há lugares disponíveis nesta carona");
         }
     }
