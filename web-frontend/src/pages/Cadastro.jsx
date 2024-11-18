@@ -12,11 +12,6 @@ import { Messages } from 'primereact/messages';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 
-const regexUpperCase = /[A-Z]/;
-const regexLowerCase = /[a-z]/;
-const regexNumber = /\d/;
-const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
-
 const Cadastro = () => {
   const [name, setNome] = useState('')
   const [email, setEmail] = useState('')
@@ -120,7 +115,9 @@ const handlePasswordBlur = () => {
     try {
       await axios.post('/auth/register', dataToSend);
       showError('success', 'Sucesso:', 'Cadastro realizado!');
-      navigate('/login');
+      setTimeout(function() { 
+        navigate('/login'); 
+      }, 2000);
     } catch (error) {
       if (error.response && error.response.status === 403) {
         const errorMsg = error.response.data;

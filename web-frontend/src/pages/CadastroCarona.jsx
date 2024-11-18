@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import DatePicker from "react-datepicker";
@@ -24,6 +25,7 @@ const CadastroCarona = () => {
     const [originAddress, setOriginAddress] = useState('');
     const [destinationAddress, setDestinationAddress] = useState('');
     const messagesRef = useRef(null);
+    const navigate = useNavigate();
 
     const showError = (severity, summary, detail) => {
         messagesRef.current.clear();
@@ -203,8 +205,10 @@ const CadastroCarona = () => {
 
         try {
             await axios.post('/rides/create', dataToSend);
-            showError('success', 'Sucesso:', 'Cadastro realizado!');
-            //navigate('/login');
+            showError('success', 'Sucesso:', 'Sucesso!');
+            setTimeout(function() { 
+              navigate('/home'); 
+            }, 2000);
           } catch (error) {
             if (error.response && (error.response.status === 403 || error.response.status === 400)) {
               const errorMsg = error.response.data; 
