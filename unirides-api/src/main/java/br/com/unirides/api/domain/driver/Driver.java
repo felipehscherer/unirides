@@ -59,16 +59,16 @@ public class Driver {
             return false;
         }
 
-        LocalDate dataAtual = LocalDate.now();
-
-        if (!dataValidade.isBefore(dataAtual) &&
-                (dataValidade.isEqual(validadeMaxima) || (dataValidade.isAfter(validadeMinima) && dataValidade.isBefore(validadeMaxima)))) {
+        if (dataValidade.isEqual(validadeMaxima) ||
+                (dataValidade.isAfter(validadeMinima) && !dataValidade.isAfter(validadeMaxima))) {
             return true;
         } else {
-            System.out.println("Erro: A CNH não é válida. A data de validade deve estar entre 9 e 10 anos após a emissão.");
+            System.out.println("Erro: A CNH não é válida. A data de validade deve estar entre " +
+                    validadeMinima + " e " + validadeMaxima + ".");
             return false;
         }
     }
+
 
     public static boolean validarFormatoCNH(String numeroCNH) {
         String regex = "^[0-9]{11}$";

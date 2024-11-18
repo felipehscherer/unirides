@@ -3,7 +3,8 @@ package br.com.unirides.api.utils;
 import br.com.unirides.api.domain.driver.Driver;
 import br.com.unirides.api.dto.driver.DriverRequestDTO;
 import br.com.unirides.api.exceptions.CnhAlreadyRegisteredException;
-import br.com.unirides.api.exceptions.InvalidCnhException;
+import br.com.unirides.api.exceptions.CnhInvalidDateException;
+import br.com.unirides.api.exceptions.CnhInvalidFormatException;
 import br.com.unirides.api.repository.DriverRepository;
 
 public class DriverValidationUtils {
@@ -14,11 +15,11 @@ public class DriverValidationUtils {
         }
 
         if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
-            throw new InvalidCnhException("Formato da CNH inválido");
+            throw new CnhInvalidFormatException("Formato da CNH inválido");
         }
 
         if (!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())) {
-            throw new InvalidCnhException("Data da CNH inválida");
+            throw new CnhInvalidDateException("Data da CNH inválida");
         }
 
         if (driverRepository.findByNumeroCnh(motoristaDTO.getNumeroCnh()).isPresent()) {
@@ -32,11 +33,11 @@ public class DriverValidationUtils {
         }
 
         if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
-            throw new InvalidCnhException("Formato da CNH inválido");
+            throw new CnhInvalidFormatException("Formato da CNH inválido");
         }
 
         if (!Driver.validarDataCNH(motoristaDTO.getDataEmissao().toString(), motoristaDTO.getDataValidade().toString())) {
-            throw new InvalidCnhException("Data da CNH inválida");
+            throw new CnhInvalidDateException("Data da CNH inválida");
         }
     }
 }

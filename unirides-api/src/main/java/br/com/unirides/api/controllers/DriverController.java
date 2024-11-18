@@ -35,6 +35,8 @@ public class DriverController {
     @PostMapping("/register")
     public ResponseEntity<DriverResponseDTO> registerDriver(@RequestBody DriverRequestDTO motoristaDTO) {
 
+        String cnhFormatada = formatarNumeroCnh(motoristaDTO.getNumeroCnh());
+
         validarDriver(motoristaDTO);
 
         User usuario = userRepository.findByEmail(motoristaDTO.getEmail())
@@ -42,7 +44,7 @@ public class DriverController {
 
         Driver driver = new Driver();
         driver.setUsuarioEmail(usuario.getEmail());
-        driver.setNumeroCnh(motoristaDTO.getNumeroCnh());
+        driver.setNumeroCnh(cnhFormatada);
         driver.setDataEmissao(motoristaDTO.getDataEmissao());
         driver.setDataValidade(motoristaDTO.getDataValidade());
         driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria()));
@@ -53,12 +55,22 @@ public class DriverController {
         return ResponseEntity.status(201).body(driverDTO);
     }
 
+    public static String formatarNumeroCnh(String numeroCnh) {
+
+        String numeroCnhFormatado = numeroCnh.replaceAll("\\D", "");
+
+        return numeroCnhFormatado;
+    }
+
     public boolean validarDriver(DriverRequestDTO motoristaDTO) {
+
+        String cnhFormatada = formatarNumeroCnh(motoristaDTO.getNumeroCnh());
+
         if (driverRepository.existsByUsuarioEmail(motoristaDTO.getEmail())) {
             throw new RuntimeException("Já existe um motorista registrado com este e-mail.");
         }
 
-        if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
+        if (!Driver.validarFormatoCNH(cnhFormatada)) {
             throw new CnhInvalidFormatException("Formato da cnh invalida");
         }
 
@@ -91,6 +103,8 @@ public class DriverController {
     @PutMapping("/update/{email}")
     public ResponseEntity<String> updateDriver(@PathVariable String email, @RequestBody DriverRequestDTO motoristaDTO) {
 
+        String cnhFormatada = formatarNumeroCnh(motoristaDTO.getNumeroCnh());
+
         Driver driver = driverRepository.findDriverByUsuarioEmail(email)
                 .orElseThrow(() -> new RuntimeException("Motorista não encontrado."));
 
@@ -101,7 +115,7 @@ public class DriverController {
                     throw new CnhAlreadyRegisteredException("Já existe um motorista registrado com este número de CNH");
                 }
 
-                if (!Driver.validarFormatoCNH(motoristaDTO.getNumeroCnh())) {
+                if (!Driver.validarFormatoCNH(cnhFormatada)) {
                     throw new CnhInvalidFormatException("Formato da CNH inválido");
                 }
 
@@ -109,7 +123,7 @@ public class DriverController {
                     throw new CnhInvalidFormatException("Data da CNH inválida");
                 }
 
-                driver.setNumeroCnh(motoristaDTO.getNumeroCnh());
+                driver.setNumeroCnh(cnhFormatada);
                 driver.setDataEmissao(motoristaDTO.getDataEmissao());
                 driver.setDataValidade(motoristaDTO.getDataValidade());
                 driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria()));

@@ -5,6 +5,7 @@ import axios from '../services/axiosConfig';
 import './styles/CadastroMotorista.css';
 import logoImage from "../assets/logo.jpg";
 import {Messages} from "primereact/messages";
+import InputMask from "react-input-mask";
 
 function CadastroMotorista() {
     const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ function CadastroMotorista() {
     const [dataValidade, setDataValidade] = useState('');
     const [categoria, setCategoria] = useState('');
     const messagesRef = useRef(null);
+
 
     const navigate = useNavigate();
 
@@ -71,16 +73,18 @@ function CadastroMotorista() {
             <Toast ref={messagesRef} />
             <div className="register-box-driver">
                 <form onSubmit={handleCadastro}>
-                    <img src={logoImage} alt="Logo" className="register-logo-driver" />
-                    <p className="register-title-driver">Preencha as informações sobre sua CNH </p>
-                    <label htmlFor="numeroCnh" className="register-label-driver">Digite o numero da sua CNH</label>
-                    <input
-                        type="text"
+                    <img src={logoImage} alt="Logo" className="register-logo-driver"/>
+                    <p className="register-title-driver">Preencha as informações sobre sua CNH</p>
+                    <label htmlFor="numeroCnh" className="register-label-driver">Digite o número da sua CNH</label>
+                    <InputMask
+                        mask="999.999.999-99"
                         value={numeroCnh}
                         onChange={(e) => setNumeroCnh(e.target.value)}
-                        placeholder="Cnh"
+                        placeholder="Digite o número da CNH"
                         required
-                    />
+                    >
+                        {(inputProps) => <input {...inputProps} type="text" className="cnh-input" />}
+                    </InputMask>
                     <label htmlFor="dataEmissao" className="register-label-driver">Digite a data de emissão</label>
                     <input
                         type="date"
@@ -116,7 +120,7 @@ function CadastroMotorista() {
                     </div>
                 </form>
             </div>
-            <Messages className='custom-toast' ref={messagesRef} />
+            <Messages className='custom-toast' ref={messagesRef}/>
 
         </div>
     );

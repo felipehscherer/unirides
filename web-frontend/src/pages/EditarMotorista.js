@@ -4,6 +4,8 @@ import axios from '../services/axiosConfig';
 import './styles/EditarMotorista.css';
 import logoImage from "../assets/logo.jpg";
 import {Messages} from "primereact/messages";
+import InputMask from "react-input-mask";
+
 
 function EditarMotorista() {
     const [email, setEmail] = useState('');
@@ -88,14 +90,16 @@ function EditarMotorista() {
 
                 <p className="edit-title-driver">Edite suas as informações </p>
 
-                <label htmlFor="numeroCnh" className="edit-label-driver">Digite o numero da sua CNH</label>
-                <input
-                    type="text"
+                <label htmlFor="numeroCnh" className="register-label-driver">Digite o número da sua CNH</label>
+                <InputMask
+                    mask="999.999.999-99"
                     value={numeroCnh}
                     onChange={(e) => setNumeroCnh(e.target.value)}
-                    placeholder="Cnh"
+                    placeholder="Digite o número da CNH"
                     required
-                />
+                >
+                    {(inputProps) => <input {...inputProps} type="text" className="cnh-input"/>}
+                </InputMask>
                 <label htmlFor="dataEmissao" className="edit-label-driver">Digite a data de emissão</label>
                 <input
                     type="date"
@@ -129,7 +133,7 @@ function EditarMotorista() {
                     Voltar para Perfil
                 </button>
             </form>
-            <Messages className='custom-toast' ref={messagesRef} />
+            <Messages className='custom-toast' ref={messagesRef}/>
         </div>
     );
 }
