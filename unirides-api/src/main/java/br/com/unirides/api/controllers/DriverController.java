@@ -47,7 +47,7 @@ public class DriverController {
         driver.setNumeroCnh(cnhFormatada);
         driver.setDataEmissao(motoristaDTO.getDataEmissao());
         driver.setDataValidade(motoristaDTO.getDataValidade());
-        driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria()));
+        driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria().toUpperCase()));
 
         driverRepository.save(driver);
 
@@ -82,7 +82,7 @@ public class DriverController {
             throw new CnhAlreadyRegisteredException("Já existe um motorista registrado com este numero de CNH");
         }
 
-        if (!Driver.validarCategoria(motoristaDTO.getCategoria())) {
+        if (!Driver.validarCategoria(motoristaDTO.getCategoria().toUpperCase())) {
             throw new CnhInvalidCategoryException("Categoria invalida");
         }
         return true;
@@ -111,6 +111,11 @@ public class DriverController {
         Optional<Driver> driverData = driverRepository.findDriverByUsuarioEmail(email);
         try {
             if (driverData.isPresent()) {
+
+                if (!Driver.validarCategoria(motoristaDTO.getCategoria().toUpperCase())) {
+                    throw new CnhInvalidCategoryException("Categoria invalida");
+                }
+
                 if (driverRepository.existsByNumeroCnhAndIdNot(driverData.get().getNumeroCnh(), driverData.get().getId())) {
                     throw new CnhAlreadyRegisteredException("Já existe um motorista registrado com este número de CNH");
                 }
@@ -126,7 +131,7 @@ public class DriverController {
                 driver.setNumeroCnh(cnhFormatada);
                 driver.setDataEmissao(motoristaDTO.getDataEmissao());
                 driver.setDataValidade(motoristaDTO.getDataValidade());
-                driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria()));
+                driver.setCategoria(DriverLicenseCategory.valueOf(motoristaDTO.getCategoria().toUpperCase()));
 
                 driverRepository.save(driver);
 
@@ -137,8 +142,13 @@ public class DriverController {
         } catch (CnhInvalidFormatException e) {
             throw new CnhInvalidFormatException(e.getMessage());
         } catch (DataIntegrityViolationException e) {
-            throw new CnhAlreadyRegisteredException("já existe um motorista com este número de CNH.");
-        } catch (Exception e) {
+            throw new CnhAlreadyRegisteredException(e.getMessage());
+        } catch (CnhInvalidCategoryException e){
+            throw new CnhInvalidCategoryException(e.getMessage());
+        } catch (CnhInvalidDateException e){
+            throw new CnhInvalidDateException(e.getMessage());
+        }
+        catch (Exception e) {
             throw new RuntimeException("Erro ao atualizar dados do motorista, tente novamente.");
         }
 

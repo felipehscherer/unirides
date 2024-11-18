@@ -5,6 +5,8 @@ import './styles/EditarMotorista.css';
 import logoImage from "../assets/logo.jpg";
 import {Messages} from "primereact/messages";
 import InputMask from "react-input-mask";
+import MotoristaRequestBuilder from '../components/MotoristaRequestBuilder';
+
 
 
 function EditarMotorista() {
@@ -50,7 +52,13 @@ function EditarMotorista() {
     const handleCadastro = async (e) => {
         e.preventDefault();
 
-        const dados = {email, numeroCnh, dataEmissao, dataValidade, categoria}
+        const dados = new MotoristaRequestBuilder()
+            .setEmail(email)
+            .setNumeroCnh(numeroCnh)
+            .setDataEmissao(dataEmissao)
+            .setDataValidade(dataValidade)
+            .setCategoria(categoria)
+            .build();
 
         try {
             const response = await axios.put(

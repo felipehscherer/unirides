@@ -6,6 +6,8 @@ import './styles/CadastroMotorista.css';
 import logoImage from "../assets/logo.jpg";
 import {Messages} from "primereact/messages";
 import InputMask from "react-input-mask";
+import MotoristaRequestBuilder from '../components/MotoristaRequestBuilder';
+
 
 function CadastroMotorista() {
     const [email, setEmail] = useState('');
@@ -14,7 +16,6 @@ function CadastroMotorista() {
     const [dataValidade, setDataValidade] = useState('');
     const [categoria, setCategoria] = useState('');
     const messagesRef = useRef(null);
-
 
     const navigate = useNavigate();
 
@@ -38,14 +39,20 @@ function CadastroMotorista() {
     const handleCadastro = async (e) => {
         e.preventDefault();
 
-        const dados = { email, numeroCnh, dataEmissao, dataValidade, categoria };
-
         try {
+            const dados = new MotoristaRequestBuilder()
+                .setEmail(email)
+                .setNumeroCnh(numeroCnh)
+                .setDataEmissao(dataEmissao)
+                .setDataValidade(dataValidade)
+                .setCategoria(categoria)
+                .build();
+
             await axios.post('driver/register', dados);
 
-            const mensagem = "CNH cadastrada com Sucesso!"
-
+            const mensagem = "CNH cadastrada com Sucesso!";
             showError('success', 'Sucesso:', mensagem);
+
             setTimeout(() => {
                 navigate('/perfil');
             }, 2000);
@@ -54,6 +61,8 @@ function CadastroMotorista() {
             if (error.response && error.response.status === 400) {
                 const errorMsg = error.response.data;
                 showError('error', 'Erro:', errorMsg);
+            } else {
+                showError('error', 'Erro:', "Algo deu errado.");
             }
         }
     };
@@ -120,8 +129,7 @@ function CadastroMotorista() {
                     </div>
                 </form>
             </div>
-            <Messages className='custom-toast' ref={messagesRef}/>
-
+            <Messages className='custom-toast' ref={messagesRef} />
         </div>
     );
 }
