@@ -34,10 +34,14 @@ function RideSearch() {
     }
 
     try {
-      const response = await axios.post('/rides/search', dataToSend);
+      const response = await axios.post('/rides/search', dataToSend, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setRides(response.data);
     } catch (error) {
-      console.error('Erro ao buscar caronas:', error);
+      console.error('Erro ao buscar caronassss:', error);
     }
   };
 
@@ -260,15 +264,15 @@ function RideSearch() {
       
       <div className="ride-list">
       {rides.map(ride => (
-        <div key={ride.id}>
+        <div key={ride.id} className="ride-item">
             <h3>Caronas para {ride.origintionAddress}</h3>
-            <p>Origem: {ride.origin}</p>
-            <p>Endereço de Origem: {ride.originAddress}</p>
-            <p>Endereço de Destino: {ride.destinationAddress}</p>
-            <p>Preço: {ride.price}</p>
-            <p>Motorista: {ride.driverName}</p>
-            <p>Vagas Disponíveis: {ride.FreeSeatsNumber}</p>
-            <p>Data: {ride.date}</p>
+            <p><strong>Origem:</strong> {ride.origin}</p>
+            <p><strong>Endereço de Origem:</strong> {ride.originAddress}</p>
+            <p><strong>Endereço de Destino:</strong> {ride.destinationAddress}</p>
+            <p><strong>Preço:</strong> {ride.price}</p>
+            <p><strong>Motorista:</strong> {ride.driverName}</p>
+            <p><strong>Vagas Disponíveis:</strong> {ride.FreeSeatsNumber}</p>
+            <p><strong>Data:</strong> {ride.date}</p>
         </div>//horario, duração, distancia, 
       ))}
       </div>
