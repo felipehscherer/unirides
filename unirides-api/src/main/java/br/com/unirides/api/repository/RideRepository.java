@@ -29,6 +29,7 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
     @Query(value = "SELECT * FROM Ride r WHERE LOWER(unaccent(r.destination)) LIKE LOWER(unaccent(CONCAT('%', :destination, '%')))", nativeQuery = true)
     List<Ride> findByDestinationContainingIgnoreCase(@Param("destination") String destination);
 
+    List<Ride> findAll();
 
 
 }
