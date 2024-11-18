@@ -10,6 +10,7 @@ import br.com.unirides.api.exceptions.GlobalExceptionHandler;
 import br.com.unirides.api.exceptions.EmailAlreadyExistsException;
 import br.com.unirides.api.infra.security.TokenService;
 import br.com.unirides.api.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -287,19 +288,30 @@ public class AuthControllerTest {
         String password = faker.internet().password();
         String name = faker.name().fullName();
 
-        RegisterRequestDTO request = new RegisterRequestDTO(name, email, cpf, password,
-                faker.phoneNumber().phoneNumber(), "01/01/2000", faker.address().zipCode(),
-                faker.address().city(), faker.address().state(), faker.address().streetAddress(),
-                faker.random().nextInt(1, 500), "");
+        RegisterRequestDTO request = new RegisterRequestDTO(
+                name,
+                email,
+                cpf,
+                password,
+                faker.phoneNumber().phoneNumber(),
+                "01/01/2000",
+                "01001-000",
+                faker.address().city(),
+                faker.address().state(),
+                faker.address().streetAddress(),
+                faker.random().nextInt(1, 500),
+                ""
+        );
 
         when(userRepository.findByCpf(cpf)).thenReturn(Optional.empty());
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"" + name + "\",\"email\":\"" + email + "\",\"cpf\":\"" + cpf + "\",\"password\":\"" + password + "\"}"))
+                        .content(new ObjectMapper().writeValueAsString(request)))  // Converte o objeto `request` para JSON automaticamente
                 .andExpect(status().isOk());
     }
+
 
     @Test
     public void testRegister_CpfAlreadyExists_HTTP() throws Exception {
