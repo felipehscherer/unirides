@@ -3,6 +3,7 @@ package br.com.unirides.api.controllers;
 
 import br.com.unirides.api.domain.driver.Driver;
 import br.com.unirides.api.domain.driver.Vehicle;
+import br.com.unirides.api.domain.driver.VehicleFactory;
 import br.com.unirides.api.domain.user.User;
 import br.com.unirides.api.dto.vehicle.VehicleRequestDTO;
 import br.com.unirides.api.dto.vehicle.VehicleResponseDTO;
@@ -84,7 +85,6 @@ public class VehicleController {
 
     @PostMapping("/register")
     public ResponseEntity<VehicleResponseDTO> createVeiculo(@RequestBody VehicleRequestDTO data) {
-
         String email = data.email();
 
         Optional<Driver> optDriver = driverRepository.findDriverByUsuarioEmail(email);
@@ -92,22 +92,32 @@ public class VehicleController {
         if (optDriver.isPresent()) {
             Driver driver = optDriver.get();
 
-            if (validarVeiculo(data.plate(), data.capacity())) {
+            try {
+                Vehicle vehicle = VehicleFactory.createVehicle(
+                        driver,
+                        data.color(),
+                        data.capacity(),
+                        data.model(),
+                        data.brand(),
+                        data.plate()
+                );
 
-                Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate().toUpperCase(), driver, true);
+                validarVeiculo(vehicle.getPlate().toUpperCase(), vehicle.getCapacity());
 
-                vehicleRepository.save(vehicleData);
+                vehicleRepository.save(vehicle);
 
-                VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicleData);
+                VehicleResponseDTO responseDTO = new VehicleResponseDTO(vehicle);
                 return ResponseEntity.status(201).body(responseDTO);
-            }
 
-            return ResponseEntity.notFound().build();
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(null);
+            }
 
         } else {
             throw new CnhNotRegisteredException("Usuário não possui uma CNH registrada");
         }
     }
+
 
     public boolean validarVeiculo(String plate, int capacity) {
 

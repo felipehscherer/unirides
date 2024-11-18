@@ -24,7 +24,6 @@ public class Vehicle {
     private String brand;
     private String plate;
 
-    //(fetch=FetchType.LAZY)
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "driver_id", nullable = false)
