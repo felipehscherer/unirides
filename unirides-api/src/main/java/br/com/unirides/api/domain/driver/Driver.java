@@ -6,11 +6,10 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "drivers",  uniqueConstraints = {
+@Table(name = "drivers", uniqueConstraints = {
         @UniqueConstraint(columnNames = "usuario_email"),
         @UniqueConstraint(columnNames = "numero_cnh")
 })
@@ -49,34 +48,41 @@ public class Driver {
             return false;
         }
 
-        LocalDate validadePadrao;
         LocalDate dataMudanca = LocalDate.of(2020, 1, 1);
 
-        if (dataEmissao.isBefore(dataMudanca)) {
-            validadePadrao = dataEmissao.plusYears(5);
-        } else {
-            validadePadrao = dataEmissao.plusYears(10);
-        }
+        int anosPermitidos = dataEmissao.isBefore(dataMudanca) ? 5 : 10;
+        LocalDate validadeMinima = dataEmissao.plusYears(anosPermitidos - 1);
+        LocalDate validadeMaxima = dataEmissao.plusYears(anosPermitidos);
 
         if (dataValidade.isBefore(dataEmissao)) {
             System.out.println("Erro: A data de validade não pode ser anterior à data de emissão.");
             return false;
         }
 
-        LocalDate dataAtual = LocalDate.now();
-
-        if (dataValidade.isAfter(dataAtual) && (dataValidade.isEqual(validadePadrao) || dataValidade.isBefore(validadePadrao))) {
+        if (dataValidade.isEqual(validadeMaxima) ||
+                (dataValidade.isAfter(validadeMinima) && !dataValidade.isAfter(validadeMaxima))) {
             return true;
         } else {
-            System.out.println("Erro: A CNH não é válida. A data de validade deve estar dentro do período padrão.");
+            System.out.println("Erro: A CNH não é válida. A data de validade deve estar entre " +
+                    validadeMinima + " e " + validadeMaxima + ".");
             return false;
         }
     }
+
 
     public static boolean validarFormatoCNH(String numeroCNH) {
         String regex = "^[0-9]{11}$";
 
         return numeroCNH != null && numeroCNH.matches(regex);
+    }
+
+    public static boolean validarCategoria(String categoria) {
+        try {
+            DriverLicenseCategory.valueOf(categoria.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
 

@@ -19,4 +19,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
     @Query("SELECT v FROM Vehicle v WHERE v.driver.id = :driverId AND v.isActive = true")
     Optional<Vehicle> findFirstActiveVehicleByDriverId(@Param("driverId") UUID driverId);
 
+    boolean existsByPlateAndIdNot(String plate, UUID id);
+
 }

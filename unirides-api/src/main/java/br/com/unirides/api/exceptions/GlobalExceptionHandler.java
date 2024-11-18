@@ -49,25 +49,25 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(InvalidVehicleExeceptionException.class)
-    public ResponseEntity<String> handleInvalidVehicleExeception(InvalidVehicleExeceptionException e){
+    @ExceptionHandler(VehicleInvalidException.class)
+    public ResponseEntity<String> handleInvalidVehicleExeception(VehicleInvalidException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(InvalidCapacityException.class)
-    public ResponseEntity<String> handleInvalidCapacityException(InvalidCapacityException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
-
-    @ExceptionHandler(InvalidCnhException.class)
-    public ResponseEntity<String> handleInvalidCnhException(InvalidCnhException e){
+    @ExceptionHandler(CapacityInvalidException.class)
+    public ResponseEntity<String> handleInvalidCapacityException(CapacityInvalidException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
 
-    @ExceptionHandler(InvalidPlateException.class)
-    public ResponseEntity<String> handleInvalidPlateException(InvalidPlateException e){
+    @ExceptionHandler(CnhInvalidFormatException.class)
+    public ResponseEntity<String> handleInvalidCnhException(CnhInvalidFormatException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
+    @ExceptionHandler(PlateInvalidException.class)
+    public ResponseEntity<String> handleInvalidPlateException(PlateInvalidException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
@@ -94,6 +94,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(VehicleNotFoundException.class)
     public ResponseEntity<String> handleVehicleNotFoundException(VehicleNotFoundException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CnhInvalidDateException.class)
+    public ResponseEntity<String> handleInvalidCnhDateException(CnhInvalidDateException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(CnhInvalidCategoryException.class)
+    public ResponseEntity<String> handleCnhInvalidCategoryException(CnhInvalidCategoryException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 

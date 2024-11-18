@@ -1,11 +1,11 @@
-.register-container-driver{
+.edit-container-driver{
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-color: #f0f2f5;
 }
-.register-box-driver{
+.edit-box-driver{
     background-color: #fff;
     padding: 40px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -15,23 +15,21 @@
     height: 100%;
     max-width: 600px;
     width: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
-.register-logo-driver{
+.edit-logo-driver{
     max-width: 70%;
     height: auto;
     margin-bottom: 15px;
 }
 
-.register-title-driver{
+.edit-title-driver{
     font-size: 24px;
     margin-bottom: 30px;
     color: #000000;
 }
 
-.register-label-driver{
+.edit-label-driver{
     display: block;
     text-align: left;
     margin-bottom: 5px;
@@ -39,7 +37,7 @@
     color: #000000;
 }
 
-.register-box-driver input{
+.edit-box-driver input{
     display: block;
     width: 100%;
     margin-bottom: 20px;
@@ -48,14 +46,7 @@
     border-radius: 4px;
 }
 
-.buttons-driver{
-    display: block;
-    justify-content: space-around;
-    width: 100%;
-    margin-top: auto;
-}
-
-.button-register-driver{
+.button-edit-driver{
     background-color: #089F08;
     color: white;
     width: 100%;
@@ -66,7 +57,7 @@
     cursor: pointer;
     margin-bottom: 10px;
 }
-.button-register-driver:hover{
+.button-edit-driver:hover{
     background-color: green;
 }
 
