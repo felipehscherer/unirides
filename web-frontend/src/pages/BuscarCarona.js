@@ -5,6 +5,9 @@ import './styles/BuscarCarona.css';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
 import { Messages } from 'primereact/messages';
 import "react-datepicker/dist/react-datepicker.css";
+import { RideCardFactory } from "../components/RideCardFactory.js";
+import { RideSearchRequestBuilder } from '../components/RideSearchRequestBuilder.js';
+
 
 function RideSearch() {
   const [rides, setRides] = useState([]);
@@ -17,15 +20,14 @@ function RideSearch() {
 
   const handleSearch = async (e) => {
     await getRideInfos();
-    const dataToSend = {
-      origin: `${originPosition.lat},${originPosition.lng}`,
-      destination: `${destinationPosition.lat},${destinationPosition.lng}`,  
-      originAddress: originAddress,
-      destinationAddress: destinationAddress,
-    }
+    const dataToSend = new RideSearchRequestBuilder()
+      .setOrigin(originPosition.lat, originPosition.lng)
+      .setDestination(destinationPosition.lat, destinationPosition.lng)
+      .setAddresses(originAddress, destinationAddress)
+    .build();
 
     try {
-      const response = await axios.post('/rides/search', dataToSend, {
+      const response = await axios.post('/rides/search', dataToSend, {  //requisição ao back pra trazer as caronas
         headers: {
           'Content-Type': 'application/json'
         }
@@ -216,21 +218,12 @@ function RideSearch() {
           Buscar Carona</button>
       
       <div className="ride-list">
-      {rides.map(ride => (
-        <div key={ride.id} className="ride-item">
-            <h3>Caronas para {ride.origintionAddress}</h3>
-            <p><strong>Origem:</strong> {ride.origin}</p>
-            <p><strong>Endereço de Origem:</strong> {ride.originAddress}</p>
-            <p><strong>Endereço de Destino:</strong> {ride.destinationAddress}</p>
-            <p><strong>Preço:</strong> {ride.price}</p>
-            <p><strong>Motorista:</strong> {ride.driverName}</p>
-            <p><strong>Vagas Disponíveis:</strong> {ride.FreeSeatsNumber}</p>
-            <p><strong>Data:</strong> {ride.date}</p>
-        </div>//horario, duração, distancia, 
-      ))}
+        {rides.map(ride => 
+          RideCardFactory(ride) //adicionar horario, duração, distancia,
+          )} 
       </div>
 
-      <button className="back-home-button" onClick={handleBackToHome}>
+      <button className="back-home-button" onClick={handleBackToHome}> 
         Voltar para a Home
       </button>
       <Messages className='custom-toast' ref={messagesRef} />

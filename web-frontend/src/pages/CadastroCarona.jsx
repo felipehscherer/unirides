@@ -9,6 +9,7 @@ import axios from '../services/axiosConfig';
 import { Messages } from 'primereact/messages';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
+import {RideCreationRequestBuilder} from '../components/RideCreationRequestBuilder.js';
 
 
 const CadastroCarona = () => {
@@ -190,18 +191,16 @@ const CadastroCarona = () => {
             return;
         }
         
-        const dataToSend = {
-            origin: `${originPosition.lat},${originPosition.lng}`,
-            destination: `${destinationPosition.lat},${destinationPosition.lng}`,
-            originAddress: originAddress, 
-            destinationAddress: destinationAddress,
-            date: date,
-            time: time,
-            desiredPassengersNumber: passengers,
-            price: suggestedPrice,
-            distance: distanceInKm,
-            duration: duration
-        }
+        const dataToSend = new RideCreationRequestBuilder()
+          .setOrigin(originPosition.lat, originPosition.lng)
+          .setDestination(destinationPosition.lat, destinationPosition.lng)
+          .setAddresses(originAddress, destinationAddress)
+          .setDateAndTime(date, time)
+          .setDesiredPassengersNumber(passengers)
+          .setPrice(suggestedPrice)
+          .setDistance(distanceInKm)
+          .setDuration(duration)
+        .build();
 
         try {
             await axios.post('/rides/create', dataToSend);
