@@ -1,2 +1,2 @@
 .env
-application.propierts
+./src/main/resources/application.properties

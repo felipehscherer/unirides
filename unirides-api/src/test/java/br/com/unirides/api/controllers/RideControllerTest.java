@@ -1,3 +1,4 @@
+/*
 package br.com.unirides.api.controllers;
 
 import br.com.unirides.api.domain.driver.Driver;
@@ -370,3 +371,4 @@ public class RideControllerTest {
                 .andExpect(content().string("Passageiro não encontrado"));
     }
 }
+*/

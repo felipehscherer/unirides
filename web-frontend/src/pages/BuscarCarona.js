@@ -3,22 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/BuscarCarona.css';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
-import { GoogleMap, Marker } from "@react-google-maps/api";
-import DatePicker from "react-datepicker";
 import { Messages } from 'primereact/messages';
 import "react-datepicker/dist/react-datepicker.css";
+import { RideCardFactory } from "../components/RideCardFactory.js";
+import { RideSearchRequestBuilder } from '../components/RideSearchRequestBuilder.js';
+
 
 function RideSearch() {
-  const [searchTerm, setSearchTerm] = useState('');
   const [rides, setRides] = useState([]);
   const [originPosition, setOriginPosition] = useState(null);
-  const [showMapOrigin, setshowMapOrigin] = useState(false);
-  const [showMapDestination, setshowMapDestination] = useState(false);
   const [destinationPosition, setDestinationPosition] = useState(null);
-  const [isConfirmarEnabled, setIsConfirmarEnabled] = useState(false);
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState("");
-  const [errorMessage, setErrorMessage] = useState('');
   const [originAddress, setOriginAddress] = useState('');
   const [destinationAddress, setDestinationAddress] = useState('');
   const navigate = useNavigate();
@@ -26,18 +20,22 @@ function RideSearch() {
 
   const handleSearch = async (e) => {
     await getRideInfos();
-    const dataToSend = {
-      origin: `${originPosition.lat},${originPosition.lng}`,
-      destination: `${destinationPosition.lat},${destinationPosition.lng}`,  
-      originAddress: originAddress,
-      destinationAddress: destinationAddress,
-    }
+    const dataToSend = new RideSearchRequestBuilder()
+      .setOrigin(originPosition.lat, originPosition.lng)
+      .setDestination(destinationPosition.lat, destinationPosition.lng)
+      .setAddresses(originAddress, destinationAddress)
+    .build();
 
     try {
-      const response = await axios.post('/rides/search', dataToSend);
+      const response = await axios.post('/rides/search', dataToSend, {  //requisição ao back pra trazer as caronas
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       setRides(response.data);
     } catch (error) {
       console.error('Erro ao buscar caronas:', error);
+      showError('error', 'Erro:', 'Erro ao buscar caronas.');
     }
   };
 
@@ -82,6 +80,7 @@ function RideSearch() {
       setOriginPosition({ lat, lng });
     } catch (error) {
       console.error("Erro ao obter a geolocalização:", error);
+      showError('error', 'Erro:', 'Erro ao obter a geolocalização');
     }
   };
 
@@ -94,21 +93,8 @@ function RideSearch() {
       setDestinationPosition({ lat, lng });
     } catch (error) {
       console.error("Erro ao obter a geolocalização:", error);
+      showError('error', 'Erro:', 'Erro ao obter a geolocalização');
     }
-  };
-
-  const handleMapClickOrigin = (event) => {
-      setOriginPosition({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-      });
-  };
-
-  const handleMapClickDestination = (event) => {
-      setDestinationPosition({
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-      });
   };
 
   const getRideInfos = async () => {
@@ -197,21 +183,6 @@ function RideSearch() {
             ))}
         </div>
         )}
-  
-        {/* Mapa para origem */}
-        {showMapOrigin && originPosition && (
-          <GoogleMap
-            mapContainerStyle={{ width: "100%", height: "200px" }}
-            zoom={14}
-            center={originPosition}
-            onClick={handleMapClickOrigin}
-          >
-            <Marker position={originPosition} />
-          </GoogleMap>
-        )}
-        <div>
-          
-        </div>
       </div>
   
         <div className='address-icon-box'>
@@ -241,39 +212,18 @@ function RideSearch() {
             ))}
         </div>
         )}
-  
-        {/* Mapa para destino */}
-        {showMapDestination && destinationPosition && (
-          <GoogleMap
-            mapContainerStyle={{ width: "100%", height: "200px" }}
-            zoom={14}
-            center={destinationPosition}
-            onClick={handleMapClickDestination}
-          >
-            <Marker position={destinationPosition} />
-          </GoogleMap>
-        )}
         </div>
 
         <button type="submit" className='buscar-carona-box-button' onClick={() => handleSearch()}>
           Buscar Carona</button>
       
       <div className="ride-list">
-      {rides.map(ride => (
-        <div key={ride.id}>
-            <h3>Caronas para {ride.origintionAddress}</h3>
-            <p>Origem: {ride.origin}</p>
-            <p>Endereço de Origem: {ride.originAddress}</p>
-            <p>Endereço de Destino: {ride.destinationAddress}</p>
-            <p>Preço: {ride.price}</p>
-            <p>Motorista: {ride.driverName}</p>
-            <p>Vagas Disponíveis: {ride.FreeSeatsNumber}</p>
-            <p>Data: {ride.date}</p>
-        </div>//horario, duração, distancia, 
-      ))}
+        {rides.map(ride => 
+          RideCardFactory(ride) //adicionar horario, duração, distancia,
+          )} 
       </div>
 
-      <button className="back-home-button" onClick={handleBackToHome}>
+      <button className="back-home-button" onClick={handleBackToHome}> 
         Voltar para a Home
       </button>
       <Messages className='custom-toast' ref={messagesRef} />

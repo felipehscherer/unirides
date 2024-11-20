@@ -43,6 +43,9 @@ public class RideController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RideService rideService;
+
     TokenService tokenService;
 
     @Autowired
@@ -153,8 +156,9 @@ public class RideController {
 
     @PostMapping("/search")
     public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
+        System.out.println("Recebido: " + searchDTO);
         try {
-            List<Ride> rides = rideRepository.findByDestinationContainingIgnoreCase(searchDTO.getDestination());
+            List<Ride> rides = rideService.findRidesByDestination(searchDTO.getDestination());
 
             if (rides.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
@@ -168,17 +172,9 @@ public class RideController {
                 dto.setOriginAddress(ride.getOriginAddress());
                 dto.setDestinationAddress(ride.getDestinationAddress());
                 dto.setPrice(ride.getPrice());
-
-                Driver driver = driverRepository.findById(ride.getDriverId()).orElseThrow(
-                        () -> new UserNotFoundException("Motorista não encontrado")
-                );
-                User user = userRepository.findUserIdByDriverId(driver.getId()).orElseThrow(
-                        () -> new UserNotFoundException("Usuário não encontrado")
-                );
-
-                dto.setDriverName(user.getName());  // Exemplo, supondo que tenha um objeto `driver`
+                dto.setDriverName("Nome do Motorista");  // Coloque o nome do motorista
                 dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
-                dto.setDate(ride.getDate());  // Converte para string, se necessário
+                dto.setDate(ride.getDate());
                 dto.setDuration(ride.getDuration());
                 dto.setDistance(ride.getDistance());
                 return dto;
@@ -189,6 +185,7 @@ public class RideController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 
 }

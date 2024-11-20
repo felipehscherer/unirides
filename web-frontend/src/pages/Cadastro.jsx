@@ -8,14 +8,10 @@ import DateValidator from '../components/DateValidator.js';
 import CpfValidator from '../components/CpfValidator.js';
 import logoImage from '../assets/logo.png';
 import { Messages } from 'primereact/messages';
+import { CadastroRequestBuilder } from '../components/CadastroRequestBuilder.js';
 // Importações de estilos do PrimeReact
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
-
-const regexUpperCase = /[A-Z]/;
-const regexLowerCase = /[a-z]/;
-const regexNumber = /\d/;
-const regexSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
 
 const Cadastro = () => {
   const [name, setNome] = useState('')
@@ -92,44 +88,41 @@ const handlePasswordFocus = () => {
 const handlePasswordBlur = () => {
   setIsTyping(false); // Marca que o usuário parou de digitar
 };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setPasswordError('')
-    setGenericError('')
-     if(name.trim().split(' ').length < 2){
-      setGenericError('Campo "Nome" incompleto!')
-      return
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setPasswordError('')
+  setGenericError('')
+    if(name.trim().split(' ').length < 2){
+    setGenericError('Campo "Nome" incompleto!')
+    return
+  }
+
+  const dataToSend = new CadastroRequestBuilder()
+    .setName(name)
+    .setEmail(email)
+    .setCpf(cpf)
+    .setPassword(password)
+    .setPhone(telefone)
+    .setBirthDate(dataNascimento)
+    .setAddressDetails(cep, cidade, estado, endereco, numero, complemento)
+  .build();
+
+  try {
+    await axios.post('/auth/register', dataToSend);
+    showError('success', 'Sucesso:', 'Cadastro realizado!');
+    setTimeout(function() { 
+      navigate('/login'); 
+    }, 2000);
+  } catch (error) {
+    if (error.response && error.response.status === 403) {
+      const errorMsg = error.response.data;
+      setErrorMessage(errorMsg);
+      showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
+    }else{
+      showError('error', 'Erro:', "Algo deu errado..");
     }
-
-
-    const dataToSend = {  //remoção de mascaras
-      name: name,
-      email: email,
-      cpf: cpf.replace(/\D/g, ''),
-      password: password,
-      telefone: telefone.replace(/\D/g, ''),
-      dataNascimento: dataNascimento,
-      cep: cep.replace(/\D/g, ''),
-      cidade: cidade,
-      estado: estado,
-      endereco: endereco,
-      numero: numero,
-      complemento: complemento
-    };
-
-    try {
-      await axios.post('/auth/register', dataToSend);
-      showError('success', 'Sucesso:', 'Cadastro realizado!');
-      navigate('/login');
-    } catch (error) {
-      if (error.response && error.response.status === 403) {
-        const errorMsg = error.response.data;
-        setErrorMessage(errorMsg);
-        showError('error', 'Erro:', errorMessage);  // Exibe o erro do backend
-      }else{
-        showError('error', 'Erro:', "Algo deu errado..");
-      }
-    }
+  }
   };
 
   return (
