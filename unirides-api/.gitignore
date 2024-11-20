@@ -1,3 +1,2 @@
 .env
-./unirides-api/src/main/resources/application.properties
-./unirides-api/target/classes/application.properties
+/src/main/resources/application.properties

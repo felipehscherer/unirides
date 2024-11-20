@@ -77,6 +77,41 @@
   margin-top: 20px;
 }
 
+.button-container-driver-vehicle {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.button-container-driver{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.button-container-vehicle{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.button-driver-vehicle{
+  background-color: #089F08;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-inline: 10px;
+ }
+
+.button-driver-vehicle:hover{
+  background-color: green;
+
+}
+
 .btn-action-green {
   background-color: #089F08;
   color: white;
@@ -92,6 +127,8 @@
 .btn-action-green:hover {
   background-color: green;
 }
+
+
 
 .btn-home {
   background-color: #007bff;
