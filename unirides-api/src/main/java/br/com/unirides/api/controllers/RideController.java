@@ -91,7 +91,6 @@ public class RideController {
             ride.setStatus(RideStatus.ABERTA);
             ride.setFreeSeatsNumber(rideCreationDTO.getDesiredPassengersNumber());
 
-
             if (!rideRepository.getRideByAllArguments(
                     rideCreationDTO.getOrigin(), rideCreationDTO.getDestination(), rideCreationDTO.getDistance(),
                     driver.getId(), rideCreationDTO.getDate(),
@@ -172,7 +171,7 @@ public class RideController {
                 dto.setOriginAddress(ride.getOriginAddress());
                 dto.setDestinationAddress(ride.getDestinationAddress());
                 dto.setPrice(ride.getPrice());
-                dto.setDriverName("Nome do Motorista");  // Coloque o nome do motorista
+                dto.setDriverName("Nome do Motorista");  //buscar atraves do driverID
                 dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
                 dto.setDate(ride.getDate());
                 dto.setDuration(ride.getDuration());
