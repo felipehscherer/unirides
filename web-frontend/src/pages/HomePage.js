@@ -26,7 +26,7 @@ const HomePage = () => {
           className="main-image"
         /> 
 {/*           <h1>De Universitários, Para Universitários: Sua Carona Começa Aqui!</h1> */}
-          <p>
+          <p class="justificado">
           Unirides conecta universitários para transformar a mobilidade. 
           Economize, compartilhe e faça parte de uma comunidade que acredita que juntos podemos ir mais longe. 
           Sua carona, sua escolha, nosso caminho compartilhado.
