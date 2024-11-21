@@ -25,6 +25,8 @@ const CadastroCarona = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [originAddress, setOriginAddress] = useState('');
     const [destinationAddress, setDestinationAddress] = useState('');
+    const [originCity, setOriginCity] = useState('');
+    const [destinationCity, setDestinationCity] = useState('');
     const messagesRef = useRef(null);
     const navigate = useNavigate();
 
@@ -94,6 +96,21 @@ const CadastroCarona = () => {
         });
     };
 
+    const extractCityName = (address) => {
+      if (!address) return "";
+      const parts = address.split(",");
+      //return parts[parts.length - 3]?.trim() || ""; // assume que o nome da cidade é sempre a penúltima parte antes do estado
+
+      const cityAndState = parts[parts.length - 3]?.trim() || "";
+      return cityAndState.split('-')[0].trim();
+    };
+
+    const formatDuration = (seconds) => {
+      const hours = seconds / 3600; // Calcula horas
+      const minutes = (seconds % 3600) / 60; // Calcula minutos restantes
+      return `${Math.floor(hours)}h ${Math.floor(minutes)}min`;
+  };
+
     const calculateDistanceAndSuggestPrice = async () => {
         if (!originPosition || !destinationPosition) {
             showError('warn', 'Alerta:', 'Preencha todos os campos!');
@@ -130,12 +147,14 @@ const CadastroCarona = () => {
     
             const element = data.rows[0].elements[0];
             if (element.status === "OK") {
-                setDuration(element.duration.text);
+                setDuration(element.duration.value); //duracao em segundos
                 setDistanceInKm(element.distance.text);
                 setSuggestedPrice(calculatePrice(element.distance.value/1000));
 
                 setOriginAddress(data.origin_addresses[0])
                 setDestinationAddress(data.destination_addresses[0])
+                setOriginCity(extractCityName(data.origin_addresses[0]))
+                setDestinationCity(extractCityName(data.destination_addresses[0]))
 
                 console.log('desT:' + destinationAddress)
                 console.log('desCRU:' + data.destination_addresses[0])
@@ -195,6 +214,7 @@ const CadastroCarona = () => {
           .setOrigin(originPosition.lat, originPosition.lng)
           .setDestination(destinationPosition.lat, destinationPosition.lng)
           .setAddresses(originAddress, destinationAddress)
+          .setCities(originCity, destinationCity)
           .setDateAndTime(date, time)
           .setDesiredPassengersNumber(passengers)
           .setPrice(suggestedPrice)
@@ -203,6 +223,8 @@ const CadastroCarona = () => {
         .build();
 
         try {
+          console.log("estamos enviando o seguinte pro back:")
+          console.log(dataToSend)
             await axios.post('/rides/create', dataToSend);
             showError('success', 'Sucesso:', 'Sucesso!');
             setTimeout(function() { 
@@ -332,7 +354,7 @@ const CadastroCarona = () => {
         {isConfirmarEnabled && (
                 <div>
                     <h4>Distância: {distanceInKm}</h4>
-                    <h4>Duração: {duration}</h4>
+                    <h4>Duração: {formatDuration(duration)}</h4>
                     <h4>Preço: R$ {suggestedPrice.toFixed(2)}</h4>
                 </div>
         )}

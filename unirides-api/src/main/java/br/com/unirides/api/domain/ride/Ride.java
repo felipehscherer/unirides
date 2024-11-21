@@ -46,10 +46,12 @@ public class Ride {
     private UUID driverId;
     private UUID vehicleId;
     private String cnh;
-    private String origin;
-    private String destination;
+    private String originCoords;
+    private String destinationCoords;
     private String originAddress;
     private String destinationAddress;
+    private String originCity;
+    private String destinationCity;
     private LocalDate date;
     private String time;
     private int desiredPassengersNumber;

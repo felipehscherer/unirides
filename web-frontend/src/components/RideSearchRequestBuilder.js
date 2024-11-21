@@ -18,6 +18,12 @@ export class RideSearchRequestBuilder {
       this.data.destinationAddress = destinationAddress;
       return this;
     }
+
+    setCities(originCity, destinationCity){
+      this.data.originCity = originCity;
+      this.data.destinationCity = destinationCity;
+      return this;
+    }
   
     build() {
       return this.data;

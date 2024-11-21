@@ -12,6 +12,8 @@ public class RideSearchResponseDTO {
     private String destination;
     private String originAddress;
     private String destinationAddress;
+    private String originCity;
+    private String destinationCity;
     private LocalDate date;
     private String time;
     private String price;

@@ -19,7 +19,7 @@ function RideSearch() {
   const messagesRef = useRef(null);
 
   const handleSearch = async (e) => {
-    await getRideInfos();
+    //await getRideInfos();
     const dataToSend = new RideSearchRequestBuilder()
       .setOrigin(originPosition.lat, originPosition.lng)
       .setDestination(destinationPosition.lat, destinationPosition.lng)
@@ -27,6 +27,8 @@ function RideSearch() {
     .build();
 
     try {
+      console.log('estamos enviando isso para o back:')
+      console.log(dataToSend)
       const response = await axios.post('/rides/search', dataToSend, {  //requisição ao back pra trazer as caronas
         headers: {
           'Content-Type': 'application/json'
@@ -97,7 +99,7 @@ function RideSearch() {
     }
   };
 
-  const getRideInfos = async () => {
+  const getRideInfos = async () => { //nao sera mais necessário nessa pagina, apenas na proxima de detalhes
     if (!originPosition || !destinationPosition) {
         showError('warn', 'Alerta:', 'Preencha todos os campos!');
         return false;

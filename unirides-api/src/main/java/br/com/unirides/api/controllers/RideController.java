@@ -77,10 +77,12 @@ public class RideController {
             ride.setDriverId(driver.getId());
             ride.setVehicleId(vehicle.getId());
             ride.setCnh(driver.getNumeroCnh());
-            ride.setOrigin(rideCreationDTO.getOrigin());
-            ride.setDestination(rideCreationDTO.getDestination());
+            ride.setOriginCoords(rideCreationDTO.getOrigin());
+            ride.setDestinationCoords(rideCreationDTO.getDestination());
             ride.setOriginAddress(rideCreationDTO.getOriginAddress());
             ride.setDestinationAddress(rideCreationDTO.getDestinationAddress());
+            ride.setOriginCity(rideCreationDTO.getOriginCity());
+            ride.setDestinationCity(rideCreationDTO.getDestinationCity());
             ride.setDate(rideCreationDTO.getDate());
             ride.setTime(rideCreationDTO.getTime());
             ride.setDesiredPassengersNumber(rideCreationDTO.getDesiredPassengersNumber());
@@ -157,7 +159,7 @@ public class RideController {
     public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
         System.out.println("Recebido: " + searchDTO);
         try {
-            List<Ride> rides = rideService.findRidesByDestination(searchDTO.getDestination());
+            List<Ride> rides = rideService.findRidesByDestination(searchDTO.getDestinationAddress());
 
             if (rides.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
@@ -166,13 +168,23 @@ public class RideController {
             // Converte as entidades `Ride` para `RideDTO`
             List<RideSearchResponseDTO> rideDTOs = rides.stream().map(ride -> {
                 RideSearchResponseDTO dto = new RideSearchResponseDTO();
-                dto.setOrigin(ride.getOrigin());
-                dto.setDestination(ride.getDestination());
+                dto.setOrigin(ride.getOriginCoords());
+                dto.setDestination(ride.getDestinationCoords());
                 dto.setOriginAddress(ride.getOriginAddress());
                 dto.setDestinationAddress(ride.getDestinationAddress());
+                dto.setOriginCity(ride.getOriginCity());
+                dto.setDestinationCity(ride.getDestinationCity());
                 dto.setPrice(ride.getPrice());
-                dto.setDriverName("Nome do Motorista");  //buscar atraves do driverID
+                dto.setTime(ride.getTime());
+
+                // Buscar o Driver e, em seguida, o User para obter o nome
+                driverRepository.findByNumeroCnh(ride.getCnh()).flatMap(
+                        driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
+                                user -> dto.setDriverName(user.getName()));
+
+                //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
                 dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
+
                 dto.setDate(ride.getDate());
                 dto.setDuration(ride.getDuration());
                 dto.setDistance(ride.getDistance());

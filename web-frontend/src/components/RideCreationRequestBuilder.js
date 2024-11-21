@@ -18,6 +18,12 @@ export class RideCreationRequestBuilder {
       this.data.destinationAddress = destinationAddress;
       return this;
     }
+
+    setCities(originCity, destinationCity){
+        this.data.originCity = originCity;
+        this.data.destinationCity = destinationCity;
+        return this;
+    }
   
     setDateAndTime(date, time) {
       this.data.date = date;

@@ -20,7 +20,7 @@ public class RideService {
 
         // Obtenha todas as caronas e filtre pelo destino
         return rideRepository.findAll().stream()
-                .filter(ride -> normalizeText(ride.getDestination()).contains(normalizedDestination))
+                .filter(ride -> normalizeText(ride.getDestinationCoords()).contains(normalizedDestination))
                 .collect(Collectors.toList());
     }
 
