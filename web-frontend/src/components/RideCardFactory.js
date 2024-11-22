@@ -1,24 +1,22 @@
 import React from 'react';
 import './RideCard.css';
 
-export const RideCardFactory = (ride) => {
-  const calculateArrivalTime = (time, durationInSeconds) => {
-    // Separar horas e minutos da string de horário
-    const [hours, minutes] = time.split(":").map(Number);
+export const RideCardFactory = ({ ride, navigate }) => {
+  const handleViewDetails = () => {
+    navigate(`/caronas/${ride.rideId}`, {
+      state: { rideDetails: ride },
+    });
+  };
 
-    // Criar um objeto Date com o horário de saída
+  const calculateArrivalTime = (time, durationInSeconds) => {
+    const [hours, minutes] = time.split(":").map(Number);
     const date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
     date.setSeconds(0);
-
-    // Somar a duração (em segundos)
     date.setSeconds(date.getSeconds() + durationInSeconds);
-
-    // Formatar o horário de chegada no formato HH:mm
     const arrivalHours = date.getHours().toString().padStart(2, "0");
     const arrivalMinutes = date.getMinutes().toString().padStart(2, "0");
-
     return `${arrivalHours}:${arrivalMinutes}`;
   };
 
@@ -54,7 +52,7 @@ export const RideCardFactory = (ride) => {
         </p>
       </div>
       <div className="ride-card-footer">
-        <button className="details-button" onClick={() => window.location.href = `/ride-details/${ride.id}`}>
+        <button className="details-button" onClick={handleViewDetails}>
           Ver Detalhes
         </button>
       </div>

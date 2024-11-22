@@ -19,25 +19,41 @@ function RideSearch() {
   const messagesRef = useRef(null);
 
   const handleSearch = async (e) => {
-    //await getRideInfos();
-    const dataToSend = new RideSearchRequestBuilder()
-      .setOrigin(originPosition.lat, originPosition.lng)
-      .setDestination(destinationPosition.lat, destinationPosition.lng)
-      .setAddresses(originAddress, destinationAddress)
-    .build();
-
     try {
-      console.log('estamos enviando isso para o back:')
-      console.log(dataToSend)
-      const response = await axios.post('/rides/search', dataToSend, {  //requisição ao back pra trazer as caronas
+      const rideInfo = await getRideInfos();
+      
+      if (!rideInfo.success) {
+        return;
+      }
+
+      // Atualizar os estados com os endereços obtidos
+      const { originAddress: newOriginAddress, destinationAddress: newDestinationAddress } = rideInfo;
+
+      const dataToSend = new RideSearchRequestBuilder()
+        .setOrigin(originPosition.lat, originPosition.lng)
+        .setDestination(destinationPosition.lat, destinationPosition.lng)
+        .setAddresses(newOriginAddress, newDestinationAddress)
+        .build();
+      console.log("Dados preparados para envio:", dataToSend);
+
+      const response = await axios.post('/rides/search', dataToSend, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
       setRides(response.data);
+      console.log('dados repsosta:', response.data)
+      
+      setOriginAddress(newOriginAddress);
+      setDestinationAddress(newDestinationAddress);
     } catch (error) {
-      console.error('Erro ao buscar caronas:', error);
-      showError('error', 'Erro:', 'Erro ao buscar caronas.');
+      if (Array.isArray(error.response.data) && error.response.data.length === 0) {
+        console.log("Não há caronas!");
+        showError('warn', 'Aviso', 'Nenhuma carona encontrada')
+      }else{
+        console.error('Erro ao buscar caronas:', error, error.response.data);
+        showError('error', 'Erro:', 'Erro ao buscar caronas.');
+      }
     }
   };
 
@@ -99,61 +115,58 @@ function RideSearch() {
     }
   };
 
-  const getRideInfos = async () => { //nao sera mais necessário nessa pagina, apenas na proxima de detalhes
+  const getRideInfos = async () => {
     if (!originPosition || !destinationPosition) {
-        showError('warn', 'Alerta:', 'Preencha todos os campos!');
-        return false;
+      showError('warn', 'Alerta:', 'Preencha todos os campos!');
+      return { success: false };
     }
 
     const origin = `${originPosition.lat},${originPosition.lng}`;
     const destination = `${destinationPosition.lat},${destinationPosition.lng}`;
         
     try {
-        console.log('Enviando requisição para calcular distância');
-        console.log('Origin:', origin);
-        console.log('Destination:', destination);
+      console.log('Enviando requisição para calcular distância');
+      console.log('Origin:', origin);
+      console.log('Destination:', destination);
 
-        const { data } = await axios.get('/api/distance', {
-            params: {
-                origin,
-                destination
-            },
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        console.log('Resposta recebida:', data);
-
-        if (!data || !data.rows || !data.rows[0] || !data.rows[0].elements || !data.rows[0].elements[0]) {
-            showError('error', 'Erro:', 'Resposta inválida do servidor');
-            return false;
+      const { data } = await axios.get('/api/distance', {
+        params: {
+          origin,
+          destination
+        },
+        headers: {
+          'Content-Type': 'application/json',
         }
+      });
 
-        const element = data.rows[0].elements[0];
-        if (element.status === "OK") {
-            setOriginAddress(data.origin_addresses[0])
-            setDestinationAddress(data.destination_addresses[0])
-            return true;
-        } else {
-            showError('error', 'Erro:', 'Não foi possível calcular a distância');
-            return false;
-        }
+      console.log('Resposta recebida:', data);
+
+      if (!data || !data.rows || !data.rows[0] || !data.rows[0].elements || !data.rows[0].elements[0]) {
+        showError('error', 'Erro:', 'Resposta inválida do servidor');
+        return { success: false };
+      }
+
+      const element = data.rows[0].elements[0];
+      if (element.status === "OK") {
+        return {
+          success: true,
+          originAddress: data.origin_addresses[0],
+          destinationAddress: data.destination_addresses[0]
+        };
+      } else {
+        showError('error', 'Erro:', 'Não foi possível buscar os endereços');
+        return { success: false };
+      }
     } catch (error) {
-        console.error("Erro ao calcular a distância:", error);
-        console.error("Detalhes do erro:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status
-        });
-        
-        const errorMessage = error.response?.data?.message || 
-                           'Não foi possível calcular a distância';
-        
-        showError('error', 'Erro:', errorMessage);
-        return false;
+      console.error("Erro", error);
+      console.error("Detalhes do erro:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      return { success: false };
     }
-};
+  };
 
   return (
     <div className="ride-registration">
@@ -220,9 +233,9 @@ function RideSearch() {
           Buscar Carona</button>
       
       <div className="ride-list">
-        {rides.map(ride => 
-          RideCardFactory(ride) //adicionar horario, duração, distancia,
-          )} 
+        {rides.map((ride) => (
+          <RideCardFactory key={ride.rideId} ride={ride} navigate={navigate} />
+        ))}
       </div>
 
       <button className="back-home-button" onClick={handleBackToHome}> 

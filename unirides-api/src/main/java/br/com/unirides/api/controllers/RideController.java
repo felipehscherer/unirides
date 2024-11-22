@@ -21,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -159,15 +156,20 @@ public class RideController {
     public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
         System.out.println("Recebido: " + searchDTO);
         try {
-            List<Ride> rides = rideService.findRidesByDestination(searchDTO.getDestinationAddress());
+            //System.out.println("BUSCAAAAAAAAAAAAAAAAAAAAA");
+            List<Ride> rides = rideService.findRidesByDestination(searchDTO);
+            //System.out.println("BUSCOOOOOOOOOOOOOOOOOOOU");
 
             if (rides.isEmpty()) {
+                //System.out.println("VAI VER SE ERA VAZIOOOOOOOOOOOOOOOO");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
             }
+            //System.out.println("NAO ERA VAZIOOOOOOOOOOOOOOOO");
 
             // Converte as entidades `Ride` para `RideDTO`
             List<RideSearchResponseDTO> rideDTOs = rides.stream().map(ride -> {
                 RideSearchResponseDTO dto = new RideSearchResponseDTO();
+                dto.setRideId(ride.getId());
                 dto.setOrigin(ride.getOriginCoords());
                 dto.setDestination(ride.getDestinationCoords());
                 dto.setOriginAddress(ride.getOriginAddress());
@@ -193,6 +195,42 @@ public class RideController {
 
             return ResponseEntity.ok(rideDTOs);
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("search_id/{rideId}")
+    public ResponseEntity<?> searchRideId(@PathVariable UUID rideId){
+        try{
+            Ride ride = rideRepository.findById(rideId)
+                    .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
+
+            RideSearchResponseDTO dto = new RideSearchResponseDTO();
+            dto.setRideId(ride.getId());
+            dto.setOrigin(ride.getOriginCoords());
+            dto.setDestination(ride.getDestinationCoords());
+            dto.setOriginAddress(ride.getOriginAddress());
+            dto.setDestinationAddress(ride.getDestinationAddress());
+            dto.setOriginCity(ride.getOriginCity());
+            dto.setDestinationCity(ride.getDestinationCity());
+            dto.setPrice(ride.getPrice());
+            dto.setTime(ride.getTime());
+
+            // Buscar o Driver e, em seguida, o User para obter o nome
+            driverRepository.findByNumeroCnh(ride.getCnh()).flatMap(
+                    driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
+                    user -> dto.setDriverName(user.getName()));
+
+            //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
+            dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
+
+            dto.setDate(ride.getDate());
+            dto.setDuration(ride.getDuration());
+            dto.setDistance(ride.getDistance());
+
+            return ResponseEntity.ok(dto);
+
+        }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
