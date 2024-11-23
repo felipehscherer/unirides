@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static br.com.unirides.api.utils.UserValidationUtils.*;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class AuthController {
         } else if (this.repository.findByEmail(body.email()).isPresent()) {
             throw new EmailAlreadyExistsException("E-mail já cadastrado!");
         }else{
-            if (User.validateCpf(body.cpf())){
+            if (validateCpf(body.cpf())){
                 newUser.setCpf(body.cpf());
             }else{
                 responseOk = false;
@@ -55,7 +57,7 @@ public class AuthController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             String data = body.dataNascimento();
             //A data no banco dica invertida, ou seja 12/05/199 = 1999-05-12
-            if (User.validateDate(data)){
+            if (validateDate(data)){
                 LocalDate dataFormatada = LocalDate.parse(data, formatter);
                 newUser.setDataNascimento(dataFormatada);
             }else{
@@ -68,10 +70,10 @@ public class AuthController {
             newUser.setName(body.name());
             newUser.setTelefone(body.telefone());
 
-            String[] enderecoFinal = User.validateCEP(body.cep());
+            String[] enderecoFinal = validateCEP(body.cep());
             if (enderecoFinal[0] == null || enderecoFinal[0].isEmpty()){
                 responseOk = false;
-                throw new CepInvalidoException("CEP inválido");
+                throw new CepInvalidoException("O campo de cidade não pode estar vazio!");
             }
             newUser.setCep(body.cep());
             newUser.setCidade(enderecoFinal[0]);
@@ -86,6 +88,6 @@ public class AuthController {
             String token = this.tokenService.generateToken(newUser);
             return ResponseEntity.ok("Usuário cadastrado com sucesso!");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu erradoo!");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Algo deu errado!");
     }
 }

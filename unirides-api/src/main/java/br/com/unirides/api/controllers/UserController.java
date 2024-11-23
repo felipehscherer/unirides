@@ -3,7 +3,7 @@ package br.com.unirides.api.controllers;
 import br.com.unirides.api.domain.driver.Driver;
 import br.com.unirides.api.dto.user.UserDriverInfoResponseDTO;
 import br.com.unirides.api.exceptions.UserNotFoundException;
-import br.com.unirides.api.exceptions.VehicleNotFoundException;
+import br.com.unirides.api.infra.security.SecurityUtils;
 import br.com.unirides.api.repository.DriverRepository;
 import br.com.unirides.api.repository.VehicleRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,11 +15,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.UUID;
+
+import static br.com.unirides.api.utils.UserValidationUtils.validateName;
+import static br.com.unirides.api.utils.UserValidationUtils.validatePassword;
 
 @RestController
 @RequestMapping("/user")
@@ -39,9 +44,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserResponseDTO> getProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
+        Object principal = SecurityUtils.getAuthenticatedPrincipal();
         String email;
 
         if (principal instanceof User) {
@@ -65,8 +68,7 @@ public class UserController {
 
     @PutMapping("/profile/email")
     public ResponseEntity<UserResponseDTO> updateEmail(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = SecurityUtils.getAuthenticatedPrincipal();
 
         String email;
 
@@ -100,8 +102,7 @@ public class UserController {
 
     @PutMapping("/profile/password")
     public ResponseEntity<Void> updatePassword(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = SecurityUtils.getAuthenticatedPrincipal();
 
         String email;
 
@@ -120,27 +121,16 @@ public class UserController {
             String newPassword = request.get("newPassword");
 
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
 
-            // Validação da nova senha
-            if (newPassword.length() < 8) {
-                return ResponseEntity.badRequest().body(null); // Nova senha deve ter no mínimo 8 caracteres
+            if (validatePassword(newPassword)) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                repository.save(user);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.badRequest().body(null);
             }
-            if (!Pattern.compile("[A-Z]").matcher(newPassword).find()) {
-                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra maiúscula
-            }
-            if (!Pattern.compile("[a-z]").matcher(newPassword).find()) {
-                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra minúscula
-            }
-            if (!Pattern.compile("[0-9]").matcher(newPassword).find()) {
-                return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos um número
-            }
-
-            user.setPassword(passwordEncoder.encode(newPassword));
-            repository.save(user);
-
-            return ResponseEntity.noContent().build();
         }
 
         return ResponseEntity.notFound().build();
@@ -148,8 +138,7 @@ public class UserController {
 
     @PutMapping("/profile/details")
     public ResponseEntity<UserResponseDTO> updateDetails(@RequestBody Map<String, String> request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = SecurityUtils.getAuthenticatedPrincipal();
 
         String email;
 
@@ -165,83 +154,62 @@ public class UserController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            // Validação do nome
             String newName = request.get("name");
             if (newName != null) {
-                if (newName.trim().isEmpty()) {
-                    return ResponseEntity.badRequest().body(null); // Nome não pode estar vazio
+                if (validateName(newName)) {
+                    user.setName(newName);
+                } else {
+                    return ResponseEntity.badRequest().body(null);
                 }
-                if (newName.length() < 3 || newName.length() > 50) {
-                    return ResponseEntity.badRequest().body(null); // Nome deve ter entre 3 e 50 caracteres
-                }
-                if (!Pattern.compile("^[A-Za-z\\s]+$").matcher(newName).matches()) {
-                    return ResponseEntity.badRequest().body(null); // Nome deve conter apenas letras
-                }
-                user.setName(newName);
             }
 
             user.setCidade(request.getOrDefault("cidade", user.getCidade()));
             user.setEstado(request.getOrDefault("estado", user.getEstado()));
             user.setEndereco(request.getOrDefault("endereco", user.getEndereco()));
 
-            // Atualizar número e complemento, se aplicável
             String numeroStr = request.get("numero");
             if (numeroStr != null) {
                 try {
                     user.setNumero(Integer.parseInt(numeroStr));
                 } catch (NumberFormatException e) {
-                    return ResponseEntity.badRequest().build(); // Número inválido
+                    return ResponseEntity.badRequest().build();
                 }
             }
 
             user.setComplemento(request.getOrDefault("complemento", user.getComplemento()));
 
-            // Atualizar email se fornecido e se não estiver em uso por outro usuário
             String newEmail = request.get("email");
             if (newEmail != null && !newEmail.equals(user.getEmail())) {
                 if (repository.findByEmail(newEmail).isPresent()) {
-                    return ResponseEntity.badRequest().body(null); // Email já em uso
+                    return ResponseEntity.badRequest().body(null);
                 }
                 user.setEmail(newEmail);
             }
 
-            // Atualizar senha se fornecido o currentPassword e newPassword
             String currentPassword = request.get("currentPassword");
             String newPassword = request.get("newPassword");
             if (currentPassword != null && newPassword != null) {
                 if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha atual incorreta
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
                 }
-                // Validação da nova senha
-                if (newPassword.length() < 8) {
-                    return ResponseEntity.badRequest().body(null); // Nova senha deve ter no mínimo 8 caracteres
+                if (validatePassword(newPassword)) {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                } else {
+                    return ResponseEntity.badRequest().body(null);
                 }
-                if (!Pattern.compile("[A-Z]").matcher(newPassword).find()) {
-                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra maiúscula
-                }
-                if (!Pattern.compile("[a-z]").matcher(newPassword).find()) {
-                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos uma letra minúscula
-                }
-                if (!Pattern.compile("[0-9]").matcher(newPassword).find()) {
-                    return ResponseEntity.badRequest().body(null); // Nova senha deve conter pelo menos um número
-                }
-                user.setPassword(passwordEncoder.encode(newPassword));
             }
 
-            // Salvar as alterações
             repository.save(user);
 
             UserResponseDTO responseDTO = new UserResponseDTO(user.getName(), user.getEmail(), user.getCpf());
             return ResponseEntity.ok(responseDTO);
         }
-
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/driver-info")
     public ResponseEntity<UserDriverInfoResponseDTO> getInfoDriver() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
+        Object principal = SecurityUtils.getAuthenticatedPrincipal();
         String email;
 
         if (principal instanceof User) {
@@ -266,7 +234,48 @@ public class UserController {
         }
 
         return ResponseEntity.ok(responseDTO);
+    }
 
 
+    @PostMapping("/{id}/upload-profile-image")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+        try {
+            // Buscar o usuário no banco de dados
+            Optional<User> optionalUser = repository.findById(id);
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.status(404).body("Usuário não encontrado.");
+            }
+
+            User user = optionalUser.get();
+
+            // Salvar a imagem no campo profileImage
+            user.setProfileImage(file.getBytes());
+            repository.save(user);
+
+            return ResponseEntity.ok("Imagem salva com sucesso!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Erro ao salvar a imagem.");
+        }
+    }
+
+    @Transactional
+    @GetMapping("/{id}/profile-image")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable UUID id) {
+        Optional<User> optionalUser = repository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        User user = optionalUser.get();
+        byte[] image = user.getProfileImage();
+
+        if (image == null || image.length == 0) {
+            return ResponseEntity.status(404).body(null);
+        }
+
+        // Retornar a imagem como resposta
+        return ResponseEntity.ok().contentType(org.springframework.http.MediaType.IMAGE_JPEG).body(image);
     }
 }
+
