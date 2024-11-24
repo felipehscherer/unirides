@@ -21,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,6 +39,9 @@ public class RideController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RideService rideService;
 
     TokenService tokenService;
 
@@ -74,10 +74,12 @@ public class RideController {
             ride.setDriverId(driver.getId());
             ride.setVehicleId(vehicle.getId());
             ride.setCnh(driver.getNumeroCnh());
-            ride.setOrigin(rideCreationDTO.getOrigin());
-            ride.setDestination(rideCreationDTO.getDestination());
+            ride.setOriginCoords(rideCreationDTO.getOrigin());
+            ride.setDestinationCoords(rideCreationDTO.getDestination());
             ride.setOriginAddress(rideCreationDTO.getOriginAddress());
             ride.setDestinationAddress(rideCreationDTO.getDestinationAddress());
+            ride.setOriginCity(rideCreationDTO.getOriginCity());
+            ride.setDestinationCity(rideCreationDTO.getDestinationCity());
             ride.setDate(rideCreationDTO.getDate());
             ride.setTime(rideCreationDTO.getTime());
             ride.setDesiredPassengersNumber(rideCreationDTO.getDesiredPassengersNumber());
@@ -87,7 +89,6 @@ public class RideController {
             ride.setDuration(rideCreationDTO.getDuration());
             ride.setStatus(RideStatus.ABERTA);
             ride.setFreeSeatsNumber(rideCreationDTO.getDesiredPassengersNumber());
-
 
             if (!rideRepository.getRideByAllArguments(
                     rideCreationDTO.getOrigin(), rideCreationDTO.getDestination(), rideCreationDTO.getDistance(),
@@ -153,32 +154,40 @@ public class RideController {
 
     @PostMapping("/search")
     public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
+        System.out.println("Recebido: " + searchDTO);
         try {
-            List<Ride> rides = rideRepository.findByDestinationContainingIgnoreCase(searchDTO.getDestination());
+            //System.out.println("BUSCAAAAAAAAAAAAAAAAAAAAA");
+            List<Ride> rides = rideService.findRidesByDestination(searchDTO);
+            //System.out.println("BUSCOOOOOOOOOOOOOOOOOOOU");
 
             if (rides.isEmpty()) {
+                //System.out.println("VAI VER SE ERA VAZIOOOOOOOOOOOOOOOO");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
             }
+            //System.out.println("NAO ERA VAZIOOOOOOOOOOOOOOOO");
 
             // Converte as entidades `Ride` para `RideDTO`
             List<RideSearchResponseDTO> rideDTOs = rides.stream().map(ride -> {
                 RideSearchResponseDTO dto = new RideSearchResponseDTO();
-                dto.setOrigin(ride.getOrigin());
-                dto.setDestination(ride.getDestination());
+                dto.setRideId(ride.getId());
+                dto.setOrigin(ride.getOriginCoords());
+                dto.setDestination(ride.getDestinationCoords());
                 dto.setOriginAddress(ride.getOriginAddress());
                 dto.setDestinationAddress(ride.getDestinationAddress());
+                dto.setOriginCity(ride.getOriginCity());
+                dto.setDestinationCity(ride.getDestinationCity());
                 dto.setPrice(ride.getPrice());
+                dto.setTime(ride.getTime());
 
-                Driver driver = driverRepository.findById(ride.getDriverId()).orElseThrow(
-                        () -> new UserNotFoundException("Motorista não encontrado")
-                );
-                User user = userRepository.findUserIdByDriverId(driver.getId()).orElseThrow(
-                        () -> new UserNotFoundException("Usuário não encontrado")
-                );
+                // Buscar o Driver e, em seguida, o User para obter o nome
+                driverRepository.findByNumeroCnh(ride.getCnh()).flatMap(
+                        driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
+                                user -> dto.setDriverName(user.getName()));
 
-                dto.setDriverName(user.getName());  // Exemplo, supondo que tenha um objeto `driver`
+                //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
                 dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
-                dto.setDate(ride.getDate());  // Converte para string, se necessário
+
+                dto.setDate(ride.getDate());
                 dto.setDuration(ride.getDuration());
                 dto.setDistance(ride.getDistance());
                 return dto;
@@ -189,6 +198,43 @@ public class RideController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("search_id/{rideId}")
+    public ResponseEntity<?> searchRideId(@PathVariable UUID rideId){
+        try{
+            Ride ride = rideRepository.findById(rideId)
+                    .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
+
+            RideSearchResponseDTO dto = new RideSearchResponseDTO();
+            dto.setRideId(ride.getId());
+            dto.setOrigin(ride.getOriginCoords());
+            dto.setDestination(ride.getDestinationCoords());
+            dto.setOriginAddress(ride.getOriginAddress());
+            dto.setDestinationAddress(ride.getDestinationAddress());
+            dto.setOriginCity(ride.getOriginCity());
+            dto.setDestinationCity(ride.getDestinationCity());
+            dto.setPrice(ride.getPrice());
+            dto.setTime(ride.getTime());
+
+            // Buscar o Driver e, em seguida, o User para obter o nome
+            driverRepository.findByNumeroCnh(ride.getCnh()).flatMap(
+                    driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
+                    user -> dto.setDriverName(user.getName()));
+
+            //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
+            dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
+
+            dto.setDate(ride.getDate());
+            dto.setDuration(ride.getDuration());
+            dto.setDistance(ride.getDistance());
+
+            return ResponseEntity.ok(dto);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 
 }

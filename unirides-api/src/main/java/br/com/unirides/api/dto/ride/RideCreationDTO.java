@@ -14,6 +14,8 @@ public class RideCreationDTO {
     String destination;
     String originAddress;
     String destinationAddress;
+    String originCity;
+    String destinationCity;
     LocalDate date;
     String time;
     int desiredPassengersNumber;
