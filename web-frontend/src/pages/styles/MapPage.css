@@ -1,25 +1,32 @@
-/* Container principal */
+
 .container-1 {
     position: relative;
     height: 100vh;
 }
 
-/* Caixa de pesquisa fixa no topo */
 .search-box {
     position: absolute;
-    top: 2rem; /* Ajuste a distância conforme necessário */
+    top: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.9); /* Fundo com transparência */
+    background: rgba(255, 255, 255, 0.9);
     padding: 1rem;
     border-radius: 10px;
-    width: 90%; /* Ajuste a largura da caixa */
-    max-width: 500px; /* Largura máxima */
-    z-index: 1000; /* Fixa a caixa no topo */
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para os campos de entrada */
+.error-messages {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 470px;
+
+}
+
 .address-icon-box input {
     width: 100%;
     padding: 12px 16px;
@@ -30,32 +37,10 @@
     transition: border 0.3s, box-shadow 0.3s;
 }
 
-.travel-mode-select {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
-
-.travel-mode-select select {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-}
-
-
-/* Foco visual no campo de entrada */
-.address-icon-box input:focus {
-    border-color: #007bff; /* Azul para indicar o foco */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Espaço entre os campos */
 .address-icon-box {
     margin-bottom: 1rem;
 }
 
-/* Sugestões de pesquisa */
 .suggestions-list {
     max-height: 200px;
     overflow-y: auto;
@@ -80,7 +65,24 @@
     color: #007bff;
 }
 
-/* Estilo para o botão de busca */
+.address-icon-box input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.travel-mode-select {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.travel-mode-select select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
 .buscar-carona-box-button {
     width: 100%;
     padding: 12px;
@@ -97,8 +99,8 @@
     background-color: #45a049;
 }
 
-/* Estilo para o mapa */
 .map {
+    position: relative;
     width: 100%;
     height: 100%;
 }

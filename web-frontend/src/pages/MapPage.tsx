@@ -3,64 +3,46 @@ import React, {useState, useEffect, useRef} from "react";
 import {GoogleMap, Marker, DirectionsRenderer} from "@react-google-maps/api";
 import "./styles/MapPage.css";
 import {Messages} from "primereact/messages";
+// @ts-ignore
+import {DrivingMode, WalkingMode, BicyclingMode, TransitMode, TravelModeStrategy,} from "../components/TravelModeStrategy.ts";
+// @ts-ignore
+import {GooglePlacesSuggestionService} from "../components/Suggestion.ts";
 
 const MapPage = () => {
     const [originValue, setOriginValue] = useState<string>("");
     const [destinationValue, setDestinationValue] = useState<string>("");
     const [originData, setOriginData] = useState<any[]>([]);
     const [destinyData, setDestinyData] = useState<any[]>([]);
-    const [originStatus, setOriginStatus] = useState<string>("");
-    const [destinyStatus, setDestinyStatus] = useState<string>("");
     const [directionsResponse, setDirectionsResponse] = useState<any>(null);
-    const [travelMode, setTravelMode] = useState<google.maps.TravelMode>(google.maps.TravelMode.TRANSIT);
+    const [travelModeStrategy, setTravelModeStrategy] = useState<TravelModeStrategy>(new TransitMode());
     const messagesRef = useRef(null);
 
     const position = {lat: -29.789286, lng: -55.768070};
+    const suggestionService = new GooglePlacesSuggestionService();
 
-    const fetchSuggestions = (query: string, type: "origin" | "destination") => {
-        if (!query) return;
-
-        const service = new google.maps.places.AutocompleteService();
-        const request = {
-            input: query,
-            types: ["geocode"],
-        };
-
-        service.getPlacePredictions(request, (predictions, status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                if (type === "origin") {
-                    setOriginData(predictions || []);
-                    setOriginStatus("OK");
-                } else {
-                    setDestinyData(predictions || []);
-                    setDestinyStatus("OK");
-                }
+    const fetchSuggestions = async (query: string, type: "origin" | "destination") => {
+        try {
+            const predictions = await suggestionService.fetchSuggestions(query);
+            if (type === "origin") {
+                setOriginData(predictions);
             } else {
-                if (type === "origin") {
-                    setOriginData([]);
-                    setOriginStatus("ERROR");
-                } else {
-                    setDestinyData([]);
-                    setDestinyStatus("ERROR");
-                }
+                setDestinyData(predictions);
             }
-        });
+        } catch (error) {
+            console.error(error);
+            if (type === "origin") setOriginData([]);
+            else setDestinyData([]);
+        }
     };
 
     useEffect(() => {
-        if (originValue) {
-            fetchSuggestions(originValue, "origin");
-        } else {
-            setOriginData([]);
-        }
+        if (originValue) fetchSuggestions(originValue, "origin");
+        else setOriginData([]);
     }, [originValue]);
 
     useEffect(() => {
-        if (destinationValue) {
-            fetchSuggestions(destinationValue, "destination");
-        } else {
-            setDestinyData([]);
-        }
+        if (destinationValue) fetchSuggestions(destinationValue, "destination");
+        else setDestinyData([]);
     }, [destinationValue]);
 
     const handleSearch = async () => {
@@ -69,7 +51,7 @@ const MapPage = () => {
             const result = await directionsService.route({
                 origin: originValue,
                 destination: destinationValue,
-                travelMode: travelMode,
+                travelMode: travelModeStrategy.getMode(),
             });
 
             if (result.routes && result.routes.length > 0) {
@@ -84,7 +66,22 @@ const MapPage = () => {
     };
 
     const handleTravelModeChange = (mode: string) => {
-        setTravelMode(google.maps.TravelMode[mode as keyof typeof google.maps.TravelMode]);
+        switch (mode) {
+            case "DRIVING":
+                setTravelModeStrategy(new DrivingMode());
+                break;
+            case "WALKING":
+                setTravelModeStrategy(new WalkingMode());
+                break;
+            case "BICYCLING":
+                setTravelModeStrategy(new BicyclingMode());
+                break;
+            case "TRANSIT":
+                setTravelModeStrategy(new TransitMode());
+                break;
+            default:
+                setTravelModeStrategy(new TransitMode());
+        }
     };
 
     const handleSuggestionSelect = (description: string, type: "origin" | "destination") => {
@@ -117,8 +114,7 @@ const MapPage = () => {
                         placeholder="Endereço de Origem"
                         onBlur={() => setTimeout(() => setOriginData([]), 200)}
                     />
-
-                    {originValue && originStatus === "OK" && originData.length > 0 && (
+                    {originValue && originData.length > 0 && (
                         <div className="suggestions-list">
                             {originData.map((suggestion, index) => (
                                 <div
@@ -132,7 +128,6 @@ const MapPage = () => {
                         </div>
                     )}
                 </div>
-
                 <div className="address-icon-box">
                     <input
                         value={destinationValue || ""}
@@ -140,7 +135,7 @@ const MapPage = () => {
                         placeholder="Endereço de Destino"
                         onBlur={() => setTimeout(() => setDestinyData([]), 200)}
                     />
-                    {destinationValue && destinyStatus === "OK" && destinyData.length > 0 && (
+                    {destinationValue && destinyData.length > 0 && (
                         <div className="suggestions-list">
                             {destinyData.map((suggestion, index) => (
                                 <div
@@ -154,35 +149,27 @@ const MapPage = () => {
                         </div>
                     )}
                 </div>
-
                 <div className="travel-mode-select">
-                    <select
-                        value={travelMode}
-                        onChange={(e) => handleTravelModeChange(e.target.value)}
-                    >
+                    <select onChange={(e) => handleTravelModeChange(e.target.value)}>
                         <option value="DRIVING">Dirigindo</option>
                         <option value="WALKING">Caminhando</option>
                         <option value="BICYCLING">Bicicleta</option>
                         <option value="TRANSIT">Transporte Público</option>
                     </select>
                 </div>
-
-                <button type="button" className="buscar-carona-box-button" onClick={handleSearch}>
+                <button className="buscar-carona-box-button" type="button" onClick={handleSearch}>
                     Buscar Rota
                 </button>
             </div>
-
             <div className="map">
-                <GoogleMap
-                    mapContainerStyle={{width: "100%", height: "100%"}}
-                    center={position}
-                    zoom={15}
-                >
+                <GoogleMap mapContainerStyle={{width: "100%", height: "100%"}} center={position} zoom={15}>
                     <Marker position={position}/>
                     {directionsResponse && <DirectionsRenderer directions={directionsResponse}/>}
                 </GoogleMap>
             </div>
-            <Messages className='custom-toast' ref={messagesRef}/>
+            <div className="error-messages">
+                <Messages ref={messagesRef}/>
+            </div>
         </div>
     );
 };
