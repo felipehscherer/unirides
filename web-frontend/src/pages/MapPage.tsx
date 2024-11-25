@@ -1,19 +1,21 @@
 // @ts-ignore
-import React, { useState, useEffect } from "react";
-import { GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
+import React, {useState, useEffect, useRef} from "react";
+import {GoogleMap, Marker, DirectionsRenderer} from "@react-google-maps/api";
 import "./styles/MapPage.css";
+import {Messages} from "primereact/messages";
 
 const MapPage = () => {
     const [originValue, setOriginValue] = useState<string>("");
     const [destinationValue, setDestinationValue] = useState<string>("");
-    const [oData, setOData] = useState<any[]>([]);
-    const [dData, setDData] = useState<any[]>([]);
-    const [oStatus, setOStatus] = useState<string>("");
-    const [dStatus, setDStatus] = useState<string>("");
+    const [originData, setOriginData] = useState<any[]>([]);
+    const [destinyData, setDestinyData] = useState<any[]>([]);
+    const [originStatus, setOriginStatus] = useState<string>("");
+    const [destinyStatus, setDestinyStatus] = useState<string>("");
     const [directionsResponse, setDirectionsResponse] = useState<any>(null);
-    const [travelMode, setTravelMode] = useState<google.maps.TravelMode>(google.maps.TravelMode.DRIVING);
+    const [travelMode, setTravelMode] = useState<google.maps.TravelMode>(google.maps.TravelMode.TRANSIT);
+    const messagesRef = useRef(null);
 
-    const position = { lat: -29.789286, lng: -55.768070 };
+    const position = {lat: -29.789286, lng: -55.768070};
 
     const fetchSuggestions = (query: string, type: "origin" | "destination") => {
         if (!query) return;
@@ -27,19 +29,19 @@ const MapPage = () => {
         service.getPlacePredictions(request, (predictions, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
                 if (type === "origin") {
-                    setOData(predictions || []);
-                    setOStatus("OK");
+                    setOriginData(predictions || []);
+                    setOriginStatus("OK");
                 } else {
-                    setDData(predictions || []);
-                    setDStatus("OK");
+                    setDestinyData(predictions || []);
+                    setDestinyStatus("OK");
                 }
             } else {
                 if (type === "origin") {
-                    setOData([]);
-                    setOStatus("ERROR");
+                    setOriginData([]);
+                    setOriginStatus("ERROR");
                 } else {
-                    setDData([]);
-                    setDStatus("ERROR");
+                    setDestinyData([]);
+                    setDestinyStatus("ERROR");
                 }
             }
         });
@@ -49,7 +51,7 @@ const MapPage = () => {
         if (originValue) {
             fetchSuggestions(originValue, "origin");
         } else {
-            setOData([]);
+            setOriginData([]);
         }
     }, [originValue]);
 
@@ -57,7 +59,7 @@ const MapPage = () => {
         if (destinationValue) {
             fetchSuggestions(destinationValue, "destination");
         } else {
-            setDData([]);
+            setDestinyData([]);
         }
     }, [destinationValue]);
 
@@ -73,11 +75,11 @@ const MapPage = () => {
             if (result.routes && result.routes.length > 0) {
                 setDirectionsResponse(result);
             } else {
-                alert("Nenhuma rota encontrada entre os endereços fornecidos.");
+                showError("error", "Erro:", "Nenhuma rota encontrada entre os endereços fornecidos.");
             }
         } catch (error) {
             console.error("Erro ao buscar rotas:", error);
-            alert("Erro ao buscar rotas. Por favor, tente novamente.");
+            showError("error", "Erro:", "Erro ao buscar rotas. Por favor, tente novamente.");
         }
     };
 
@@ -85,14 +87,24 @@ const MapPage = () => {
         setTravelMode(google.maps.TravelMode[mode as keyof typeof google.maps.TravelMode]);
     };
 
-    const handleOriginSelect = (description: string) => {
-        setOriginValue(description);
-        setOData([]);
+    const handleSuggestionSelect = (description: string, type: "origin" | "destination") => {
+        if (type === "origin") {
+            setOriginValue(description);
+            setOriginData([]);
+        } else {
+            setDestinationValue(description);
+            setDestinyData([]);
+        }
     };
 
-    const handleDestinationSelect = (description: string) => {
-        setDestinationValue(description);
-        setDData([]);
+    const showError = (severity: string, summary: string, detail: string) => {
+        messagesRef.current?.clear();
+        messagesRef.current?.show({
+            severity: severity,
+            summary: summary,
+            detail: detail,
+            life: 5000,
+        });
     };
 
     return (
@@ -103,13 +115,15 @@ const MapPage = () => {
                         value={originValue || ""}
                         onChange={(e) => setOriginValue(e.target.value)}
                         placeholder="Endereço de Origem"
+                        onBlur={() => setTimeout(() => setOriginData([]), 200)}
                     />
-                    {originValue && oStatus === "OK" && oData.length > 0 && (
+
+                    {originValue && originStatus === "OK" && originData.length > 0 && (
                         <div className="suggestions-list">
-                            {oData.map((suggestion, index) => (
+                            {originData.map((suggestion, index) => (
                                 <div
                                     key={suggestion.place_id || index}
-                                    onClick={() => handleOriginSelect(suggestion.description)}
+                                    onClick={() => handleSuggestionSelect(suggestion.description, "origin")}
                                     className="suggestion-item"
                                 >
                                     {suggestion.description}
@@ -124,13 +138,14 @@ const MapPage = () => {
                         value={destinationValue || ""}
                         onChange={(e) => setDestinationValue(e.target.value)}
                         placeholder="Endereço de Destino"
+                        onBlur={() => setTimeout(() => setDestinyData([]), 200)}
                     />
-                    {destinationValue && dStatus === "OK" && dData.length > 0 && (
+                    {destinationValue && destinyStatus === "OK" && destinyData.length > 0 && (
                         <div className="suggestions-list">
-                            {dData.map((suggestion, index) => (
+                            {destinyData.map((suggestion, index) => (
                                 <div
                                     key={suggestion.place_id || index}
-                                    onClick={() => handleDestinationSelect(suggestion.description)}
+                                    onClick={() => handleSuggestionSelect(suggestion.description, "destination")}
                                     className="suggestion-item"
                                 >
                                     {suggestion.description}
@@ -159,14 +174,15 @@ const MapPage = () => {
 
             <div className="map">
                 <GoogleMap
-                    mapContainerStyle={{ width: "100%", height: "100%" }}
+                    mapContainerStyle={{width: "100%", height: "100%"}}
                     center={position}
                     zoom={15}
                 >
-                    <Marker position={position} />
-                    {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
+                    <Marker position={position}/>
+                    {directionsResponse && <DirectionsRenderer directions={directionsResponse}/>}
                 </GoogleMap>
             </div>
+            <Messages className='custom-toast' ref={messagesRef}/>
         </div>
     );
 };
