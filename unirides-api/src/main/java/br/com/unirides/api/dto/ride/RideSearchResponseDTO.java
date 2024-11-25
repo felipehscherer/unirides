@@ -23,4 +23,6 @@ public class RideSearchResponseDTO {
     private String duration;
     private int freeSeatsNumber;
     private String driverName;
+    private String car;
+    private int numPassengers;
 }

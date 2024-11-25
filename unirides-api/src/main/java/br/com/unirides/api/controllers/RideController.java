@@ -88,7 +88,9 @@ public class RideController {
             ride.setDistance(rideCreationDTO.getDistance());
             ride.setDuration(rideCreationDTO.getDuration());
             ride.setStatus(RideStatus.ABERTA);
-            ride.setFreeSeatsNumber(rideCreationDTO.getDesiredPassengersNumber());
+            ride.setFreeSeatsNumber(
+                    Math.min(rideCreationDTO.getDesiredPassengersNumber(), vehicle.getCapacity() - 1)
+            );
 
             if (!rideRepository.getRideByAllArguments(
                     rideCreationDTO.getOrigin(), rideCreationDTO.getDestination(), rideCreationDTO.getDistance(),
@@ -112,6 +114,17 @@ public class RideController {
             Ride ride = rideRepository.findById(rideId)
                     .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada"));
 
+            User passenger = userRepository.findById(rideJoinDTO.getPassengerId())
+                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
+
+            Set<User> passengers = ride.getPassengers();
+
+            for (User u : passengers) {
+                if (u.getId().equals(rideJoinDTO.getPassengerId())) {
+                    throw new IllegalArgumentException("Você já é um passageiro!");  //exibir no front
+                }
+            }
+
             if (ride.getStatus() != RideStatus.ABERTA) {
                 throw new IllegalStateException("Não é possível ingressar em uma carona que não está aberta");
             }
@@ -119,9 +132,6 @@ public class RideController {
             if (ride.getFreeSeatsNumber() <= ride.getPassengers().size()) {
                 throw new IllegalStateException("Não há lugares disponíveis nesta carona");
             }
-
-            User passenger = userRepository.findById(rideJoinDTO.getPassengerId())
-                    .orElseThrow(() -> new UserNotFoundException("Passageiro não encontrado"));
 
             ride.getPassengers().add(passenger);
             rideRepository.save(ride);
@@ -180,12 +190,22 @@ public class RideController {
                 dto.setTime(ride.getTime());
 
                 // Buscar o Driver e, em seguida, o User para obter o nome
-                driverRepository.findByNumeroCnh(ride.getCnh()).flatMap(
-                        driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
-                                user -> dto.setDriverName(user.getName()));
+                Optional<Driver> optionalDriver = driverRepository.findByNumeroCnh(ride.getCnh());
 
-                //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
+                if (optionalDriver.isPresent()) {
+                    Driver driver = optionalDriver.get();
+                    Optional<User> optionalUser = userRepository.findByEmail(driver.getUsuarioEmail());
+
+                    optionalUser.ifPresent(user -> {
+                        dto.setDriverName(user.getName());
+                        Vehicle vehicle = vehicleRepository.findFirstActiveVehicleByDriverId(driver.getId())
+                                .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
+                        dto.setCar(vehicle.getBrand() + ' ' + vehicle.getModel() + ' ' + vehicle.getColor());
+                    });
+                }
+
                 dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
+                dto.setNumPassengers(ride.getPassengers().size());
 
                 dto.setDate(ride.getDate());
                 dto.setDuration(ride.getDuration());
@@ -221,7 +241,6 @@ public class RideController {
                     driver -> userRepository.findByEmail(driver.getUsuarioEmail())).ifPresent(
                     user -> dto.setDriverName(user.getName()));
 
-            //TODO: verificar se o numero não é maior que a capacidade do carro -1 (motorista)
             dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
 
             dto.setDate(ride.getDate());

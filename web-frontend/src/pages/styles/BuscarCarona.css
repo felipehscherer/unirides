@@ -187,4 +187,11 @@
   margin-bottom: 0.5rem; /* Espaçamento entre múltiplos alertas, se necessário */
 }
 
-
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #45a049;
+  margin: 0.8em 0;
+  padding: 0;
+}
