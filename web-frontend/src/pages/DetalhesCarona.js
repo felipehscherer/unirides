@@ -200,7 +200,7 @@ function DetalhesCarona() {
         </div>
         <button type="submit" className='solicitar-button' onClick={() => handleSolicitar()}> Ingressar na Carona </button>
 
-        <button className="home-button" onClick={() => navigate()}> Voltar </button>
+        <button className="back-home-button" onClick={() => navigate()}> Voltar </button>
 
         <Messages className='custom-toast' ref={messagesRef} />
       </div>
