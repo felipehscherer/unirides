@@ -14,7 +14,7 @@ function DetalhesCarona() {
     const location = useLocation();
     const { rideId } = useParams();
     const [ride, setRideDetails] = useState(null);
-    const [setUserId] = useState('');
+    const [userId, setUserId] = useState('');
     const messagesRef = useRef(null);
     const navigate = useNavigate();
     

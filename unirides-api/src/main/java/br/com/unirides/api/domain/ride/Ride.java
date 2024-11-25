@@ -46,8 +46,8 @@ public class Ride {
     private UUID driverId;
     private UUID vehicleId;
     private String cnh;
-    private String originCoords;
-    private String destinationCoords;
+    private String origin;
+    private String destination;
     private String originAddress;
     private String destinationAddress;
     private String originCity;
