@@ -1,0 +1,104 @@
+/* Container principal */
+.container-1 {
+    position: relative;
+    height: 100vh;
+}
+
+/* Caixa de pesquisa fixa no topo */
+.search-box {
+    position: absolute;
+    top: 2rem; /* Ajuste a distância conforme necessário */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9); /* Fundo com transparência */
+    padding: 1rem;
+    border-radius: 10px;
+    width: 90%; /* Ajuste a largura da caixa */
+    max-width: 500px; /* Largura máxima */
+    z-index: 1000; /* Fixa a caixa no topo */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo para os campos de entrada */
+.address-icon-box input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.travel-mode-select {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.travel-mode-select select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+
+/* Foco visual no campo de entrada */
+.address-icon-box input:focus {
+    border-color: #007bff; /* Azul para indicar o foco */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Espaço entre os campos */
+.address-icon-box {
+    margin-bottom: 1rem;
+}
+
+/* Sugestões de pesquisa */
+.suggestions-list {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.suggestion-item:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+/* Estilo para o botão de busca */
+.buscar-carona-box-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.buscar-carona-box-button:hover {
+    background-color: #45a049;
+}
+
+/* Estilo para o mapa */
+.map {
+    width: 100%;
+    height: 100%;
+}

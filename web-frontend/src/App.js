@@ -13,6 +13,7 @@ import BuscarCarona from "./pages/BuscarCarona";
 import CadastroCarona from './pages/CadastroCarona';
 import DetalhesCarona from './pages/DetalhesCarona';
 import HomePage from './pages/HomePage';
+import MapPage from "./pages/MapPage.tsx";
 
 // Importar outras páginas conforme necessário ou for criando
 // quando necessario proteger uma routa só chamar "</ProtectedRoute.js>" dentro da routa
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/veiculo/gerenciar/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista" element={<protectRoute> <ApresentarVeiculos /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista/editar/:plate" element={<protectRoute> <EditarVeiculo /> </protectRoute>} />
+                <Route path="/horarios-onibus" element=<MapPage/> />
                 <Route path="/cadastro-carona" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
             </Routes>
         </Router>
