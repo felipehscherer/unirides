@@ -175,6 +175,7 @@ public class RideController {
 
     @PostMapping("cancel/{ride_id}")
     public ResponseEntity<?> cancelRide(@PathVariable UUID ride_id){
+        //se eu sou o motorista, cancela pra todos. se nao sou, só não sou mais passageiro
         try{
             Ride ride = rideRepository.findById(ride_id)
                     .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada!"));

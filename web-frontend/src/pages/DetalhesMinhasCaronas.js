@@ -59,12 +59,11 @@ function DetalhesMinhasCaronas() {
     try {
         const response = await axios.post(`/rides/cancel/${rideId}`);
         console.log('respostadoback: ', response.data)
+        showMessage('success', 'Sucesso:', 'Carona cancelada!');
       } catch (error) {
         console.error('Erro ao buscar detalhes da carona:', error);
         showMessage('error', 'Erro:', error.response?.data);
       }
-
-    showMessage('success', 'Sucesso:', 'Carona cancelada!');
   };
 
   const handleRedo = async () =>{
