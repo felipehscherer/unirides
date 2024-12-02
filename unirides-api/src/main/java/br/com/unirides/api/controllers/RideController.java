@@ -18,6 +18,7 @@ import br.com.unirides.api.repository.DriverRepository;
 import br.com.unirides.api.repository.RideRepository;
 import br.com.unirides.api.repository.UserRepository;
 import br.com.unirides.api.repository.VehicleRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,6 +86,10 @@ public class RideController {
                 throw new IllegalArgumentException("Carona já cadastrada!");
             }
 
+            User user = userRepository.findByEmail(email)
+                            .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+
+            ride.getPassengers().add(user);
             rideRepository.save(ride);
 
             return ResponseEntity.ok(ride);
@@ -106,7 +111,7 @@ public class RideController {
 
             for (User u : passengers) {
                 if (u.getId().equals(rideJoinDTO.getPassengerId())) {
-                    throw new IllegalArgumentException("Você já é um passageiro!");  //exibir no front
+                    throw new IllegalArgumentException("Você já é um passageiro!");
                 }
             }
 
@@ -147,7 +152,7 @@ public class RideController {
         }
     }
 
-    @PostMapping("/search")
+    @PostMapping("/search") //busca caronas pelo destino
     public ResponseEntity<?> searchRides(@RequestBody RideSearchDTO searchDTO) {
         System.out.println("Recebido: " + searchDTO.getOrigin());
         try {
@@ -168,7 +173,54 @@ public class RideController {
         }
     }
 
-    @GetMapping("search_id/{rideId}")
+    @PostMapping("cancel/{ride_id}")
+    public ResponseEntity<?> cancelRide(@PathVariable UUID ride_id){
+        try{
+            Ride ride = rideRepository.findById(ride_id)
+                    .orElseThrow(() -> new IllegalArgumentException("Carona não encontrada!"));
+
+            if (ride.getStatus().equals(RideStatus.ABERTA)){
+                ride.setStatus(RideStatus.CANCELADA);
+            }else if (ride.getStatus().equals(RideStatus.CONCLUIDA)){
+                return ResponseEntity.badRequest().body("Carona já concluída!");
+            }else if (ride.getStatus().equals(RideStatus.CANCELADA)){
+                return ResponseEntity.badRequest().body("Carona já está cancelada!");
+            } else if (ride.getStatus().equals(RideStatus.EM_PROGRESSO)) {
+                return ResponseEntity.badRequest().body("Não foi possível cancelar, carona em progresso!");
+            }
+
+            rideRepository.save(ride);
+            return ResponseEntity.ok(ride);
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/history/{passenger_id}")  //busca todas as caronas de um usuário pelo ID do usuario
+    public ResponseEntity<?> searchAllRides(@PathVariable UUID passenger_id) {
+        try {
+            List<Ride> rides = rideRepository.findUserRideHistory(passenger_id);
+            if (rides.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+            }
+
+            Optional<User> user = userRepository.findDriverIdByUserId(passenger_id);
+            System.out.println(user.isPresent() ? user.get().getId() : 10);
+            //Optional<Driver> driver = driverRepository.findDriverByUsuarioEmail()
+
+            // Usa o mapper para converter as entidades `Ride` para `RideSearchResponseDTO`
+            List<RideSearchResponseDTO> rideDTOs = rides.stream()
+                    .map(ride -> rideSearchMapper.mapToDTOWithPassengerId(ride, passenger_id))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(rideDTOs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("search_id/{rideId}")  //busca por ID da carona
     public ResponseEntity<?> searchRideId(@PathVariable UUID rideId){
         try{
             Ride ride = rideRepository.findById(rideId)
@@ -191,10 +243,15 @@ public class RideController {
                     user -> dto.setDriverName(user.getName()));
 
             dto.setFreeSeatsNumber(ride.getFreeSeatsNumber());
-
             dto.setDate(ride.getDate());
             dto.setDuration(ride.getDuration());
             dto.setDistance(ride.getDistance());
+            dto.setStatus(ride.getStatus());
+            dto.setNumPassengers(ride.getPassengers().size());
+
+            Vehicle vehicle = vehicleRepository.findById(ride.getVehicleId())
+                    .orElseThrow(() -> new IllegalArgumentException("Veículo não encontrado"));
+            dto.setCar(vehicle.getBrand() + " " + vehicle.getModel() + " " + vehicle.getColor());
 
             return ResponseEntity.ok(dto);
 

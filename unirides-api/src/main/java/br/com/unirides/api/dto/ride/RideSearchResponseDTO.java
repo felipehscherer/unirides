@@ -1,5 +1,6 @@
 package br.com.unirides.api.dto.ride;
 
+import br.com.unirides.api.domain.ride.RideStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,4 +26,6 @@ public class RideSearchResponseDTO {
     private String driverName;
     private String car;
     private int numPassengers;
+    private RideStatus status;
+    private boolean isDriver;
 }

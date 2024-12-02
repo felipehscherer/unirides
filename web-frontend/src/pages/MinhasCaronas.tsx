@@ -1,72 +1,130 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Calendar, Clock, DollarSign, User, Search, Filter, Repeat, Car } from 'lucide-react';
+import { Calendar, Clock, DollarSign, User, Search, Filter, Repeat, Car } from 'lucide-react';
+import axios from '../services/axiosConfig';
+import { useNavigate} from 'react-router-dom';
+import { jwtDecode, JwtPayload } from "jwt-decode"; // tipagem correta para JWT para usar com ts
 
-interface Carona {
+interface CaronaTransform {
   rideId: string;
-  origin: string;
-  destination: string;
+  originCity: string;
+  destinationCity: string;
   date: string;
   time: string;
   price: string;
   driverName: string;
-  rideStatus: number;
-  isDriver: boolean;
+  status: number;
+  driver: boolean;
+}
+
+interface Carona{
+  car: string;
+  date: string;
+  destination: string;
+  destinationAddress: string;
+  destinationCity: string;
+  distance: string;
+  driverName: string;
+  duration: string;
+  freeSeatsNumber: 1;
+  numPassengers: 1;
+  origin: string;
+  originAddress: string;
+  originCity: string;
+  price: string;
+  rideId: string;
+  status: string;
+  time: string;
+  driver: boolean;
 }
 
 const MinhasCaronas: React.FC = () => {
   const [caronas, setCaronas] = useState<Carona[]>([]);
-  const [filteredCaronas, setFilteredCaronas] = useState<Carona[]>([]);
+  const [ride, setRide] = useState<Carona>();
+  const [filteredCaronas, setFilteredCaronas] = useState<CaronaTransform[]>([]);
+  const [transformedCaronas, setTransformedCaronas] = useState<CaronaTransform[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [driverFilter, setDriverFilter] = useState('all');
+  const [userId, setUserId] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Simular busca de dados do backend
-    const mockCaronas: Carona[] = [
-      {
-        rideId: '1',
-        origin: 'São Paulo',
-        destination: 'Rio de Janeiro',
-        date: '2023-06-01',
-        time: '08:00',
-        price: '100.00',
-        driverName: 'João Silva',
-        rideStatus: 0,
-        isDriver: true
-      },
-      {
-        rideId: '2',
-        origin: 'Belo Horizonte',
-        destination: 'Brasília',
-        date: '2023-05-28',
-        time: '10:00',
-        price: '150.00',
-        driverName: 'Maria Santos',
-        rideStatus: 1,
-        isDriver: false
-      },
-      {
-        rideId: '3',
-        origin: 'Curitiba',
-        destination: 'Florianópolis',
-        date: '2023-06-05',
-        time: '14:00',
-        price: '80.00',
-        driverName: 'Pedro Oliveira',
-        rideStatus: 2,
-        isDriver: true
+    const getRides = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        
+        if (token) {
+          const decoded = jwtDecode<JwtPayload & { userId: string }>(token);
+          const userId = decoded.userId;
+  
+          setUserId(userId);
+  
+          const response = await axios.get<Carona[]>(`/rides/history/${userId}`);
+          console.log(response.data);
+
+        // Atualiza o estado original
+        setCaronas(response.data);
+
+        // Transforma os dados e atualiza o estado transformado
+        const transformed = transformCaronas(response.data);
+        setTransformedCaronas(transformed);
+        setFilteredCaronas(transformed);
+        }
+      } catch (error: any) {
+        console.error('Erro ao buscar as caronas:', error.message);
       }
-    ];
-    setCaronas(mockCaronas);
-    setFilteredCaronas(mockCaronas);
+    };
+  
+    getRides();
   }, []);
 
+  const transformCaronas = (caronas: Carona[]): CaronaTransform[] => {
+    const statusMap: { [key: string]: number } = {
+      ABERTA: 0,
+      EM_PROGRESSO: 1,
+      CONCLUIDA: 2,
+      CANCELADA: 3,
+    };
+  
+    return caronas.map(carona => ({
+      rideId: carona.rideId,
+      originCity: carona.originCity,
+      destinationCity: carona.destinationCity,
+      date: carona.date,
+      time: carona.time,
+      price: carona.price,
+      driverName: carona.driverName,
+      status: statusMap[carona.status] ?? -1, // Retorna -1 caso o status seja inválido
+      driver: carona.driver, // Inicialmente falso; ajuste de acordo com sua lógica
+    }));
+  };
+
+  /* rideSearchResponseDTO
+        car: "ford fiesta prata",
+        date: "2024-11-27",
+        destination: "-30.8880817,-55.5264082",
+        destinationAddress: "R. Cel. Ângelo de Melo, 10 - Fluminense, Sant'Ana do Livramento - RS, 97574-454, Brazil",
+        destinationCity: "Sant'Ana do Livramento",
+        distance: "203 km",
+        driverName: "Felipe Dresch",
+        duration: "8950",
+        freeSeatsNumber: 1,
+        numPassengers: 1,
+        origin: "-29.7837672,-55.7936527",
+        originAddress: "R. Vasco Alves, 2 - Centro, Alegrete - RS, 97542-600, Brazil",
+        originCity: "Alegrete",
+        price: "61.637699999999995",
+        rideId: "b35bb12a-75f3-4a2b-86b7-8c57b09584f0",
+        status: "ABERTA",
+        time: "19:30"
+  */
+
   useEffect(() => {
-    const filtered = caronas.filter(carona => 
-      (carona.origin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       carona.destination.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (statusFilter === 'all' || carona.rideStatus === parseInt(statusFilter)) &&
-      (driverFilter === 'all' || (driverFilter === 'driver' && carona.isDriver) || (driverFilter === 'passenger' && !carona.isDriver))
+    const filtered = transformedCaronas.filter(carona => 
+      (carona.originCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       carona.destinationCity.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (statusFilter === 'all' || carona.status === parseInt(statusFilter)) &&
+      (driverFilter === 'all' || (driverFilter === 'driver' && carona.driver) || (driverFilter === 'passenger' && !carona.driver))
     );
     setFilteredCaronas(filtered);
   }, [searchTerm, statusFilter, driverFilter, caronas]);
@@ -74,8 +132,9 @@ const MinhasCaronas: React.FC = () => {
   const getStatusLabel = (status: number) => {
     switch (status) {
       case 0: return 'Ativa';
-      case 1: return 'Concluída';
-      case 2: return 'Cancelada';
+      case 1: return 'Em Progresso';
+      case 2: return 'Concluída';
+      case 3: return 'Cancelada';
       default: return 'Desconhecido';
     }
   };
@@ -84,14 +143,34 @@ const MinhasCaronas: React.FC = () => {
     switch (status) {
       case 0: return { backgroundColor: '#4caf50', color: 'white' };
       case 1: return { backgroundColor: '#2196f3', color: 'white' };
-      case 2: return { backgroundColor: '#f44336', color: 'white' };
+      case 2: return { backgroundColor: '#0056b3', color: 'white' };
+      case 3: return { backgroundColor: '#f44336', color: 'white' };
       default: return {};
     }
   };
 
-  const handleOfferAgain = (carona: Carona) => {
-    // Implementar lógica para oferecer a carona novamente
-    console.log(`Oferecendo novamente a carona: ${carona.origin} -> ${carona.destination}`);
+  const handleOfferAgain = (caronaId: string) => {
+    const selectedRide = caronas.find(carona => carona.rideId === caronaId);
+    if (selectedRide) {
+      navigate('/cadastro-carona', { 
+        state: { //Preencher a página com esses dados
+          ride: {
+            origin: selectedRide.originAddress,
+            destination: selectedRide.destinationAddress,
+            date: selectedRide.date,
+            time: selectedRide.time,
+            numPassengers: selectedRide.numPassengers,
+          },
+        },
+      });
+    }
+  };
+
+  const handleCardClick = (caronaId: string) => {
+    const selectedRide = caronas.find(carona => carona.rideId === caronaId);
+    if (selectedRide) {
+      navigate(`/minhas-caronas/${selectedRide.rideId}`, { state: { ride: selectedRide } });
+    }
   };
 
   const styles = {
@@ -246,8 +325,9 @@ const MinhasCaronas: React.FC = () => {
         >
           <option value="all">Todos os status</option>
           <option value="0">Ativas</option>
-          <option value="1">Concluídas</option>
-          <option value="2">Canceladas</option>
+          <option value="1">Em Progresso</option>
+          <option value="2">Concluídas</option>
+          <option value="3">Canceladas</option>
         </select>
         <select
           style={styles.filterSelect}
@@ -272,12 +352,13 @@ const MinhasCaronas: React.FC = () => {
             <div
               style={{
                 ...styles.statusTag,
-                ...getStatusStyle(carona.rideStatus),
+                ...getStatusStyle(carona.status),
               }}
+              onClick={() => handleCardClick(carona.rideId)}
             >
-              {getStatusLabel(carona.rideStatus)}
+              {getStatusLabel(carona.status)}
             </div>
-            <h2 style={styles.cardTitle}>{carona.origin} → {carona.destination}</h2>
+            <h2 style={styles.cardTitle}>{carona.originCity} → {carona.destinationCity}</h2>
             <div style={styles.cardInfo}>
               <Calendar size={16} style={styles.icon} />
               <span>{new Date(carona.date).toLocaleDateString()}</span>
@@ -288,16 +369,16 @@ const MinhasCaronas: React.FC = () => {
             </div>
             <div style={styles.cardInfo}>
               <DollarSign size={16} style={styles.icon} />
-              <span>R$ {carona.price}</span>
+              <span>R$ {parseFloat(carona.price).toFixed()}</span>
             </div>
             <div style={styles.cardInfo}>
               <User size={16} style={styles.icon} />
               <span>{carona.driverName}</span>
             </div>
             
-            {carona.isDriver && (
+            {carona.driver && (
               <button
-                onClick={() => handleOfferAgain(carona)}
+                onClick={() => handleOfferAgain(carona.rideId)}
                 style={styles.offerAgainButton}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#4caf50';

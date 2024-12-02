@@ -100,14 +100,14 @@ function DetalhesCarona() {
     };
 
     const showMessage = (severity, summary, detail) => {
-      messagesRef.current.clear();
-      messagesRef.current.show({
-      severity: severity,
-      summary: summary,  // Mensagem de resumo
-      detail: detail,    // Detalhe do erro
-      life: 5000         // Tempo de exibição
+        messagesRef.current.clear();
+        messagesRef.current.show({
+        severity: severity,
+        summary: summary,  // Mensagem de resumo
+        detail: detail,    // Detalhe do erro
+        life: 5000         // Tempo de exibição
       });
-  };
+    };
   
     return (
       <div className='main-container-carona'>

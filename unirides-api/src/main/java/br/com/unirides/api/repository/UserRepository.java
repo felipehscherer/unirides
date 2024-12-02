@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findById(UUID uuid);
     @Query("SELECT u.name FROM User u WHERE u.id = :id")
     Optional<User> findUserIdByDriverId(UUID id);
+    @Query("SELECT d FROM Driver d WHERE d.id = :id")
+    Optional<User> findDriverIdByUserId(UUID id);
 }
