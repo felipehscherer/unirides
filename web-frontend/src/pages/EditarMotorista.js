@@ -1,12 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../services/axiosConfig';
 import './styles/Motorista.css';
-import {Messages} from "primereact/messages";
+import { Messages } from "primereact/messages";
 import InputMask from "react-input-mask";
 import MotoristaRequestBuilder from '../components/MotoristaRequestBuilder';
-import {Toast} from "primereact/toast";
-
+import { Toast } from "primereact/toast";
 
 function EditarMotorista() {
     const [email, setEmail] = useState('');
@@ -17,8 +16,13 @@ function EditarMotorista() {
     const [errorMessage, setErrorMessage] = useState('');
     const messagesRef = useRef(null);
 
-
     const navigate = useNavigate();
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    };
 
     useEffect(() => {
         const fetchDriverData = async () => {
@@ -29,14 +33,12 @@ function EditarMotorista() {
                 setEmail(data.email);
 
                 const responseDriver = await axios.get(`/driver/get/${data.email}`);
-
                 const driverData = responseDriver.data;
 
                 setNumeroCnh(driverData.numeroCnh || '');
-                setDataEmissao(driverData.dataEmissao || '');
-                setDataValidade(driverData.dataValidade || '');
+                setDataEmissao(formatDate(driverData.dataEmissao) || '');
+                setDataValidade(formatDate(driverData.dataValidade) || '');
                 setCategoria(driverData.categoria || '');
-
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
                 if (error.response && error.response.status === 401) {
@@ -64,7 +66,7 @@ function EditarMotorista() {
                 `driver/update/${email}`,
                 dados
             );
-            const mensagem = "Dados de motorista atualizado com Sucesso!"
+            const mensagem = "Dados de motorista atualizado com Sucesso!";
 
             showError('success', 'Sucesso:', mensagem);
             setTimeout(() => {
@@ -88,7 +90,6 @@ function EditarMotorista() {
             life: 5000
         });
     };
-
 
     return (
         <div className="driver-container">
