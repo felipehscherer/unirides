@@ -143,3 +143,15 @@ display: flex;
     font-size: 16px;
     margin-bottom: 0.4rem;
   }
+
+  .trajeto-button {
+    width: 30%;
+    padding: 10px;
+    background-color: #43A715;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 0.4rem;
+  }
