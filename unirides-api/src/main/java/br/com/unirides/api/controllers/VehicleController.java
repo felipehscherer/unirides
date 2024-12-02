@@ -92,7 +92,7 @@ public class VehicleController {
         if (optDriver.isPresent()) {
             Driver driver = optDriver.get();
 
-            if (validarVeiculo(data.plate(), data.capacity())) {
+            if (validarVeiculo(data.plate().toUpperCase(), data.capacity())) {
 
                 Vehicle vehicleData = new Vehicle(driver.getId(), data.color(), data.capacity(), data.model(), data.brand(), data.plate().toUpperCase(), driver, true);
 

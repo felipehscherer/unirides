@@ -1,0 +1,128 @@
+.schedule-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-box {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.weekday-box {
+    background-color: #f0f8ff;
+    border: 1px solid #d1e7fd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+.saturday-box {
+    background-color: #fff8dc;
+    border: 1px solid #ffcc00;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.location-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.title-header {
+    color: #000000;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.location-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.day-group-container {
+    margin: 15px;
+}
+
+
+.day-type-box {
+    margin-bottom: 20px;
+}
+
+.day-title {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.location-box-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.location-title {
+    font-size: 1.1em;
+    color: #333;
+    margin: 15px;
+}
+
+.schedule-category h5 {
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: #555;
+}
+
+.schedule-category {
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-list {
+    display: inline-block;
+    max-width: 100%;
+    padding: 10px;
+}
+
+.time-box {
+    display: inline-block;
+    margin: 5px;
+    padding: 6px 12px;
+    background-color: #43A715;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+.time-box:hover {
+    background-color: #2b6e0c;
+}
+
+.no-schedule {
+    color: #999;
+    font-style: italic;
+}
+
+.accordion {
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+.accordion-tab {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+#results {
+    margin-top: 20px;
+}

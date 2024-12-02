@@ -39,11 +39,12 @@ function Home() {
           >
             Meu Perfil
           </button>
-          
+
           <button
               className="home-button"
               onClick={() => navigate('/caronas')}
-          >Procurar Caronas</button>
+          >Procurar Caronas
+          </button>
 
           <button
               className="home-button"
@@ -53,12 +54,19 @@ function Home() {
                 backgroundColor: isDriver ? "#089F08" : "#ddd", // Estilo visual
                 color: isDriver ? "white" : "#aaa",
                 cursor: isDriver ? "pointer" : "not-allowed",
-            }}
-          >Oferecer Caronas</button>
+              }}
+          >Oferecer Caronas
+          </button>
 
           <button
               className="home-button"
-              onClick={() => navigate('/horarios-onibus')}
+              onClick={() => navigate('/rotas-onibus')}
+          >
+            Rotas de Ônibus
+          </button>
+          <button
+              className="home-button"
+              onClick={() => navigate('/onibus/horarios/alegrete')}
           >
             Horários de Ônibus
           </button>

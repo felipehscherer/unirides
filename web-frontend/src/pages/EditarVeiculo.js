@@ -1,9 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../services/axiosConfig';
-import './styles/EditarVeiculo.css';
-import logoImage from '../assets/logo.jpg';
-import {Messages} from "primereact/messages";
+import './styles/Motorista.css';
+import { Messages } from "primereact/messages";
+import { Toast } from "primereact/toast";
 
 function EditarVeiculo() {
     const { plate } = useParams();
@@ -12,10 +12,8 @@ function EditarVeiculo() {
     const [model, setModel] = useState('');
     const [brand, setBrand] = useState('');
     const [email, setEmail] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [plateState, setPlate] = useState('');
     const messagesRef = useRef(null);
-
 
     const navigate = useNavigate();
 
@@ -24,18 +22,17 @@ function EditarVeiculo() {
             try {
                 const response = await axios.get('/user/profile');
                 const data = response.data;
-
                 setEmail(data.email);
 
                 const responseVeiculo = await axios.get(`/vehicle/get/${plate}`);
                 const vehicleData = responseVeiculo.data;
 
+                // Atualize plateState com o valor da placa
                 setColor(vehicleData.color || '');
                 setCapacity(vehicleData.capacity || '');
                 setModel(vehicleData.model || '');
                 setBrand(vehicleData.brand || '');
-                setPlate(vehicleData.plate || ''); // Atualiza a variável de estado usada no formulário
-
+                setPlate(vehicleData.plate || '');
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
                 if (error.response && error.response.status === 403) {
@@ -47,8 +44,7 @@ function EditarVeiculo() {
         };
 
         fetchVehicleData();
-    }, [plate]);
-
+    }, [plate, navigate]);
 
     const showError = (severity, summary, detail) => {
         messagesRef.current.clear();
@@ -69,8 +65,7 @@ function EditarVeiculo() {
 
             const response = await axios.put(`vehicle/update/${plate}`, dados);
 
-            const mensagem = "Veiculo atualizado com Sucesso!"
-
+            const mensagem = "Veiculo atualizado com Sucesso!";
             showError('success', 'Sucesso:', mensagem);
 
             setTimeout(() => {
@@ -86,73 +81,64 @@ function EditarVeiculo() {
     };
 
     return (
-        <div className="edit-container-vehicle">
-            <div className="edit-box-vehicle">
+        <div className="driver-container">
+            <Toast ref={messagesRef} />
+            <div className="login-box">
                 <form onSubmit={handleCadastro}>
-                    <img src={logoImage} alt="Logo" className="edit-logo-vehicle" />
-
-                    <p className="edit-title-vehicle">Edite as informações do seu carro</p>
-
-                    <label htmlFor="color" className="edit-label-vehicle">Digite a cor</label>
+                    <p className="driver-title">Editar Veiculo</p>
+                    <p className='driver-description'>Preencha as informações sobre seu veiculo</p>
                     <input
-                        id="color"
                         type="text"
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
                         placeholder="Cor"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="capacity" className="edit-label-vehicle">Digite a capacidade</label>
                     <input
-                        id="capacity"
                         type="text"
                         value={capacity}
                         onChange={(e) => setCapacity(e.target.value)}
                         placeholder="Capacidade"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="model" className="edit-label-vehicle">Digite o modelo</label>
                     <input
-                        id="model"
                         type="text"
                         value={model}
                         onChange={(e) => setModel(e.target.value)}
                         placeholder="Modelo"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="brand" className="edit-label-vehicle">Digite a marca</label>
                     <input
-                        id="brand"
                         type="text"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         placeholder="Marca"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="plate" className="edit-label-vehicle">Digite a placa</label>
                     <input
-                        id="plate"
                         type="text"
                         value={plateState}
                         onChange={(e) => setPlate(e.target.value)}
                         placeholder="Placa"
+                        className="underline-input"
                         required
                     />
-
-                    <button type="submit" className="button-edit-vehicle">📝 Salvar</button>
-                    <button
-                        className="btn-profile-vehicle"
-                        onClick={() => navigate('/perfil')}
-                    >
-                        Voltar para Perfil
-                    </button>
+                    <div className='buttons-driver'>
+                        <button type="submit" className='driver-button'>📝 Atualizar</button>
+                        <button
+                            className='btn-profile-driver'
+                            onClick={() => navigate('/perfil')}
+                        >
+                            Voltar
+                        </button>
+                    </div>
                 </form>
+                <Messages className='custom-toast' ref={messagesRef} />
             </div>
-            <Messages className='custom-toast' ref={messagesRef} />
         </div>
     );
 }

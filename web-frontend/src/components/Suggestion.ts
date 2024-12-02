@@ -1,4 +1,3 @@
-// SuggestionService.ts
 export interface Suggestion {
     fetchSuggestions(query: string): Promise<google.maps.places.AutocompletePrediction[]>;
 }

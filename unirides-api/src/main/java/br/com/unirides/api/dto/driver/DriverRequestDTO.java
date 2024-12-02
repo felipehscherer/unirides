@@ -1,9 +1,8 @@
 package br.com.unirides.api.dto.driver;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDate;
 
 
 @Getter
@@ -12,7 +11,10 @@ import java.time.LocalDate;
 public class DriverRequestDTO {
     private String email;
     private String numeroCnh;
-    private LocalDate dataEmissao;
-    private LocalDate dataValidade;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private String dataEmissao;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private String dataValidade;
     private String categoria;
 }

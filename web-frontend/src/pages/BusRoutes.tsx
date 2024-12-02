@@ -8,7 +8,7 @@ import {DrivingMode, WalkingMode, BicyclingMode, TransitMode, TravelModeStrategy
 // @ts-ignore
 import {GooglePlacesSuggestionService} from "../components/Suggestion.ts";
 
-const MapPage = () => {
+const BusRoutes = () => {
     const [originValue, setOriginValue] = useState<string>("");
     const [destinationValue, setDestinationValue] = useState<string>("");
     const [originData, setOriginData] = useState<any[]>([]);
@@ -18,6 +18,7 @@ const MapPage = () => {
     const messagesRef = useRef(null);
 
     const position = {lat: -29.789286, lng: -55.768070};
+
     const suggestionService = new GooglePlacesSuggestionService();
 
     const fetchSuggestions = async (query: string, type: "origin" | "destination") => {
@@ -174,4 +175,4 @@ const MapPage = () => {
     );
 };
 
-export default MapPage;
+export default BusRoutes;
