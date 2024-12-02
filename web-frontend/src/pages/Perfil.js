@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from '../services/axiosConfig';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './styles/Perfil.css';
-import {Messages} from "primereact/messages";
+import { Messages } from 'primereact/messages';
 
 const Perfil = () => {
     const [initialData, setInitialData] = useState({});
@@ -20,7 +20,8 @@ const Perfil = () => {
     const [motorista, setMotorista] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const messagesRef = useRef(null);
-
+    const [profileImage, setProfileImage] = useState(null);
+    const fileInputRef = useRef(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -36,9 +37,13 @@ const Perfil = () => {
                 setEndereco(data.endereco);
                 setNumero(data.numero);
                 setComplemento(data.complemento);
+
+                // Buscar imagem de perfil
+                fetchProfileImage(data.email);
+
                 try {
                     const responseDriver = await axios.get(`/driver/get/${data.email}`);
-                    const driverData = responseDriver.data; // Corrige o uso de responseDriver
+                    const driverData = responseDriver.data;
 
                     if (driverData) {
                         setMotorista(true);
@@ -47,7 +52,7 @@ const Perfil = () => {
                     if (error.response && error.response.status === 404) {
                         setMotorista(false);
                     } else {
-                        console.error("Erro ao verificar motorista:", error);
+                        console.error('Erro ao verificar motorista:', error);
                     }
                 }
             } catch (error) {
@@ -61,6 +66,20 @@ const Perfil = () => {
         fetchUserData();
     }, [navigate]);
 
+    const fetchProfileImage = async (email) => {
+        try {
+            const encodedEmail = encodeURIComponent(email);
+            const response = await axios.get(`/${encodedEmail}/profile-image`, { responseType: 'blob' });
+            const imageBlob = response.data;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfileImage(reader.result);
+            };
+            reader.readAsDataURL(imageBlob);
+        } catch (error) {
+            console.error('Erro ao buscar imagem de perfil:', error);
+        }
+    };
 
     const showError = (severity, summary, detail) => {
         messagesRef.current.clear();
@@ -68,18 +87,18 @@ const Perfil = () => {
             severity: severity,
             summary: summary,
             detail: detail,
-            life: 5000
+            life: 5000,
         });
     };
 
     // Funções de validação
     const validateName = () => {
         if (!name.trim()) {
-            return "Nome não pode estar vazio.";
+            return 'Nome não pode estar vazio.';
         } else if (name.length < 3 || name.length > 50) {
-            return "Nome deve ter entre 3 e 50 caracteres.";
+            return 'Nome deve ter entre 3 e 50 caracteres.';
         } else if (!/^[A-Za-z\s]+$/.test(name)) {
-            return "Nome deve conter apenas letras.";
+            return 'Nome deve conter apenas letras.';
         }
         return null;
     };
@@ -87,24 +106,24 @@ const Perfil = () => {
     const validateEmail = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email.trim()) {
-            return "E-mail não pode estar vazio.";
+            return 'E-mail não pode estar vazio.';
         } else if (!emailRegex.test(email)) {
-            return "Formato de e-mail inválido.";
+            return 'Formato de e-mail inválido.';
         }
         return null;
     };
 
     const validatePassword = () => {
         if (newPassword && newPassword.length < 8) {
-            return "A nova senha deve ter no mínimo 8 caracteres.";
+            return 'A nova senha deve ter no mínimo 8 caracteres.';
         } else if (newPassword && !/[A-Z]/.test(newPassword)) {
-            return "A nova senha deve conter ao menos uma letra maiúscula.";
+            return 'A nova senha deve conter ao menos uma letra maiúscula.';
         } else if (newPassword && !/[a-z]/.test(newPassword)) {
-            return "A nova senha deve conter ao menos uma letra minúscula.";
+            return 'A nova senha deve conter ao menos uma letra minúscula.';
         } else if (newPassword && !/[0-9]/.test(newPassword)) {
-            return "A nova senha deve conter ao menos um número.";
+            return 'A nova senha deve conter ao menos um número.';
         } else if (newPassword && !currentPassword) {
-            return "Informe a senha atual para mudar a senha.";
+            return 'Informe a senha atual para mudar a senha.';
         }
         return null;
     };
@@ -146,14 +165,14 @@ const Perfil = () => {
             alert('Informações atualizadas com sucesso!');
             setCurrentPassword('');
             setNewPassword('');
-            setInitialData((prev) => ({...prev, ...updatedData}));
+            setInitialData((prev) => ({ ...prev, ...updatedData }));
         } catch (error) {
             setErrorMessage('Erro ao atualizar as informações.');
             console.error('Erro ao atualizar informações:', error);
         }
     };
 
-    const handleDeleteClick = (vehicle) => {
+    const handleDeleteClick = () => {
         setIsDeleteModalOpen(true);
     };
 
@@ -163,10 +182,9 @@ const Perfil = () => {
 
     const handleDeleteDriver = async (email) => {
         try {
-            await axios.delete(`/vehicle/delete/AllByUserEmail/${email}`)
-
+            await axios.delete(`/vehicle/delete/AllByUserEmail/${email}`);
             await axios.delete(`/driver/delete/${email}`);
-            const mensagem = "Cnh desvinculada com sucesso!"
+            const mensagem = 'CNH desvinculada com sucesso!';
 
             showError('success', 'Sucesso:', mensagem);
             setTimeout(() => {
@@ -183,13 +201,59 @@ const Perfil = () => {
     const handleConfirmDelete = () => {
         handleDeleteDriver(email);
         closeDeleteModal();
-
     };
 
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Exibir a imagem imediatamente
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfileImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+
+            // Enviar a imagem para o backend
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const encodedEmail = encodeURIComponent(email);
+                await axios.post(`/${encodedEmail}/upload-profile-image`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                console.log('Imagem enviada com sucesso');
+            } catch (error) {
+                console.error('Erro ao enviar imagem:', error);
+            }
+        }
+    };
+
+    const handleImageClick = () => {
+        fileInputRef.current.click();
+    };
 
     return (
         <div className="perfil-wrapper">
             <h1>Meu Perfil</h1>
+            <div className="profile-image-container">
+                {profileImage ? (
+                    <img src={profileImage} alt="Imagem de Perfil" className="profile-image" />
+                ) : (
+                    <img src="/placeholder-profile.png" alt="Imagem Padrão" className="profile-image" />
+                )}
+                <button onClick={handleImageClick} className="btn-add-image">
+                    Adicionar Imagem
+                </button>
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                />
+            </div>
             <div className="perfil-card">
                 <form onSubmit={handleSaveAll} className="form-container">
                     <div className="input-container">
@@ -265,7 +329,9 @@ const Perfil = () => {
                         />
                     </div>
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    <button type="submit" className="btn-primary">Salvar Tudo</button>
+                    <button type="submit" className="btn-primary">
+                        Salvar Tudo
+                    </button>
                 </form>
 
                 <div className="button-container-driver">
@@ -277,27 +343,36 @@ const Perfil = () => {
                                         className="button-driver-vehicle"
                                         onClick={() => navigate('/motorista/gerenciar/editar')}
                                     >
-                                        Editar Cnh
+                                        Editar CNH
                                     </button>
-                                    <button className="button-driver-vehicle" onClick={() => handleDeleteClick(email)}>
-                                        Deletar Cnh
+                                    <button
+                                        className="button-driver-vehicle"
+                                        onClick={() => handleDeleteClick(email)}
+                                    >
+                                        Deletar CNH
                                     </button>
                                     {/* Modal de Exclusão */}
                                     {isDeleteModalOpen && (
                                         <div className="modal-overlay">
                                             <div className="modal-content">
                                                 <h2>Confirmar Exclusão</h2>
-                                                <p>Você tem certeza que deseja desvincular sua cnh?
-                                                    Todos os seus veiculos vinculados serao deletados
+                                                <p>
+                                                    Você tem certeza que deseja desvincular sua CNH?
+                                                    Todos os seus veículos vinculados serão deletados.
                                                 </p>
                                                 <div>
                                                     <div className="button-container">
-                                                        <button className={'manage-Btn'} onClick={handleConfirmDelete}>✔
-                                                            Confirmar
+                                                        <button
+                                                            className={'manage-Btn'}
+                                                            onClick={handleConfirmDelete}
+                                                        >
+                                                            ✔ Confirmar
                                                         </button>
-                                                        <button className={'manage-Btn'}
-                                                                onClick={closeDeleteModal}>❌
-                                                            Cancelar
+                                                        <button
+                                                            className={'manage-Btn'}
+                                                            onClick={closeDeleteModal}
+                                                        >
+                                                            ❌ Cancelar
                                                         </button>
                                                     </div>
                                                 </div>
@@ -310,37 +385,36 @@ const Perfil = () => {
                                         className="button-driver-vehicle"
                                         onClick={() => navigate('/veiculo/gerenciar/cadastro')}
                                     >
-                                        Cadastrar Veiculo
+                                        Cadastrar Veículo
                                     </button>
                                     <button
                                         className="button-driver-vehicle"
                                         onClick={() => navigate('/veiculo/gerenciar/apresentarLista')}
                                     >
-                                        Visualizar Veiculos
+                                        Visualizar Veículos
                                     </button>
                                 </div>
                             </div>
                         </>
                     ) : (
                         <>
-                            <button className="button-driver-vehicle"
-                                    onClick={() => navigate('/motorista/gerenciar/cadastro')}>
-                                Cadastrar Cnh
+                            <button
+                                className="button-driver-vehicle"
+                                onClick={() => navigate('/motorista/gerenciar/cadastro')}
+                            >
+                                Cadastrar CNH
                             </button>
                         </>
                     )}
-                    <div/>
+                    <div />
                 </div>
-                <button
-                    className="btn-home"
-                    onClick={() => navigate('/home')}
-                >
+                <button className="btn-home" onClick={() => navigate('/home')}>
                     Voltar para home
                 </button>
-                <Messages className='custom-toast' ref={messagesRef}/>
+                <Messages className="custom-toast" ref={messagesRef} />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Perfil;
