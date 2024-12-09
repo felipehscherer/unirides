@@ -69,7 +69,7 @@ const Perfil = () => {
     const fetchProfileImage = async (email) => {
         try {
             const encodedEmail = encodeURIComponent(email);
-            const response = await axios.get(`/${encodedEmail}/profile-image`, { responseType: 'blob' });
+            const response = await axios.get(`/user/${encodedEmail}/profile-image`, { responseType: 'blob' });
             const imageBlob = response.data;
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -218,7 +218,7 @@ const Perfil = () => {
             formData.append('file', file);
             try {
                 const encodedEmail = encodeURIComponent(email);
-                await axios.post(`/${encodedEmail}/upload-profile-image`, formData, {
+                await axios.post(`/user/${encodedEmail}/upload-profile-image`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
