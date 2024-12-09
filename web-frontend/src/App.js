@@ -12,7 +12,7 @@ import EditarMotorista from "./pages/EditarMotorista";
 import BuscarCarona from "./pages/BuscarCarona";
 import CadastroCarona from './pages/CadastroCarona';
 import DetalhesCarona from './pages/DetalhesCarona';
-import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import MinhasCaronas from './pages/MinhasCaronas';
 import DetalhesMinhasCaronas from './pages/DetalhesMinhasCaronas';
 
@@ -24,7 +24,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/cadastro" element={<Cadastro />} />
                 <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
