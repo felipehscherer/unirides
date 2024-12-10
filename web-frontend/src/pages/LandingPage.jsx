@@ -1,10 +1,9 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { Car, Users, Clock, Shield, ArrowRight } from 'lucide-react'
 
 function Hero() {
   return (
-    <section className="bg-gradient-to-b from-green-600 to-green-700 text-white py-20 md:py-32">
+    <section className="bg-gradient-to-b from-[#43A715] to-[#369512] text-white py-20 md:py-32">
       <div className="container mx-auto px-4 text-center">
         <motion.h2 
           className="text-4xl md:text-5xl font-bold mb-6"
@@ -29,7 +28,7 @@ function Hero() {
         >
           <a 
             href="/cadastro"
-            className="bg-white text-green-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-green-100 transition-colors inline-flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            className="bg-white text-[#43A715] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#e6f5e1] transition-colors inline-flex items-center shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             Comece Agora
             <ArrowRight className="ml-2" />
@@ -42,22 +41,22 @@ function Hero() {
 
 const features = [
   {
-    icon: <Car className="w-12 h-12 text-green-600" />,
+    icon: <Car className="w-12 h-12 text-[#43A715]" />,
     title: "Caronas Confiáveis",
     description: "Conecte-se com motoristas verificados da sua universidade."
   },
   {
-    icon: <Users className="w-12 h-12 text-green-600" />,
+    icon: <Users className="w-12 h-12 text-[#43A715]" />,
     title: "Comunidade Universitária",
     description: "Viaje com colegas que compartilham seu caminho."
   },
   {
-    icon: <Clock className="w-12 h-12 text-green-600" />,
+    icon: <Clock className="w-12 h-12 text-[#43A715]" />,
     title: "Flexibilidade de Horários",
     description: "Encontre caronas que se ajustem à sua agenda de aulas."
   },
   {
-    icon: <Shield className="w-12 h-12 text-green-600" />,
+    icon: <Shield className="w-12 h-12 text-[#43A715]" />,
     title: "Segurança Primeiro",
     description: "Viagens seguras com verificação de perfis e avaliações."
   }
@@ -65,7 +64,7 @@ const features = [
 
 function Features() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-[#e6f5e1]">
       <div className="container mx-auto px-4">
         <h3 className="text-3xl font-bold text-center mb-12 text-gray-800">Por que escolher Unirides?</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -142,7 +141,7 @@ function Testimonials() {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-green-600 text-white sticky top-0 z-10">
+      <header className="bg-[#43A715] text-white sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <motion.h1 
             className="text-2xl font-bold"
@@ -159,7 +158,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <a href="/login" className="bg-white text-green-600 px-4 py-2 rounded-full font-medium hover:bg-green-100 transition-colors">
+                <a href="/login" className="bg-white text-[#43A715] px-4 py-2 rounded-full font-medium hover:bg-[#e6f5e1] transition-colors">
                   Acessar Conta
                 </a>
               </motion.li>
@@ -168,7 +167,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                <a href="/cadastro" className="bg-green-700 text-white px-4 py-2 rounded-full font-medium hover:bg-green-800 transition-colors">
+                <a href="/cadastro" className="bg-[#369512] text-white px-4 py-2 rounded-full font-medium hover:bg-[#2a780d] transition-colors">
                   Registrar
                 </a>
               </motion.li>
@@ -183,7 +182,7 @@ export default function LandingPage() {
         <Testimonials />
       </main>
 
-      <footer className="bg-green-800 text-white py-8">
+      <footer className="bg-[#2a780d] text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <p>&copy; 2023 Unirides. Todos os direitos reservados.</p>
         </div>
