@@ -1,8 +1,7 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
-import Home from './pages/Home';
+import HomePage from './pages/HomePage';
 import CadastroMotorista from './pages/CadastroMotorista';
 import CadastroVeiculo from "./pages/CadastroVeiculo";
 import Perfil from "./pages/Perfil";
@@ -16,10 +15,6 @@ import LandingPage from './pages/LandingPage';
 import MinhasCaronas from './pages/MinhasCaronas';
 import DetalhesMinhasCaronas from './pages/DetalhesMinhasCaronas';
 
-// Importar outras páginas conforme necessário ou for criando
-// quando necessario proteger uma routa só chamar "</ProtectedRoute.js>" dentro da routa
-// exemplo <Route path="" element={<protectRoute> element </protectRoute>}
-
 function App() {
     return (
         <Router>
@@ -27,7 +22,7 @@ function App() {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/cadastro" element={<Cadastro />} />
-                <Route path="/home" element={<protectRoute> <Home /> </protectRoute>} />
+                <Route path="/home" element={<protectRoute> <HomePage /> </protectRoute>} />
                 <Route path="/perfil" element={<protectRoute> <Perfil /> </protectRoute>} />
                 <Route path="/caronas" element={<protectRoute> <BuscarCarona /> </protectRoute>} />
                 <Route path="/caronas/:rideId" element={<protectRoute><DetalhesCarona /></protectRoute>} />
@@ -43,5 +38,5 @@ function App() {
         </Router>
     );
 }
-//<Route path="/caronas/cadasro" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
+
 export default App;
