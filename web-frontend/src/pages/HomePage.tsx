@@ -47,7 +47,7 @@ export default function HomePage() {
             title="Oferecer Carona"
             icon={<Car className="w-8 h-8 text-[#43A715]" />}
             description="Ofereça uma carona e ajude a comunidade."
-            link="/cadastrar-caronas"
+            link="/cadastro-carona"
           />
         </div>
       </main>

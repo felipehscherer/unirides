@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
-import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from '../services/axiosConfig';
+import MapWithMarker from '../components/MapWithMarker';
 import { RideCreationRequestBuilder } from '../components/RideCreationRequestBuilder';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Clock, Users, DollarSign, Check, ArrowRight } from 'lucide-react';
@@ -30,12 +30,7 @@ const CadastroCarona: React.FC = () => {
   const [originCity, setOriginCity] = useState('');
   const [destinationCity, setDestinationCity] = useState('');
   const messagesRef = useRef<any>(null);
-
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places'],
-  });
-
+  
   const {
     value: originValue,
     suggestions: { status: oStatus, data: oData },
@@ -43,6 +38,10 @@ const CadastroCarona: React.FC = () => {
     clearSuggestions: clearOriginSuggestions,
   } = usePlacesAutocomplete({
     debounce: 300,
+    requestOptions: {
+      types: ['geocode', 'establishment'],
+      componentRestrictions: { country: 'br' }
+    }
   });
 
   const {
@@ -52,6 +51,10 @@ const CadastroCarona: React.FC = () => {
     clearSuggestions: clearDestinationSuggestions,
   } = usePlacesAutocomplete({
     debounce: 300,
+    requestOptions: {
+      types: ['geocode', 'establishment'], // Add more specific types
+      componentRestrictions: { country: 'br' } // Restrict to Brazil
+    }
   });
 
   const showMessage = (severity: string, summary: string, detail: string) => {
@@ -213,8 +216,6 @@ const CadastroCarona: React.FC = () => {
     }
   };
 
-  if (!isLoaded) return <div>Carregando...</div>;
-
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
@@ -260,16 +261,7 @@ const CadastroCarona: React.FC = () => {
 
             {/* Origin Map */}
             {originPosition && (
-              <div className="h-64 rounded-lg overflow-hidden">
-                <GoogleMap
-                  mapContainerStyle={{ width: '100%', height: '100%' }}
-                  zoom={14}
-                  center={originPosition}
-                  onClick={handleMapClickOrigin}
-                >
-                  <Marker position={originPosition} />
-                </GoogleMap>
-              </div>
+              <MapWithMarker origin={originPosition} onOriginMapClick={handleMapClickOrigin} />
             )}
 
             {/* Destination Input */}
@@ -310,16 +302,7 @@ const CadastroCarona: React.FC = () => {
 
             {/* Destination Map */}
             {destinationPosition && (
-              <div className="h-64 rounded-lg overflow-hidden">
-                <GoogleMap
-                  mapContainerStyle={{ width: '100%', height: '100%' }}
-                  zoom={14}
-                  center={destinationPosition}
-                  onClick={handleMapClickDestination}
-                >
-                  <Marker position={destinationPosition} />
-                </GoogleMap>
-              </div>
+              <MapWithMarker destination={destinationPosition} onDestinationMapClick={handleMapClickDestination} />
             )}
 
             {/* Date, Time, and Passengers */}
