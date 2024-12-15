@@ -38,12 +38,12 @@ public class RideService {
         // Obter caronas, calcular proximidade e ordenar
         return rideRepository.findAll().stream()
                 .map(ride -> {
-                    Coordinates rideOrigin = parseCoordinates(ride.getOriginCoords());
-                    Coordinates rideDestination = parseCoordinates(ride.getDestinationCoords());
+                    Coordinates rideOrigin = parseCoordinates(ride.getOrigin());
+                    Coordinates rideDestination = parseCoordinates(ride.getDestination());
 
                     if (rideOrigin == null || rideDestination == null) {
                         log.warn("Coordenadas inválidas na carona {}: origem={}, destino={}",
-                                ride.getId(), ride.getOriginCoords(), ride.getDestinationCoords());
+                                ride.getId(), ride.getOrigin(), ride.getDestination());
                         return null;
                     }
 

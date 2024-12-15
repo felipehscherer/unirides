@@ -107,4 +107,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
+    @ExceptionHandler(AlreadyAPassengerException.class)
+    public ResponseEntity<String> handleCnhInvalidCategoryException(AlreadyAPassengerException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
 }

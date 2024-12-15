@@ -237,11 +237,11 @@ public class UserController {
     }
 
 
-    @PostMapping("/{id}/upload-profile-image")
-    public ResponseEntity<String> uploadProfileImage(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+    @PostMapping("/{email}/upload-profile-image")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable String email, @RequestParam("file") MultipartFile file) {
         try {
             // Buscar o usuário no banco de dados
-            Optional<User> optionalUser = repository.findById(id);
+            Optional<User> optionalUser = repository.findByEmail(email);
             if (optionalUser.isEmpty()) {
                 return ResponseEntity.status(404).body("Usuário não encontrado.");
             }
@@ -260,9 +260,9 @@ public class UserController {
     }
 
     @Transactional
-    @GetMapping("/{id}/profile-image")
-    public ResponseEntity<byte[]> getProfileImage(@PathVariable UUID id) {
-        Optional<User> optionalUser = repository.findById(id);
+    @GetMapping("/{email}/profile-image")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable String email) {
+        Optional<User> optionalUser = repository.findByEmail(email);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(404).body(null);
         }

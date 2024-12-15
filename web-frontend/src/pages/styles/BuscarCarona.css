@@ -54,7 +54,7 @@
   background-color: #389e12;
 }
 
-.back-home-button {
+.back-to-home-button {
   width: 100%;
   padding: 10px;
   background-color: #007bff;
@@ -65,7 +65,7 @@
   font-size: 16px;
 }
 
-.back-home-button:hover {
+.back-to-home-button:hover {
   background-color: #0056b3;
 }
 
@@ -170,7 +170,7 @@
 .input-data{
   width: 130px;
   padding-right: 10px;
-  height: '15px';
+  height: 15px;
 }
 
 
@@ -187,4 +187,11 @@
   margin-bottom: 0.5rem; /* Espaçamento entre múltiplos alertas, se necessário */
 }
 
-
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #45a049;
+  margin: 0.8em 0;
+  padding: 0;
+}

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",                     // Define o padrão JavaScript gerado
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Bibliotecas disponíveis no projeto
+    "allowJs": true,                       // Permite arquivos .js
+    "skipLibCheck": true,                  // Ignora a verificação de tipos em arquivos de bibliotecas
+    "strict": true,                        // Habilita verificações rigorosas de tipo
+    "forceConsistentCasingInFileNames": true, // Obriga consistência nos nomes dos arquivos
+    "module": "ESNext",                    // Usa o sistema de módulos ESNext
+    "moduleResolution": "Node",           // Resolve os módulos como o Node.js
+    "resolveJsonModule": true,            // Permite a importação de arquivos JSON
+    "isolatedModules": true,              // Força cada arquivo a ser tratado como módulo
+    "jsx": "react-jsx",
+    "outDir": "./dist",            // Especifica a saída compilada (diretório "dist")
+    "rootDir": "./src",            // Define o diretório de entrada como "src"
+    "esModuleInterop": true,
+  },
+  "include": ["src"],                      // Inclui arquivos na pasta "src"
+  "exclude": ["node_modules"]              // Exclui a pasta "node_modules"
+}

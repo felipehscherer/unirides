@@ -238,7 +238,7 @@ function RideSearch() {
         ))}
       </div>
 
-      <button className="back-home-button" onClick={handleBackToHome}> 
+      <button className="back-to-home-button" onClick={handleBackToHome}> 
         Voltar para a Home
       </button>
       <Messages className='custom-toast' ref={messagesRef} />
