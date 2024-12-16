@@ -23,6 +23,7 @@ interface Ride {
   time: string;
   duration: number;
   freeSeatsNumber: number;
+  numPassengers: number;
   price?: string;
 }
 

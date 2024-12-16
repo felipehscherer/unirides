@@ -1,4 +1,3 @@
-import React from 'react';
 import '../pages/styles/DetalhesCarona.css';
 import MapWithRoute from "../components/MapWithRoute";
 import { calculateArrivalTime } from '../components/RideCardFactory';
@@ -74,7 +73,12 @@ const RideDetailsContent = ({
 
           <div className='icone-e-texto-box'>
             <img src="/grupo-de-usuarios.png" alt="Número de Passageiros" style={{ width: "35px", height: "35px", marginBottom: "5px" }} />
-            <div className='desc-itens'>{ride.numPassengers > 0 ? ride.numPassengers : 0}</div>
+            <div className='desc-itens'>{ride.numPassengers > 0 ? ride.numPassengers : 0} passageiro(s)</div>
+          </div>
+
+          <div className='icone-e-texto-box'>
+            <img src="/assento.png" alt="Número de Vagas" style={{ width: "35px", height: "35px", marginBottom: "5px" }} />
+            <div className='desc-itens'>{ride.freeSeatsNumber > 0 ? ride.freeSeatsNumber : 0} vaga(s)</div>
           </div>
         </div>
 

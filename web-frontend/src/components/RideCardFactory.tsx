@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Calendar, Clock, DollarSign, Users } from 'lucide-react';
+import { Calendar, Clock, DollarSign, Users, Armchair } from 'lucide-react';
 import { NavigateFunction } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
@@ -13,6 +13,7 @@ interface Ride {
   time: string;
   duration: number;
   freeSeatsNumber: number;
+  numPassengers: number;
   price?: string;
 }
 
@@ -81,9 +82,15 @@ export const RideCardFactory: React.FC<RideCardFactoryProps> = ({ ride, navigate
             <span>Chegada: {calculateArrivalTime(ride.time, ride.duration)}</span>
           </div>
           <div className="flex items-center">
-            <Users size={16} className="mr-2 text-gray-500" />
-            <span>{ride.freeSeatsNumber || 0} vaga(s)</span>
+            <Armchair size={16} className="mr-2 text-gray-500" />
+            <span>{ride.freeSeatsNumber - ride.numPassengers || 0} vaga(s)</span>
           </div>
+
+          <div className="flex items-center">
+            <Users size={16} className="mr-2 text-gray-500" />
+            <span>{ride.numPassengers || 0} passageiro(s)</span>
+          </div>
+          
           <div className="flex items-center">
             <DollarSign size={16} className="mr-2 text-gray-500" />
             <span>R$ {ride.price ? parseFloat(ride.price).toFixed() : 'N/A'}</span>

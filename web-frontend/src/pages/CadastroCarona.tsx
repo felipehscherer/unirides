@@ -7,6 +7,7 @@ import axios from '../services/axiosConfig';
 import MapWithMarker from '../components/MapWithMarker';
 import { RideCreationRequestBuilder } from '../components/RideCreationRequestBuilder';
 import { motion } from 'framer-motion';
+import { Messages } from 'primereact/messages';
 import { MapPin, Calendar, Clock, Users, DollarSign, Check, ArrowRight } from 'lucide-react';
 
 interface Position {
@@ -426,7 +427,7 @@ const CadastroCarona: React.FC = () => {
           </div>
         </div>
       </div>
-      
+      <Messages ref={messagesRef} className="custom-toast" />
     </div>
   );
 };
