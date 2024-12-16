@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.Normalizer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
