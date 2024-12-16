@@ -1,0 +1,126 @@
+
+header {
+    background-color: #43A715;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 1.5rem;
+}
+
+.search-box {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.error-messages {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 470px;
+
+}
+
+.address-icon-box input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.suggestions-list {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.suggestion-item:hover {
+    background: #f1f1f1;
+    color: #007bff;
+}
+
+.address-icon-box input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.travel-mode-select {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.travel-mode-select select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.buscar-onibus-box-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    color: white;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.buscar-onibus-box-button:hover {
+    background-color: #45a049;
+}
+
+.map {
+    flex: 1; /* Garante que o mapa ocupe o espaço disponível */
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 200px); /* Ajusta o mapa para ocupar a altura entre header e footer */
+    z-index: 1;
+}
+
+footer {
+    background-color: #43A715;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    margin-top: auto; /* Garante que o footer grude no final */
+}
+
+.error-messages {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 470px;
+    z-index: 9999;
+}

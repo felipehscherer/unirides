@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
@@ -14,6 +15,8 @@ import DetalhesCarona from './pages/DetalhesCarona';
 import LandingPage from './pages/LandingPage';
 import MinhasCaronas from './pages/MinhasCaronas';
 import DetalhesMinhasCaronas from './pages/DetalhesMinhasCaronas';
+import BusRoutes from "./pages/BusRoutes.tsx";
+import BusSchedule from "./pages/BusSchedule";
 
 function App() {
     return (
@@ -32,11 +35,13 @@ function App() {
                 <Route path="/veiculo/gerenciar/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista" element={<protectRoute> <ApresentarVeiculos /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista/editar/:plate" element={<protectRoute> <EditarVeiculo /> </protectRoute>} />
+                <Route path="/rotas-onibus" element={<protectRoute> <BusRoutes /> </protectRoute>} />
+                <Route path="/onibus/horarios/alegrete" element={<protectRoute> <BusSchedule /> </protectRoute>} />
                 <Route path="/cadastro-carona" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
                 <Route path="/minhas-caronas" element={<protectRoute> <MinhasCaronas /> </protectRoute>} />
             </Routes>
         </Router>
     );
 }
-
+//<Route path="/caronas/cadasro" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
 export default App;

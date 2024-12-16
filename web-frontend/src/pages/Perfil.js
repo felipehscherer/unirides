@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from '../services/axiosConfig';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import './styles/Perfil.css';
-import { Messages } from 'primereact/messages';
+import {Messages} from 'primereact/messages';
+import {HomeIcon} from "lucide-react";
 
 const Perfil = () => {
     const [initialData, setInitialData] = useState({});
@@ -69,7 +70,7 @@ const Perfil = () => {
     const fetchProfileImage = async (email) => {
         try {
             const encodedEmail = encodeURIComponent(email);
-            const response = await axios.get(`/user/${encodedEmail}/profile-image`, { responseType: 'blob' });
+            const response = await axios.get(`/user/${encodedEmail}/profile-image`, {responseType: 'blob'});
             const imageBlob = response.data;
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -165,7 +166,7 @@ const Perfil = () => {
             alert('Informações atualizadas com sucesso!');
             setCurrentPassword('');
             setNewPassword('');
-            setInitialData((prev) => ({ ...prev, ...updatedData }));
+            setInitialData((prev) => ({...prev, ...updatedData}));
         } catch (error) {
             setErrorMessage('Erro ao atualizar as informações.');
             console.error('Erro ao atualizar informações:', error);
@@ -235,184 +236,210 @@ const Perfil = () => {
     };
 
     return (
-        <div className="perfil-wrapper">
-            <h1>Meu Perfil</h1>
-            <div className="profile-image-container">
-                {profileImage ? (
-                    <img src={profileImage} alt="Imagem de Perfil" className="profile-image" />
-                ) : (
-                    <img src="/placeholder-profile.png" alt="Imagem Padrão" className="profile-image" />
-                )}
-                <button onClick={handleImageClick} className="btn-add-image">
-                    Adicionar Imagem
-                </button>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleImageUpload}
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                />
-            </div>
-            <div className="perfil-card">
-                <form onSubmit={handleSaveAll} className="form-container">
-                    <div className="input-container">
-                        <label>Nome:</label>
+        <div className="flex flex-col min-h-screen bg-[#e8f6e8]">
+            <header className="bg-[#43A715] text-white shadow-lg">
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-2xl font-bold">Unirides</h1>
+                    <nav>
+                        <ul className="flex space-x-4">
+                            <li>
+                                <a
+                                    href="/home"
+                                    className="flex items-center hover:text-[#2e760f] transition-colors"
+                                >
+                                    <HomeIcon className="w-5 h-5 mr-1"/>
+                                    Home
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+            <div className="user-container">
+                <div className="user-box">
+                    <h1>Meu Perfil</h1>
+                    <div className="profile-image-container">
+                        {profileImage ? (
+                            <img src={profileImage} alt="Imagem de Perfil" className="profile-image"/>
+                        ) : (
+                            <img src="/placeholder-profile.png" alt="Imagem Padrão" className="profile-image"/>
+                        )}
+                        <button onClick={handleImageClick} className="btn-add-image">
+                            Adicionar Imagem
+                        </button>
                         <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            style={{display: 'none'}}
                         />
                     </div>
-                    <div className="input-container">
-                        <label>Email:</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Senha Atual (para alterar senha):</label>
-                        <input
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Nova Senha:</label>
-                        <input
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Cidade:</label>
-                        <input
-                            type="text"
-                            value={cidade}
-                            onChange={(e) => setCidade(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Estado:</label>
-                        <input
-                            type="text"
-                            value={estado}
-                            onChange={(e) => setEstado(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Endereço:</label>
-                        <input
-                            type="text"
-                            value={endereco}
-                            onChange={(e) => setEndereco(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Número:</label>
-                        <input
-                            type="text"
-                            value={numero}
-                            onChange={(e) => setNumero(e.target.value)}
-                        />
-                    </div>
-                    <div className="input-container">
-                        <label>Complemento:</label>
-                        <input
-                            type="text"
-                            value={complemento}
-                            onChange={(e) => setComplemento(e.target.value)}
-                        />
-                    </div>
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    <button type="submit" className="btn-primary">
-                        Salvar Tudo
-                    </button>
-                </form>
 
-                <div className="button-container-driver">
-                    {motorista ? (
-                        <>
-                            <div className="button-container-driver-vehicle">
-                                <div className={'button-container-driver'}>
-                                    <button
-                                        className="button-driver-vehicle"
-                                        onClick={() => navigate('/motorista/gerenciar/editar')}
-                                    >
-                                        Editar CNH
-                                    </button>
-                                    <button
-                                        className="button-driver-vehicle"
-                                        onClick={() => handleDeleteClick(email)}
-                                    >
-                                        Deletar CNH
-                                    </button>
-                                    {/* Modal de Exclusão */}
-                                    {isDeleteModalOpen && (
-                                        <div className="modal-overlay">
-                                            <div className="modal-content">
-                                                <h2>Confirmar Exclusão</h2>
-                                                <p>
-                                                    Você tem certeza que deseja desvincular sua CNH?
-                                                    Todos os seus veículos vinculados serão deletados.
-                                                </p>
-                                                <div>
-                                                    <div className="button-container">
-                                                        <button
-                                                            className={'manage-Btn'}
-                                                            onClick={handleConfirmDelete}
-                                                        >
-                                                            ✔ Confirmar
-                                                        </button>
-                                                        <button
-                                                            className={'manage-Btn'}
-                                                            onClick={closeDeleteModal}
-                                                        >
-                                                            ❌ Cancelar
-                                                        </button>
+                    <form onSubmit={handleSaveAll} className="user-box">
+                        <div className="underline-input">
+                            <input
+                                placeholder="Nome"
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                        </div>
+                        <div className="underline-input">
+                            <input
+                                placeholder="Email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Senha Atual (para alterar senha)"
+                                   type="password"
+                                   value={currentPassword}
+                                   onChange={(e) => setCurrentPassword(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Nova senha"
+                                   type="password"
+                                   value={newPassword}
+                                   onChange={(e) => setNewPassword(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="cidade"
+                                   type="text"
+                                   value={cidade}
+                                   onChange={(e) => setCidade(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Estado"
+                                   type="text"
+                                   value={estado}
+                                   onChange={(e) => setEstado(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Endereço"
+                                   type="text"
+                                   value={endereco}
+                                   onChange={(e) => setEndereco(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Número"
+                                   type="text"
+                                   value={numero}
+                                   onChange={(e) => setNumero(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <input className="underline-input-perfil"
+                                   placeholder="Complemento"
+                                   type="text"
+                                   value={complemento}
+                                   onChange={(e) => setComplemento(e.target.value)}
+                            />
+                        </div>
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        <button type="submit" className="btn-primary">
+                            Salvar Tudo
+                        </button>
+                    </form>
+
+                    <div className="button-container">
+                        {motorista ? (
+                            <>
+                                <div className="button-container-driver-vehicle">
+                                    <div className="button-container-driver">
+                                        <button
+                                            className="button-driver-vehicle"
+                                            onClick={() => navigate('/motorista/gerenciar/editar')}
+                                        >
+                                            Editar CNH
+                                        </button>
+                                        <button
+                                            className="button-driver-vehicle"
+                                            onClick={() => handleDeleteClick(email)}
+                                        >
+                                            Deletar CNH
+                                        </button>
+                                        {/* Modal de Exclusão */}
+                                        {isDeleteModalOpen && (
+                                            <div className="modal-overlay">
+                                                <div className="modal-content">
+                                                    <h2>Confirmar Exclusão</h2>
+                                                    <p>
+                                                        Você tem certeza que deseja desvincular sua CNH?
+                                                        Todos os seus veículos vinculados serão deletados.
+                                                    </p>
+                                                    <div>
+                                                        <div className="button-container">
+                                                            <button
+                                                                className={'manage-Btn'}
+                                                                onClick={handleConfirmDelete}
+                                                            >
+                                                                ✔ Confirmar
+                                                            </button>
+                                                            <button
+                                                                className={'manage-Btn'}
+                                                                onClick={closeDeleteModal}
+                                                            >
+                                                                ❌ Cancelar
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
+                                    <div className="button-container-driver">
+                                        <button
+                                            className="button-driver-vehicle"
+                                            onClick={() => navigate('/veiculo/gerenciar/cadastro')}
+                                        >
+                                            Cadastrar Veículo
+                                        </button>
+                                        <button
+                                            className="button-driver-vehicle"
+                                            onClick={() => navigate('/veiculo/gerenciar/apresentarLista')}
+                                        >
+                                            Visualizar Veículos
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="button-container-driver">
-                                    <button
-                                        className="button-driver-vehicle"
-                                        onClick={() => navigate('/veiculo/gerenciar/cadastro')}
-                                    >
-                                        Cadastrar Veículo
-                                    </button>
-                                    <button
-                                        className="button-driver-vehicle"
-                                        onClick={() => navigate('/veiculo/gerenciar/apresentarLista')}
-                                    >
-                                        Visualizar Veículos
-                                    </button>
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <button
-                                className="button-driver-vehicle"
-                                onClick={() => navigate('/motorista/gerenciar/cadastro')}
-                            >
-                                Cadastrar CNH
-                            </button>
-                        </>
-                    )}
-                    <div />
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    className="button-register-cnh"
+                                    onClick={() => navigate('/motorista/gerenciar/cadastro')}
+                                >
+                                    Cadastrar CNH
+                                </button>
+                            </>
+                        )}
+                        <div/>
+                    </div>
+                    <button className="btn-home" onClick={() => navigate('/home')}>
+                        Voltar para home
+                    </button>
+                    <Messages className="custom-toast" ref={messagesRef}/>
                 </div>
-                <button className="btn-home" onClick={() => navigate('/home')}>
-                    Voltar para home
-                </button>
-                <Messages className="custom-toast" ref={messagesRef} />
             </div>
+            <footer className="bg-[#43A715] text-white py-4 mt-auto">
+                <div className="container mx-auto px-4 text-center">
+                    <p className="text-sm">&copy; 2023 RideShare. Todos os direitos reservados.</p>
+                </div>
+            </footer>
         </div>
     );
 };

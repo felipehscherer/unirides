@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from '../services/axiosConfig';
-import './styles/CadastroVeiculo.css';
-import logoImage from '../assets/logo.jpg';
+import './styles/User.css';
 import {Messages} from "primereact/messages";
+import {Toast} from "primereact/toast";
 
 function CadastroVeiculo() {
     const [email, setEmail] = useState('');
@@ -78,65 +78,63 @@ function CadastroVeiculo() {
     }
 
     return (
-        <div className="register-container-vehicle">
-            <div className="register-box-vehicle">
+        <div className="driver-container">
+            <Toast ref={messagesRef}/>
+            <div className="login-box">
                 <form onSubmit={handleCadastro}>
-                    <img src={logoImage} alt="Logo" className="register-logo-vehicle"/>
-
-                    <p className="register-title-vehicle">Preencha as informações sobre seu carro </p>
-
-                    <label htmlFor="color" className="register-label-vehicle">Digite a cor</label>
+                    <p className="driver-title">Cadastro de Veiculo</p>
+                    <p className='driver-description'>Preencha as informações sobre seu veiculo</p>
                     <input
                         type="text"
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
                         placeholder="Cor"
+                        className="underline-input"
                         required
                     />
-                    <label htmlFor="capacity" className="register-label-vehicle">Digite a capacidade</label>
                     <input
                         type="text"
                         value={capacity}
                         onChange={(e) => setCapacity(e.target.value)}
                         placeholder="Capacidade"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="model" className="register-label-vehicle">Digite o modelo</label>
                     <input
                         type="text"
                         value={model}
                         onChange={(e) => setModel(e.target.value)}
                         placeholder="Modelo"
+                        className="underline-input"
                         required
                     />
-
-                    <label htmlFor="brand" className="register-label-vehicle">Digite a marca</label>
                     <input
                         type="text"
                         value={brand}
                         onChange={(e) => setBrand(e.target.value)}
                         placeholder="Marca"
+                        className="underline-input"
                         required
                     />
-                    <label htmlFor="plate" className={'register-label-vehicle'}>Digite a placa</label>
                     <input
                         type="text"
                         value={plate}
                         onChange={(e) => setPlate(e.target.value)}
                         placeholder="Placa"
+                        className="underline-input"
                         required
                     />
-
-                    <button type="submit" className={'button-register-vehicle'}>📝 Cadastrar</button>
-                    <button
-                        className={'btn-profile-vehicle'}
-                        onClick={() => navigate('/perfil')}
-                    >
-                        Voltar para Perfil
-                    </button>
+                    <div className='buttons-driver'>
+                        <button type="submit" className='driver-button'>📝 Cadastrar</button>
+                        <button
+                            className='btn-profile-driver'
+                            onClick={() => navigate('/perfil')}
+                        >
+                            Voltar
+                        </button>
+                    </div>
                 </form>
-                <Messages className='custom-toast' ref={messagesRef} />
+                <Messages className='custom-toast' ref={messagesRef}/>
             </div>
         </div>
     )
