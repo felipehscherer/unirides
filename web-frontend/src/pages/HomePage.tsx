@@ -1,5 +1,5 @@
 import React from 'react';
-import {Bus, Calendar, Car, Clock, Hourglass, Search, User} from 'lucide-react';
+import {Bus, Calendar, Car, Clock, Search, User} from 'lucide-react';
 
 export default function HomePage() {
   return (

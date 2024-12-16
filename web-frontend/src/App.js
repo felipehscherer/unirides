@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
@@ -43,5 +42,4 @@ function App() {
         </Router>
     );
 }
-//<Route path="/caronas/cadasro" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
 export default App;
