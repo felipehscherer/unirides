@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Car, Clock, Search, User } from 'lucide-react';
+import {Bus, Calendar, Car, Clock, Hourglass, Search, User} from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -26,12 +26,6 @@ export default function HomePage() {
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card
-            title="Horário de Ônibus"
-            icon={<Clock className="w-8 h-8 text-[#43A715]" />}
-            description="Consulte os horários de ônibus disponíveis."
-            link="/horario-de-onibus"
-          />
-          <Card
             title="Minhas Caronas"
             icon={<Calendar className="w-8 h-8 text-[#43A715]" />}
             description="Veja suas caronas agendadas e histórico."
@@ -48,6 +42,18 @@ export default function HomePage() {
             icon={<Car className="w-8 h-8 text-[#43A715]" />}
             description="Ofereça uma carona e ajude a comunidade."
             link="/cadastrar-caronas"
+          />
+          <Card
+              title="Horário de Ônibus"
+              icon={<Clock className="w-8 h-8 text-[#43A715]" />}
+              description="Consulte os horários de ônibus disponíveis."
+              link="/onibus/horarios/alegrete"
+          />
+          <Card
+              title="Rotas de Onibus"
+              icon={<Bus className="w-8 h-8 text-[#43A715]" />}
+              description="Consulte os ônibus necessários para seu trajeto."
+              link="/rotas-onibus"
           />
         </div>
       </main>

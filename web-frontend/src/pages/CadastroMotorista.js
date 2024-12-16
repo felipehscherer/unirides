@@ -2,7 +2,7 @@
     import { useNavigate } from 'react-router-dom';
     import { Toast } from 'primereact/toast';
     import axios from '../services/axiosConfig';
-    import './styles/Motorista.css';
+    import './styles/User.css';
     import {Messages} from "primereact/messages";
     import InputMask from "react-input-mask";
     import MotoristaRequestBuilder from '../components/MotoristaRequestBuilder';

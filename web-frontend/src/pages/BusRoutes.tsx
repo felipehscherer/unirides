@@ -4,9 +4,10 @@ import {GoogleMap, Marker, DirectionsRenderer} from "@react-google-maps/api";
 import "./styles/MapPage.css";
 import {Messages} from "primereact/messages";
 // @ts-ignore
-import {DrivingMode, WalkingMode, BicyclingMode, TransitMode, TravelModeStrategy,} from "../components/TravelModeStrategy.ts";
+import {TransitMode, DrivingMode, WalkingMode, BicyclingMode, TravelModeStrategy,} from "../components/TravelModeStrategy.ts";
 // @ts-ignore
 import {GooglePlacesSuggestionService} from "../components/Suggestion.ts";
+import {HomeIcon} from "lucide-react";
 
 const BusRoutes = () => {
     const [originValue, setOriginValue] = useState<string>("");
@@ -15,7 +16,7 @@ const BusRoutes = () => {
     const [destinyData, setDestinyData] = useState<any[]>([]);
     const [directionsResponse, setDirectionsResponse] = useState<any>(null);
     const [travelModeStrategy, setTravelModeStrategy] = useState<TravelModeStrategy>(new TransitMode());
-    const messagesRef = useRef(null);
+    const messagesRef = useRef<Messages | null>(null); // Tipo ajustado para resolver o erro de tipo do messagesRef
 
     const position = {lat: -29.789286, lng: -55.768070};
 
@@ -95,7 +96,11 @@ const BusRoutes = () => {
         }
     };
 
-    const showError = (severity: string, summary: string, detail: string) => {
+    const showError = (
+        severity: "error" | "success" | "info" | "warn" | "secondary" | "contrast" | undefined, // Ajuste no tipo do parâmetro severity
+        summary: string,
+        detail: string
+    ) => {
         messagesRef.current?.clear();
         messagesRef.current?.show({
             severity: severity,
@@ -106,68 +111,94 @@ const BusRoutes = () => {
     };
 
     return (
-        <div className="container-1">
-            <div className="search-box">
-                <div className="address-icon-box">
-                    <input
-                        value={originValue || ""}
-                        onChange={(e) => setOriginValue(e.target.value)}
-                        placeholder="Endereço de Origem"
-                        onBlur={() => setTimeout(() => setOriginData([]), 200)}
-                    />
-                    {originValue && originData.length > 0 && (
-                        <div className="suggestions-list">
-                            {originData.map((suggestion, index) => (
-                                <div
-                                    key={suggestion.place_id || index}
-                                    onClick={() => handleSuggestionSelect(suggestion.description, "origin")}
-                                    className="suggestion-item"
+        <div className="flex flex-col min-h-screen bg-[#e8f6e8]">
+            <header className="bg-[#43A715] text-white shadow-lg">
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-2xl font-bold">Unirides</h1>
+                    <nav>
+                        <ul className="flex space-x-4">
+                            <li>
+                                <a
+                                    href="/home"
+                                    className="flex items-center hover:text-[#2e760f] transition-colors"
                                 >
-                                    {suggestion.description}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                                    <HomeIcon className="w-5 h-5 mr-1"/>
+                                    Home
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div className="address-icon-box">
-                    <input
-                        value={destinationValue || ""}
-                        onChange={(e) => setDestinationValue(e.target.value)}
-                        placeholder="Endereço de Destino"
-                        onBlur={() => setTimeout(() => setDestinyData([]), 200)}
-                    />
-                    {destinationValue && destinyData.length > 0 && (
-                        <div className="suggestions-list">
-                            {destinyData.map((suggestion, index) => (
-                                <div
-                                    key={suggestion.place_id || index}
-                                    onClick={() => handleSuggestionSelect(suggestion.description, "destination")}
-                                    className="suggestion-item"
-                                >
-                                    {suggestion.description}
-                                </div>
-                            ))}
-                        </div>
-                    )}
+            </header>
+            <div className="container-1">
+                <div className="search-box">
+                    <div className="address-icon-box">
+                        <input
+                            value={originValue || ""}
+                            onChange={(e) => setOriginValue(e.target.value)}
+                            placeholder="Endereço de Origem"
+                            onBlur={() => setTimeout(() => setOriginData([]), 200)}
+                        />
+                        {originValue && originData.length > 0 && (
+                            <div className="suggestions-list">
+                                {originData.map((suggestion, index) => (
+                                    <div
+                                        key={suggestion.place_id || index}
+                                        onClick={() => handleSuggestionSelect(suggestion.description, "origin")}
+                                        className="suggestion-item"
+                                    >
+                                        {suggestion.description}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="address-icon-box">
+                        <input
+                            value={destinationValue || ""}
+                            onChange={(e) => setDestinationValue(e.target.value)}
+                            placeholder="Endereço de Destino"
+                            onBlur={() => setTimeout(() => setDestinyData([]), 200)}
+                        />
+                        {destinationValue && destinyData.length > 0 && (
+                            <div className="suggestions-list">
+                                {destinyData.map((suggestion, index) => (
+                                    <div
+                                        key={suggestion.place_id || index}
+                                        onClick={() => handleSuggestionSelect(suggestion.description, "destination")}
+                                        className="suggestion-item"
+                                    >
+                                        {suggestion.description}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="travel-mode-select">
+                        <select onChange={(e) => handleTravelModeChange(e.target.value)}>
+                            <option value="DRIVING">Dirigindo</option>
+                            <option value="WALKING">Caminhando</option>
+                            <option value="BICYCLING">Bicicleta</option>
+                            <option value="TRANSIT">Transporte Público</option>
+                        </select>
+                    </div>
+                    <button className="buscar-onibus-box-button" type="button" onClick={handleSearch}>
+                        Buscar Rota
+                    </button>
                 </div>
-                <div className="travel-mode-select">
-                    <select onChange={(e) => handleTravelModeChange(e.target.value)}>
-                        <option value="DRIVING">Dirigindo</option>
-                        <option value="WALKING">Caminhando</option>
-                        <option value="BICYCLING">Bicicleta</option>
-                        <option value="TRANSIT">Transporte Público</option>
-                    </select>
+                <div className="map">
+                    <GoogleMap mapContainerStyle={{width: "100%", height: "100%"}} center={position} zoom={15}>
+                        <Marker position={position}/>
+                        {directionsResponse && <DirectionsRenderer directions={directionsResponse}/>}
+                    </GoogleMap>
                 </div>
-                <button className="buscar-carona-box-button" type="button" onClick={handleSearch}>
-                    Buscar Rota
-                </button>
+
             </div>
-            <div className="map">
-                <GoogleMap mapContainerStyle={{width: "100%", height: "100%"}} center={position} zoom={15}>
-                    <Marker position={position}/>
-                    {directionsResponse && <DirectionsRenderer directions={directionsResponse}/>}
-                </GoogleMap>
-            </div>
+            <footer className="bg-[#43A715] text-white py-4 mt-auto">
+                <div className="container mx-auto px-4 text-center">
+                    <p className="text-sm">&copy; 2023 RideShare. Todos os direitos reservados.</p>
+                </div>
+            </footer>
             <div className="error-messages">
                 <Messages ref={messagesRef}/>
             </div>

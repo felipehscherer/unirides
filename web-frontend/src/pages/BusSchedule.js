@@ -1,8 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from '../services/axiosConfig';
-import { Messages } from 'primereact/messages';
-import { Accordion, AccordionTab } from 'primereact/accordion';
+import {Messages} from 'primereact/messages';
+import {Accordion, AccordionTab} from 'primereact/accordion';
 import './styles/BusSchedule.css';
+import {HomeIcon, User} from "lucide-react";
 
 const categoryMapByTitle = {
     "Favila / Terminal": {
@@ -82,7 +83,7 @@ const BusSchedule = () => {
     const showError = (severity, summary, detail) => {
         if (messagesRef.current) {
             messagesRef.current.clear();
-            messagesRef.current.show({ severity, summary, detail, life: 5000 });
+            messagesRef.current.show({severity, summary, detail, life: 5000});
         }
     };
 
@@ -123,29 +124,32 @@ const BusSchedule = () => {
                                 <div key={location} className="location-box">
                                     <h3>{location}</h3>
                                     <div className="day-group-container">
-                                        {/* Divisão visual entre "Dias Úteis" e "Sábados" */}
                                         {Object.entries(groupedSchedules).map(([dayType, locations]) => (
-                                            <div key={dayType} className={`day-type-box ${dayType === "Sábados" ? 'saturday-box' : 'weekday-box'}`}>
+                                            <div key={dayType}
+                                                 className={`day-type-box ${dayType === "Sábados" ? 'saturday-box' : 'weekday-box'}`}>
                                                 <h4 className="day-title">{dayType}</h4>
                                                 <div className="location-box-container">
-                                                    {Object.entries(locations).map(([group, times]) => (
-                                                        <div key={group} className="location-group-box">
-                                                            <h5 className="location-title">{group}</h5>
-                                                            <div className="time-list">
-                                                                {times.length > 0 ? (
-                                                                    times.map((time, index) => {
-                                                                        // Remover o último número do horário
-                                                                        const timeWithoutCategory = time.slice(0, -1);
-                                                                        return (
-                                                                            <span key={index} className="time-box">{timeWithoutCategory}</span>
-                                                                        );
-                                                                    })
-                                                                ) : (
-                                                                    <span className="no-schedule">Sem horários disponíveis</span>
-                                                                )}
+                                                    {dayType === "Sábados" && Object.keys(locations).length === 0 ? (
+                                                        <span className="no-schedule">Horários não encontrados para Sábados</span>
+                                                    ) : (
+                                                        Object.entries(locations).map(([group, times]) => (
+                                                            <div key={group} className="location-group-box">
+                                                                <h5 className="location-title">{group}</h5>
+                                                                <div className="time-list">
+                                                                    {times.length > 0 ? (
+                                                                        times.map((time, index) => {
+                                                                            const timeWithoutCategory = time.slice(0, -1);
+                                                                            return (
+                                                                                <span key={index} className="time-box">{timeWithoutCategory}</span>
+                                                                            );
+                                                                        })
+                                                                    ) : (
+                                                                        <span className="no-schedule">Sem horários disponíveis</span>
+                                                                    )}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    ))}
+                                                        ))
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
@@ -160,9 +164,34 @@ const BusSchedule = () => {
     };
 
     return (
-        <div className="schedule-container">
-            <div id="results">{renderSchedules()}</div>
-            <Messages className="custom-toast" ref={messagesRef} />
+        <div className="flex-col min-h-screen bg-[#e8f6e8]">
+            <header className="bg-[#43A715] text-white shadow-lg">
+                <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+                    <h1 className="text-2xl font-bold">Unirides</h1>
+                    <nav>
+                        <ul className="flex space-x-4">
+                            <li>
+                                <a
+                                    href="/home"
+                                    className="flex items-center hover:text-[#2e760f] transition-colors"
+                                >
+                                    <HomeIcon className="w-5 h-5 mr-1"/>
+                                    Home
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </header>
+            <div className="schedule-container">
+                <div id="results">{renderSchedules()}</div>
+                <Messages className="custom-toast" ref={messagesRef}/>
+            </div>
+            <footer className="bg-[#43A715] text-white py-4 mt-auto">
+                <div className="container mx-auto px-4 text-center">
+                    <p className="text-sm">&copy; 2023 RideShare. Todos os direitos reservados.</p>
+                </div>
+            </footer>
         </div>
     );
 };

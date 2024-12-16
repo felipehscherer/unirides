@@ -1,52 +1,3 @@
-.perfil-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px;
-  background-color: #f0f2f5;
-  min-height: 100vh;
-}
-
-.perfil-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  width: 100%;
-  max-width: 600px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.perfil-wrapper h1 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.form-container {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.input-container {
-  margin-bottom: 20px;
-}
-
-.input-container label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.input-container input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 .error-message {
   color: red;
   font-size: 14px;
@@ -77,26 +28,7 @@
   margin-top: 20px;
 }
 
-.button-container-driver-vehicle {
-  display: flex;
-  justify-content: center;
-  margin: 10px;
-}
-
-.button-container-driver{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-.button-container-vehicle{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.button-driver-vehicle{
+.button-register-cnh{
   background-color: #089F08;
   color: white;
   padding: 12px;
@@ -107,7 +39,7 @@
   margin-inline: 10px;
  }
 
-.button-driver-vehicle:hover{
+.button-register-cnh:hover{
   background-color: green;
 
 }
@@ -145,3 +77,175 @@
 .btn-home:hover {
   background-color: #0056b3;
 }
+
+.button-container-driver-vehicle {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.underline-input-perfil {
+  display: block;
+  width: 100%;
+  margin-bottom: 30px;
+  padding: 10px 0;
+  border: none;
+  border-bottom: 2px solid #D9D9D9;
+  outline: none;
+  font-size: 16px;
+}
+
+.underline-input-perfil:focus {
+  border-bottom: 2px solid #43A715;
+}
+
+.button-container-driver,
+.button-container-vehicle {
+  display: flex;
+  flex-direction: column;
+  width: 48%;
+  gap: 10px;
+}
+
+/* Botões individuais */
+.button-driver-vehicle {
+  background-color: #089F08;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0; /* Remove a margem automática para garantir um alinhamento correto */
+}
+
+.button-driver-vehicle:hover {
+  background-color: green;
+}
+
+/* Adicionalmente, ajuste nas outras classes de botões se necessário */
+.button-register-cnh,
+.btn-action-green{
+  background-color: #089F08;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-inline: 10px; /* Ajuste na margem horizontal */
+}
+
+.button-register-cnh:hover,
+.btn-action-green:hover{
+  background-color: green;
+}
+
+
+.user-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #FFFFFF;
+}
+
+.main-content {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+footer {
+  background-color: #43A715;
+  color: white;
+  padding: 16px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+
+.user-box {
+  padding: 40px;
+  max-width: 600px;
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+
+.user-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #000000;
+}
+
+.user-description {
+  font-size: 14px;
+  color: #555555;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.user-label {
+  display: block;
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333333;
+}
+
+.user-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #43A715;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.user-button:hover {
+  background-color: green;
+}
+
+.placeholder {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: gray;
+  pointer-events: none;
+}
+
+.btn-profile-user {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+  color: #43A715;
+  border: 2px solid #43A715;
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.btn-profile-user:hover {
+  background-color: #e6ffe6;
+}
+

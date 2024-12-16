@@ -35,8 +35,8 @@ function App() {
                 <Route path="/veiculo/gerenciar/cadastro" element={<protectRoute> <CadastroVeiculo /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista" element={<protectRoute> <ApresentarVeiculos /> </protectRoute>} />
                 <Route path="/veiculo/gerenciar/apresentarLista/editar/:plate" element={<protectRoute> <EditarVeiculo /> </protectRoute>} />
-                <Route path="/rotas-onibus" element=<BusRoutes/> />
-                <Route path="/onibus/horarios/alegrete" element=<BusSchedule/>  />
+                <Route path="/rotas-onibus" element={<protectRoute> <BusRoutes /> </protectRoute>} />
+                <Route path="/onibus/horarios/alegrete" element={<protectRoute> <BusSchedule /> </protectRoute>} />
                 <Route path="/cadastro-carona" element={<protectRoute> <CadastroCarona /> </protectRoute>} />
                 <Route path="/minhas-caronas" element={<protectRoute> <MinhasCaronas /> </protectRoute>} />
             </Routes>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from '../services/axiosConfig';
-import './styles/Motorista.css';
+import './styles/User.css';
 import { Messages } from "primereact/messages";
 import { Toast } from "primereact/toast";
 
