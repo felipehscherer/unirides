@@ -83,12 +83,13 @@ export const RideCardFactory: React.FC<RideCardFactoryProps> = ({ ride, navigate
           </div>
           <div className="flex items-center">
             <Armchair size={16} className="mr-2 text-gray-500" />
-            <span>{ride.freeSeatsNumber - ride.numPassengers || 0} vaga(s)</span>
+            <span>{ride.freeSeatsNumber >= ride.numPassengers? ride.freeSeatsNumber - ride.numPassengers + 1 
+            : ride.numPassengers - ride.numPassengers + 1} vaga(s)</span>
           </div>
 
           <div className="flex items-center">
             <Users size={16} className="mr-2 text-gray-500" />
-            <span>{ride.numPassengers || 0} passageiro(s)</span>
+            <span>{ride.numPassengers - 1 || 0} passageiro(s)</span>
           </div>
           
           <div className="flex items-center">
