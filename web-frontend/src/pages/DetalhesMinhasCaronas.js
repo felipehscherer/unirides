@@ -1,16 +1,13 @@
 import RideDetailsContent from '../components/RideDetailsContent';
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { jwtDecode } from "jwt-decode";
 import axios from '../services/axiosConfig';
-import { Messages } from 'primereact/messages';
 
 function DetalhesMinhasCaronas() {
   const navigate = useNavigate();
   const [ride, setRideDetails] = useState(null);
   const messagesRef = useRef(null);
   const { rideId } = useParams();
-  const [userId, setUserId] = useState('');
   const location = useLocation();
 
   useEffect(() => {

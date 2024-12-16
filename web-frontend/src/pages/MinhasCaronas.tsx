@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, DollarSign, User, Search, Filter, Repeat, Car } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Calendar, Clock, DollarSign, User, Search, Filter, Repeat} from 'lucide-react';
 import axios from '../services/axiosConfig';
 import { useNavigate} from 'react-router-dom';
 import { jwtDecode, JwtPayload } from "jwt-decode"; // tipagem correta para JWT para usar com ts
@@ -39,13 +39,13 @@ interface Carona{
 
 const MinhasCaronas: React.FC = () => {
   const [caronas, setCaronas] = useState<Carona[]>([]);
-  const [ride, setRide] = useState<Carona>();
   const [filteredCaronas, setFilteredCaronas] = useState<CaronaTransform[]>([]);
   const [transformedCaronas, setTransformedCaronas] = useState<CaronaTransform[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [driverFilter, setDriverFilter] = useState('all');
   const [userId, setUserId] = useState('');
+  const messagesRef = useRef<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -72,6 +72,7 @@ const MinhasCaronas: React.FC = () => {
         }
       } catch (error: any) {
         console.error('Erro ao buscar as caronas:', error.message);
+        showMessage('error', 'Erro:', 'Erro ao buscar caronas.');
       }
     };
   
@@ -95,29 +96,9 @@ const MinhasCaronas: React.FC = () => {
       price: carona.price,
       driverName: carona.driverName,
       status: statusMap[carona.status] ?? -1, // Retorna -1 caso o status seja inválido
-      driver: carona.driver, // Inicialmente falso; ajuste de acordo com sua lógica
+      driver: carona.driver,
     }));
   };
-
-  /* rideSearchResponseDTO
-        car: "ford fiesta prata",
-        date: "2024-11-27",
-        destination: "-30.8880817,-55.5264082",
-        destinationAddress: "R. Cel. Ângelo de Melo, 10 - Fluminense, Sant'Ana do Livramento - RS, 97574-454, Brazil",
-        destinationCity: "Sant'Ana do Livramento",
-        distance: "203 km",
-        driverName: "Felipe Dresch",
-        duration: "8950",
-        freeSeatsNumber: 1,
-        numPassengers: 1,
-        origin: "-29.7837672,-55.7936527",
-        originAddress: "R. Vasco Alves, 2 - Centro, Alegrete - RS, 97542-600, Brazil",
-        originCity: "Alegrete",
-        price: "61.637699999999995",
-        rideId: "b35bb12a-75f3-4a2b-86b7-8c57b09584f0",
-        status: "ABERTA",
-        time: "19:30"
-  */
 
   useEffect(() => {
     const filtered = transformedCaronas.filter(carona => 
@@ -297,6 +278,15 @@ const MinhasCaronas: React.FC = () => {
       backgroundColor: '#4caf50',
       color: 'white',
     },
+  };
+
+  const showMessage = (severity: string, summary: string, detail: string) => {
+    messagesRef.current?.show({
+      severity,
+      summary,
+      detail,
+      life: 5000
+    });
   };
 
   return (
