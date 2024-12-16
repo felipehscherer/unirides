@@ -59,7 +59,10 @@ function DetalhesMinhasCaronas() {
     try {
         const response = await axios.post(`/rides/cancel/${rideId}`);
         console.log('respostadoback: ', response.data)
-        showMessage('success', 'Sucesso:', 'Carona cancelada!');
+        showMessage('success', 'Sucesso:', 'Você desistiu da carona!');
+        setTimeout(function() { 
+          navigate('/minhas-caronas'); 
+        }, 2000);
       } catch (error) {
         console.error('Erro ao buscar detalhes da carona:', error);
         showMessage('error', 'Erro:', error.response?.data);
@@ -84,7 +87,7 @@ function DetalhesMinhasCaronas() {
     <RideDetailsContent
       ride={ride}
       onPrimaryAction={handleCancelar}
-      primaryActionLabel="Cancelar Carona"
+      primaryActionLabel="Desistir da Carona"
       onSecundaryAction={handleRedo}
       secundaryActionLabel="Buscar Este Trajeto"
       onBack={() => navigate(-1)}

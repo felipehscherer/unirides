@@ -69,10 +69,6 @@ const BuscarCarona: React.FC = () => {
     }
   };
 
-  const handleBackToHome = () => {
-    navigate('/home');
-  };
-
   const showMessage = (severity: string, summary: string, detail: string) => {
     messagesRef.current?.show({
       severity,
@@ -229,7 +225,7 @@ const BuscarCarona: React.FC = () => {
         ))}
       </div>
 
-      <button className="back-to-home-button" onClick={handleBackToHome}>
+      <button className="back-to-home-button" onClick={() => navigate('/home')}>
         Voltar para a Home
       </button>
 
