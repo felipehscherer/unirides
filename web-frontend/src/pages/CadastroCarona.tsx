@@ -391,7 +391,7 @@ const CadastroCarona: React.FC = () => {
                 className="mt-6 bg-gray-50 p-4 rounded-md"
               >
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Detalhes da Viagem</h3>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <div className="flex flex-col sm:flex-row justify-around items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                   <div className="flex items-center">
                     <MapPin className="text-green-500 mr-2" size={20} />
                     <p className="text-sm text-gray-900">{distanceInKm}</p>

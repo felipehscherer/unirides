@@ -56,7 +56,7 @@ const RideDetailsContent = ({
         <div className="ride-summary">
           <div className='icone-e-texto-box'>
             <div className="price">R$</div>
-            <div className='desc-itens'>{parseFloat(ride.price).toFixed(2)}</div>
+            <div className='desc-itens'>{parseFloat(ride.price).toFixed()}</div>
           </div>
 
           <div className='icone-e-texto-box'>
@@ -79,7 +79,6 @@ const RideDetailsContent = ({
         </div>
 
         <div>
-          <h2>Trajeto</h2>
           <MapWithRoute
             origin={{ lat: parseFloat(ride.origin.split(',')[0]), lng: parseFloat(ride.origin.split(',')[1]) }}
             destination={{ lat: parseFloat(ride.destination.split(',')[0]), lng: parseFloat(ride.destination.split(',')[1]) }}

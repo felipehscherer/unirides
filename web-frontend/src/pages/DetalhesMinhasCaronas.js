@@ -67,7 +67,6 @@ function DetalhesMinhasCaronas() {
   };
 
   const handleRedo = async () =>{
-    //logica
     navigate(`/caronas`, { state: { ride} });
   };
 

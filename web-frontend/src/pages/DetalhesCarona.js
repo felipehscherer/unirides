@@ -147,7 +147,7 @@ function DetalhesCarona() {
             <div className="ride-summary">
               <div className='icone-e-texto-box'>
                 <div className="price">R$</div>
-                <div className='desc-itens'>{parseFloat(ride.price).toFixed(2)}</div>
+                <div className='desc-itens'>{parseFloat(ride.price).toFixed()}</div>
               </div>
               
               <div className='icone-e-texto-box'>
@@ -185,7 +185,6 @@ function DetalhesCarona() {
           </div>
 
           <div>
-            <h2>Trajeto</h2>
               <MapWithRoute
                 origin={{
                   lat: parseFloat(ride.origin.split(',')[0]),
@@ -200,7 +199,7 @@ function DetalhesCarona() {
         </div>
         <button type="submit" className='solicitar-button' onClick={() => handleSolicitar()}> Ingressar na Carona </button>
 
-        <button className="back-home-button" onClick={() => navigate()}> Voltar </button>
+        <button className="back-home-button" onClick={() => navigate(-1)}> Voltar </button>
 
         <Messages className='custom-toast' ref={messagesRef} />
       </div>

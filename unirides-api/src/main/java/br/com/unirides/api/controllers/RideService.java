@@ -1,6 +1,7 @@
 package br.com.unirides.api.controllers;
 
 import br.com.unirides.api.domain.ride.Ride;
+import br.com.unirides.api.domain.ride.RideStatus;
 import br.com.unirides.api.dto.ride.RideSearchDTO;
 import br.com.unirides.api.repository.RideRepository;
 import lombok.AllArgsConstructor;
@@ -35,8 +36,9 @@ public class RideService {
             return Collections.emptyList();
         }
 
-        // Obter caronas, calcular proximidade e ordenar
+        // Obter caronas abertas, calcular proximidade e ordenar
         return rideRepository.findAll().stream()
+                .filter(ride -> ride.getStatus().equals(RideStatus.ABERTA))
                 .map(ride -> {
                     Coordinates rideOrigin = parseCoordinates(ride.getOrigin());
                     Coordinates rideDestination = parseCoordinates(ride.getDestination());
